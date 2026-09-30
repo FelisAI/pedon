@@ -114,3 +114,11 @@ dimensions (feet/inches and metres), sun, water, flowering, habit and notes from
 when present. Design-specific sizes take priority over catalogue sizes. Unidentified plants
 and unknown cat safety remain unverified; a genus toxicity match cannot supply cultivar facts.
 Details come from the same export as the preview; opening the sheet makes no additional network request.
+
+**Resume on the phone:** the app keeps a durable local copy of the loaded export and scan.
+After alignment it saves an AR world map when mapping is ready (**Position saved on this
+iPhone**); nudges are saved too. Reopening loads this saved design even without the Mac and
+asks the camera to recognize the same location. Plants stay hidden until normal tracking
+and the saved anchor agree. **Align again** recovers when the site cannot be recognized;
+**↻** fetches design changes. A different scan or coordinate frame cannot reuse the old
+alignment. See `ios/README.md` for the saved-map workflow and tests.

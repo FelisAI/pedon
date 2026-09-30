@@ -5,7 +5,7 @@
 // frame — and downloads the .usdz once per version.
 import Foundation
 
-struct Landmark: Decodable, Hashable, Identifiable {
+struct Landmark: Codable, Hashable, Identifiable {
     let name: String
     let at: [Float]
     var id: String { name }
@@ -14,7 +14,7 @@ struct Landmark: Decodable, Hashable, Identifiable {
     var spoken: String { name.replacingOccurrences(of: "_", with: " ") }
 }
 
-struct PlantItem: Decodable, Identifiable {
+struct PlantItem: Codable, Identifiable {
     let id: String
     let name: String
     let node: String
@@ -30,7 +30,7 @@ struct PlantItem: Decodable, Identifiable {
     }
 }
 
-struct PlantFacts: Decodable {
+struct PlantFacts: Codable {
     let sun: String?
     let water: String?
     let bloom: String?
@@ -43,7 +43,7 @@ struct PlantFacts: Decodable {
     let flowering_height_range_m: [Double]?
 }
 
-struct DesignInfo: Decodable {
+struct DesignInfo: Codable {
     let design_name: String?
     let plants: Int?
     let species: Int?
@@ -57,11 +57,12 @@ struct DesignInfo: Decodable {
     let shift: [Float]?
 }
 
-struct ScanInfo: Decodable {
+struct ScanInfo: Codable {
     let file: String
+    let content_hash: String?
 }
 
-struct Current: Decodable {
+struct Current: Codable {
     let name: String?
     let bytes: Int?
     let mtime_ms: Double?
@@ -111,6 +112,9 @@ final class DesignSource {
     /// The first address that answers, and what it says is current.
     func current() async throws -> (base: URL, current: Current) {
         guard !candidates.isEmpty else { throw SourceError.noServer }
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-offline") { throw SourceError.unreachable(candidates) }
+        #endif
         for s in candidates {
             guard let base = URL(string: s.hasSuffix("/") ? s : s + "/"),
                   let url = URL(string: "current.json", relativeTo: base) else { continue }

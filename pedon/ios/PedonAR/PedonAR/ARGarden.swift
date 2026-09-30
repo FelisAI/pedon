@@ -7,6 +7,7 @@
 import ARKit
 import RealityKit
 import SwiftUI
+import CoreImage
 
 @MainActor
 final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
@@ -21,6 +22,14 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     let hasLiDAR = ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh)
     @Published var trackingNote: String? = "Move the phone slowly to find the ground"
 
+    @Published private(set) var canSaveMap = false
+    var mapBecameReady: (() -> Void)?
+    var resumed: (() -> Void)?
+    private var resumeGate = ResumeGate()
+    private var started = false
+    private var lastMapSignal: TimeInterval = -.infinity
+    private let imageContext = CIContext()
+
     private var design: Entity?
     private var holder: AnchorEntity?
     private var anchor: ARAnchor?
@@ -30,13 +39,19 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     var selectedPlant: ((String) -> Void)?
     private var items: [PlantItem] = []
 
-    func start() {
+    private func configuration(map: ARWorldMap? = nil) -> ARWorldTrackingConfiguration {
         let c = ARWorldTrackingConfiguration()
         c.planeDetection = [.horizontal]
         c.environmentTexturing = .automatic
         if hasLiDAR { c.sceneReconstruction = .mesh }
+        c.initialWorldMap = map
+        return c
+    }
+
+    func start() {
+        guard !started else { return }; started = true
         view.session.delegate = self
-        view.session.run(c)
+        view.session.run(configuration())
         let coach = ARCoachingOverlayView()
         coach.session = view.session
         coach.goal = .horizontalPlane
@@ -49,6 +64,63 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
                                      coach.trailingAnchor.constraint(equalTo: view.trailingAnchor)])
         setOcclusion(true)
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(selectPlant(_:))))
+    }
+
+    struct MapSnapshot {
+        let data: Data
+        let anchorID: UUID
+        let photo: Data?
+    }
+    enum MapError: LocalizedError {
+        case notReady, invalid
+        var errorDescription: String? {
+            switch self {
+            case .notReady: return "Move slowly around this spot so PEDON can remember it."
+            case .invalid: return "The saved position could not be restored. Align the design again."
+            }
+        }
+    }
+
+    func snapshot() async throws -> MapSnapshot {
+        guard canSaveMap, let id = anchor?.identifier else { throw MapError.notReady }
+        let map: ARWorldMap = try await withCheckedThrowingContinuation { continuation in
+            view.session.getCurrentWorldMap { map, error in
+                if let map { continuation.resume(returning: map) }
+                else { continuation.resume(throwing: error ?? MapError.notReady) }
+            }
+        }
+        guard id == anchor?.identifier, map.anchors.contains(where: { $0.identifier == id }) else { throw MapError.notReady }
+        let data = try NSKeyedArchiver.archivedData(withRootObject: map, requiringSecureCoding: true)
+        var photo: Data?
+        if let frame = view.session.currentFrame {
+            let image = CIImage(cvPixelBuffer: frame.capturedImage).oriented(.right)
+            let reduced = image.transformed(by: CGAffineTransform(scaleX: 720 / image.extent.width, y: 720 / image.extent.width))
+            if let cg = imageContext.createCGImage(reduced, from: reduced.extent) {
+                photo = UIImage(cgImage: cg).jpegData(compressionQuality: 0.65)
+            }
+        }
+        return MapSnapshot(data: data, anchorID: id, photo: photo)
+    }
+
+    func restore(_ saved: SavedPlacement) throws {
+        guard let map = try NSKeyedUnarchiver.unarchivedObject(ofClass: ARWorldMap.self, from: saved.worldMap),
+              let a = map.anchors.first(where: { $0.identifier == saved.anchorID && $0.name == "design" }),
+              let design else { throw MapError.invalid }
+        unplace(); clearPins()
+        let h = AnchorEntity(anchor: a)
+        design.removeFromParent(); h.addChild(design)
+        h.isEnabled = false // Only reappear after ARKit recognizes this saved coordinate frame.
+        view.scene.addAnchor(h)
+        holder = h; anchor = a
+        canSaveMap = false
+        resumeGate.begin(anchorID: a.identifier, after: view.session.currentFrame?.timestamp ?? -.infinity)
+        trackingNote = "Finding your saved position…"
+        view.session.run(configuration(map: map), options: [.resetTracking, .removeExistingAnchors])
+    }
+
+    func resetTracking() {
+        unplace(); clearPins(); canSaveMap = false
+        view.session.run(configuration(), options: [.resetTracking, .removeExistingAnchors])
     }
 
     func setOcclusion(_ on: Bool) {
@@ -123,6 +195,7 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     }
 
     func unplace() {
+        resumeGate.cancel()
         if let holder { view.scene.removeAnchor(holder) }
         if let anchor { view.session.remove(anchor: anchor) }
         holder = nil
@@ -185,8 +258,31 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     func previewFocus(_ point: SIMD3<Float>) {
         previewCamera?.look(at: point, from: point + SIMD3(0, 3.5, 4), relativeTo: nil)
     }
+    func hidePreviewDesign() { design?.isEnabled = false }
     func plantIsEnabled(_ plant: PlantItem) -> Bool? { design?.findEntity(named: plant.node)?.isEnabled }
     #endif
+
+    nonisolated func sessionShouldAttemptRelocalization(_ session: ARSession) -> Bool { true }
+
+    nonisolated func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        let normal: Bool
+        if case .normal = frame.camera.trackingState { normal = true } else { normal = false }
+        let mapped = frame.worldMappingStatus == .mapped || frame.worldMappingStatus == .extending
+        let ids = Set(frame.anchors.map(\.identifier)), timestamp = frame.timestamp
+        Task { @MainActor in
+            if self.resumeGate.observe(timestamp: timestamp, normal: normal, anchors: ids) {
+                self.holder?.isEnabled = true
+                self.resumed?()
+            }
+            let ready = normal && mapped && self.anchor.map { ids.contains($0.identifier) } == true
+            let becameReady = ready && !self.canSaveMap
+            if self.canSaveMap != ready { self.canSaveMap = ready }
+            if ready && (becameReady || timestamp - self.lastMapSignal > 30) {
+                self.lastMapSignal = timestamp
+                self.mapBecameReady?()
+            }
+        }
+    }
 
     nonisolated func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
         let note: String?

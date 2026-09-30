@@ -50,8 +50,9 @@ def stand_in(monkeypatch, tmp_path, blender_ok=True):
         args = cmd[cmd.index("--") + 1:]
         out = args[1]
         if blender_ok:
-            with open(out, "wb") as f:
-                f.write(b"PK-new")
+            import zipfile
+            with zipfile.ZipFile(out, "w") as archive:
+                archive.writestr("model.usdc", b"new model")
             return subprocess.CompletedProcess(cmd, 0, 'USDZ_STATS {"triangles": 155102, "points": 92533, '
                                                '"card_triangles": 2300, "cutouts": 34}\n', "")
         return subprocess.CompletedProcess(cmd, 1, "", "Traceback: it broke")
@@ -80,7 +81,8 @@ def test_the_file_says_which_design_it_is_and_where_to_stand(monkeypatch, tmp_pa
     assert (side["plants"], side["species"]) == (159, 22)
     assert (side["origin"], side["second"]) == ("side_yard_hedge_row", "south_fence_east_corner")
     assert side["cutouts"] == 34 and side["card_triangles"] == 2300
-    assert open(path, "rb").read() == b"PK-new"
+    import zipfile
+    assert zipfile.ZipFile(path).read("model.usdc") == b"new model"
     # with no name from the viewer, it is named from its source
     assert ar_export.design_name("data/designs/huajing_J_sunroom.json") == "huajing_J_sunroom"
     assert ar_export.design_name("/data/design.json") == "the working design"
@@ -207,3 +209,21 @@ def test_plant_details_keep_design_sizes_and_only_exact_catalogue_facts(monkeypa
     assert result[0]["details"]["cat_safe"] is None
     assert result[1]["details"] is None and result[2]["details"] is None
     assert "details" not in original[0]
+
+
+def test_scan_identity_ignores_packaging_time_but_detects_changed_geometry(tmp_path):
+    import zipfile
+    from ar_export import scan_fingerprint
+
+    def package(name, date, geometry):
+        path = tmp_path / name
+        with zipfile.ZipFile(path, "w") as archive:
+            info = zipfile.ZipInfo("scan.usdc", date_time=date)
+            archive.writestr(info, geometry)
+        return path
+
+    first = package("a.usdz", (2026, 1, 1, 0, 0, 0), b"measured scan")
+    rebuilt = package("b.usdz", (2026, 2, 2, 0, 0, 0), b"measured scan")
+    changed = package("c.usdz", (2026, 2, 2, 0, 0, 0), b"recalibrated scan")
+    assert scan_fingerprint(first) == scan_fingerprint(rebuilt)
+    assert scan_fingerprint(first) != scan_fingerprint(changed)

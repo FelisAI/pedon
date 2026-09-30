@@ -26,6 +26,8 @@ only the viewer knows the ground under each object and which model a species rou
 """
 import argparse
 import json
+import hashlib
+import zipfile
 import os
 import project  # the active project's files — the ONE owner
 import subprocess
@@ -136,6 +138,19 @@ def design_name(source):
     return os.path.splitext(os.path.basename(s))[0]
 
 
+def scan_fingerprint(path):
+    """Identify the scan content independently of USDZ packaging timestamps."""
+    digest = hashlib.sha256()
+    with zipfile.ZipFile(path) as archive:
+        for item in sorted(archive.infolist(), key=lambda entry: entry.filename):
+            digest.update(item.filename.encode("utf-8") + b"\0")
+            digest.update(str(item.file_size).encode("ascii") + b"\0")
+            with archive.open(item) as data:
+                for block in iter(lambda: data.read(1024 * 1024), b""):
+                    digest.update(block)
+    return digest.hexdigest()
+
+
 def plant_details(items):
     """Optional catalogue facts; the rendered plant's own dimensions always win."""
     import plant_catalog
@@ -201,7 +216,8 @@ def export_usdz(out_name=OUT_NAME, timeout_s=240, ratio=0.35, name=None):
             if scan_result.returncode or not os.path.isfile(scan_tmp):
                 return None, {"error": "scan_convert_failed", "detail": (scan_result.stderr or scan_result.stdout)[-600:]}
             os.replace(scan_tmp, os.path.join(OUT_DIR, scan_name))
-            scan_info = {"file": scan_name, "bounds": data.get("scan_bounds")}
+            scan_info = {"file": scan_name, "bounds": data.get("scan_bounds"),
+                         "content_hash": scan_fingerprint(os.path.join(OUT_DIR, scan_name))}
         os.replace(tmp, dst)
     finally:
         if scan_glb and data["scan_path"].startswith("data/photoreal/scene_"):

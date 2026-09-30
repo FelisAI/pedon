@@ -69,8 +69,8 @@ automatic fallback. Use Xcode directly if you changed the app's bundle identifie
    translucent model shows its planned dimensions; **ⓘ** opens the details included in the export.
 
 **Adjust alignment** offers small slides, turns and re-marking either reference. **Other points**
-returns to a fresh scan picker. Keep the Mac's viewer and phone connection running when loading
-or refreshing a design. Close the connection in the desktop sheet when finished; it exposes
+returns to a fresh scan picker. Keep the Mac's viewer and phone connection running for the first download
+or when refreshing a design. Close the connection in the desktop sheet when finished; it exposes
 only exports and the original alignment scan, never the editor's write APIs.
 
 The app has been used on a real site. Simulator tests check geometry and controls; they cannot
@@ -124,3 +124,30 @@ are required: the USD import can carry its own axis correction.
 - `DesignSource` reads the desktop's `current.json`, USDZ files and catalogue metadata.
 
 The exported scan, designs, caches and settings belong to each user, outside this repository.
+
+## Reopening an aligned design
+
+PEDON saves the loaded design and original scan on the iPhone. After alignment, it also
+saves the AR world map, selected reference points/photos, and your alignment corrections
+once tracking has mapped enough of the area. Look for **Position saved on this iPhone**.
+It refreshes the saved map as you work; **Adjust alignment → Save position** requests a save.
+
+When reopened, the app loads the saved design without needing the Mac and tries to recognize
+the saved location. Point the camera around the same area; a saved camera picture helps you
+find it. The planting overlay stays hidden until tracking recognizes the saved coordinate
+frame. **Align again** reuses your scan points but lets you mark them on the ground again;
+**Change points** picks a new pair. Plant visibility, selection, guide mode and collapsed
+controls are remembered too.
+
+Use **↻** to fetch design changes from the Mac. A changed scan or export coordinate frame
+invalidates the old alignment. Changing lighting, vegetation or surroundings can prevent
+relocalization; in that case align again. A saved map improves reopening, but does not make
+AR tracking a surveying instrument. This follows [Apple's saved-world-map workflow](https://developer.apple.com/documentation/arkit/saving-and-loading-world-data).
+
+The saved scan, map and reference pictures stay in the app's local Application Support
+folder, excluded from device backups. The exporter identifies scan contents without ZIP timestamps, so rebuilding an unchanged
+scan keeps its alignment. `SessionStore.swift` writes metadata atomically and
+keeps the previous export if a new copy fails. `ResumeGate` requires normal tracking and
+the specific saved anchor in a new camera frame before revealing the design. Simulator tests
+check durable caching, offline reopen and recovery controls; physical relocalization requires
+an iPhone at the saved site.

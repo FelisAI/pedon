@@ -7,7 +7,7 @@ import SceneKit
 
 @MainActor
 final class Flow: ObservableObject {
-    enum Step { case loading, pick, first, second, placed, remark, failed }
+    enum Step { case loading, pick, first, second, placed, remark, resuming, failed }
     @Published var step: Step = .loading
     @Published var problem: String?
     @Published var current: Current?
@@ -44,6 +44,9 @@ final class Flow: ObservableObject {
     @Published var showBeds = true { didSet { applyToggles() } }
     @Published var showLandmarks = true { didSet { applyToggles() } }
     @Published var hideBehindReal = true { didSet { applyToggles() } }
+    @Published var savedDesignLoaded = false
+    @Published var saveStatus: String?
+    @Published var resumePhoto: UIImage?
     @Published var note: String?
     /// Which mark is being redone (1 or 2) while the other stays where it was (AZ2).
     @Published var remarking = 0
@@ -54,6 +57,11 @@ final class Flow: ObservableObject {
     private var tapB: SIMD3<Float>?
     private var relay: AnyCancellable?
     private var scanURL: URL?
+    private var store: SessionStore?
+    private var cached: CachedDesign?
+    private var restoringState = false
+    private var saveTask: Task<Void, Never>?
+    private var saveRevision = 0
     private var pickedIn: String?          // which file's frame the picks are in
     // HAND CORRECTIONS on top of the two marks, kept across a reload of the same design so a
     // new version from the Mac lands where he had nudged it; a fresh mark supersedes them.
@@ -63,6 +71,16 @@ final class Flow: ObservableObject {
     init() {
         // the camera's tracking note lives on the garden; the screen watches this
         garden.selectedPlant = { [weak self] id in self?.selectedPlantID = id }
+        garden.mapBecameReady = { [weak self] in
+            guard let self, self.step == .placed else { return }; self.scheduleSave()
+        }
+        garden.resumed = { [weak self] in
+            guard let self, self.step == .resuming else { return }
+            self.step = .placed
+            self.note = nil
+            self.saveStatus = "Position saved on this iPhone"
+            self.applyToggles()
+        }
         relay = garden.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
     }
 
@@ -77,37 +95,140 @@ final class Flow: ObservableObject {
 
     func begin() {
         garden.start()
-        Task { await load() }
+        Task { await load(preferSaved: true) }
     }
 
     /// Fetch what the Mac says is current; if the design is already lined up, keep it lined
     /// up on the SAME marks — unless the new file's frame moved, when the picks are asked for
     /// again rather than silently meaning somewhere else.
-    func load() async {
+    func load(preferSaved: Bool = false) async {
         let wasPlaced = step == .placed
         step = wasPlaced ? .placed : .loading
         problem = nil
         do {
-            let (base, cur) = try await source.current()
-            guard cur.name != nil else { throw SourceError.nothingMade }
-            guard cur.info?.scan != nil else { throw SourceError.noScan }
-            let file = try await source.file(for: cur, from: base)
-            try await garden.load(file, plants: cur.info?.plant_items ?? [])
-            let scanFile = try await source.file(for: cur, from: base, scan: true)
+            guard let connection = source.candidates.first else { throw SourceError.noServer }
+            let storage = SessionStore(server: connection)
+            let record: CachedDesign
+            let usingSaved: Bool
+            if preferSaved, let existing = storage.cachedDesign() {
+                record = existing; usingSaved = true
+            } else {
+                let (base, cur) = try await source.current()
+                guard cur.name != nil else { throw SourceError.nothingMade }
+                guard cur.info?.scan != nil else { throw SourceError.noScan }
+                let file = try await source.file(for: cur, from: base)
+                let scanFile = try await source.file(for: cur, from: base, scan: true)
+                record = try storage.cache(cur, design: file, scan: scanFile)
+                usingSaved = false
+            }
+            try await garden.load(storage.designURL(record), plants: record.current.info?.plant_items ?? [])
+            let scanFile = storage.scanURL(record)
             scan = try OriginalScan.load(scanFile)
             scanURL = scanFile
-            current = cur
+            current = record.current
+            savedDesignLoaded = usingSaved
+            let frame = storage.folder.lastPathComponent + ":" + record.frame
+            let sameFrame = pickedIn == frame
+            restoringState = true
+            defer { restoringState = false }
+            if !sameFrame {
+                cancelSave()
+                garden.unplace(); garden.clearPins()
+                hiddenPlants = []; selectedPlantID = nil
+                first = nil; second = nil; firstPhoto = nil; secondPhoto = nil
+                tapA = nil; tapB = nil; fit = nil; clearFixes(); pickedIn = frame
+            }
+            store = storage; cached = record
+            if let view = storage.plantView(for: record.frame) {
+                hiddenPlants = view.hidden; selectedPlantID = view.selected
+                plantingGuide = view.guide; showPlants = view.plants; showBeds = view.beds
+                showLandmarks = view.landmarks; hideBehindReal = view.occlusion
+            }
             hiddenPlants.formIntersection(Set(plants.map(\.id)))
-            let frame = base.absoluteString + (cur.info?.origin ?? "") + String(describing: cur.info?.shift)
-            if pickedIn != frame { hiddenPlants = []; selectedPlantID = nil; first = nil; second = nil; firstPhoto = nil; secondPhoto = nil; tapA = nil; tapB = nil; clearFixes(); pickedIn = frame }
+            if !plants.contains(where: { $0.id == selectedPlantID }) { selectedPlantID = nil }
             applyToggles()
-            if wasPlaced, first != nil, let a = tapA, let b = tapB { placeFrom(a, b) }
-            else { step = picksReady ? .first : .pick }
-            note = cur.making == true ? "A newer version is being made on the Mac — reload in a minute." : nil
+            note = nil
+            if wasPlaced, sameFrame, first != nil, let a = tapA, let b = tapB {
+                placeFrom(a, b)
+            } else if let saved = storage.placement(for: record.frame), let alignment = saved.alignment(on: ground) {
+                first = saved.first; second = saved.second; tapA = saved.tapA; tapB = saved.tapB
+                turnFix = saved.turn; slideFix = saved.slide; fit = alignment
+                firstPhoto = saved.firstPhoto.flatMap(UIImage.init(data:))
+                secondPhoto = saved.secondPhoto.flatMap(UIImage.init(data:))
+                resumePhoto = saved.surroundings.flatMap(UIImage.init(data:))
+                do {
+                    try garden.restore(saved)
+                    step = .resuming
+                    saveStatus = "Saved position ready"
+                } catch {
+                    storage.forgetPlacement()
+                    garden.resetTracking()
+                    step = .first
+                    saveStatus = nil
+                    note = error.localizedDescription
+                }
+            } else {
+                step = picksReady ? .first : .pick
+                saveStatus = nil
+            }
+            if record.current.making == true { note = "A newer version is being made on the Mac — reload in a minute." }
         } catch {
-            problem = error.localizedDescription
-            step = .failed
+            if wasPlaced {
+                step = .placed; note = error.localizedDescription
+            } else {
+                problem = error.localizedDescription; step = .failed
+            }
         }
+    }
+
+    private func cancelSave() {
+        saveRevision += 1; saveTask?.cancel(); saveTask = nil
+    }
+
+    private func scheduleSave(immediate: Bool = false) {
+        guard step == .placed, tapA != nil, tapB != nil else { return }
+        saveRevision += 1
+        let revision = saveRevision
+        saveTask?.cancel()
+        saveStatus = garden.canSaveMap ? "Saving this position…" : "Move slowly around this spot to save its position"
+        guard garden.canSaveMap else { return }
+        saveTask = Task { [weak self] in
+            do { try await Task.sleep(for: immediate ? .zero : .milliseconds(700)) } catch { return }
+            guard let self, self.step == .placed, revision == self.saveRevision,
+                  let store = self.store, let cached = self.cached, let first = self.first,
+                  let second = self.second, let a = self.tapA, let b = self.tapB else { return }
+            do {
+                let snapshot = try await self.garden.snapshot()
+                guard !Task.isCancelled, revision == self.saveRevision, self.step == .placed else { return }
+                let saved = SavedPlacement(frame: cached.frame, first: first, second: second,
+                    tapA: a, tapB: b, turn: self.turnFix, slide: self.slideFix,
+                    anchorID: snapshot.anchorID, worldMap: snapshot.data,
+                    firstPhoto: self.firstPhoto?.jpegData(compressionQuality: 0.7),
+                    secondPhoto: self.secondPhoto?.jpegData(compressionQuality: 0.7),
+                    surroundings: snapshot.photo, savedAt: Date())
+                try store.save(saved)
+                self.saveStatus = "Position saved on this iPhone"
+            } catch {
+                guard revision == self.saveRevision else { return }
+                self.saveStatus = "Position not saved yet — move slowly, then tap Save position"
+            }
+        }
+    }
+
+    func savePosition(immediate: Bool = false) { scheduleSave(immediate: immediate) }
+
+    func alignAgain() {
+        cancelSave(); store?.forgetPlacement(); saveStatus = nil; resumePhoto = nil
+        garden.resetTracking()
+        tapA = nil; tapB = nil; fit = nil; clearFixes()
+        step = picksReady ? .first : .pick
+        note = nil
+    }
+
+    private func persistView() {
+        guard !restoringState, let store, let cached else { return }
+        try? store.save(SavedPlantView(frame: cached.frame, hidden: hiddenPlants, selected: selectedPlantID,
+            guide: plantingGuide, plants: showPlants, beds: showBeds, landmarks: showLandmarks, occlusion: hideBehindReal))
     }
 
     func markFirst() {
@@ -145,6 +266,7 @@ final class Flow: ObservableObject {
         note = abs(f.stretch) > 0.03
             ? "Your marks are \(Int((abs(f.stretch) * 100).rounded()))% \(f.stretch > 0 ? "further apart" : "closer together") than the scan — one may be on the wrong spot."
             : nil
+        scheduleSave()
     }
 
     func turn(_ degrees: Float) {
@@ -153,6 +275,7 @@ final class Flow: ObservableObject {
         fit = f.turned(by: degrees * .pi / 180, about: first.point(on: ground))
         garden.place(fit!)
         applyToggles()
+        scheduleSave()
     }
 
     /// Slide the design from where he stands: `forward` metres away from him, `right` metres
@@ -165,6 +288,7 @@ final class Flow: ObservableObject {
         fit = g
         garden.place(g)
         applyToggles()
+        scheduleSave()
     }
 
     /// Redo ONE mark; the other stays where it was.
@@ -196,7 +320,11 @@ final class Flow: ObservableObject {
     #if DEBUG
     /// `-previewPlaced`: the lined-up screen with sample marks, for looking at the controls
     /// in the Simulator, which has no camera to mark real ground with.
-    func previewPlaced() async {
+    func previewPlaced(keepView: Bool = false) async {
+        if !keepView {
+            plantingGuide = false; hiddenPlants = []; selectedPlantID = nil
+            showPlants = true; showBeds = true; showLandmarks = true
+        }
         first = PickPoint(x: 0, z: 0, label: "Reference 1", y: 0)
         second = PickPoint(x: 6, z: 14, label: "Reference 2", y: 0)
         fit = Alignment.solve(planA: [0, 0, 0], planB: [6, 0, 14], tapA: [0, 0, 0], tapB: [6, 0, 14])
@@ -206,9 +334,14 @@ final class Flow: ObservableObject {
         }
         step = .placed
     }
+    func previewResumePrompt() {
+        garden.hidePreviewDesign()
+        step = .resuming
+    }
     #endif
 
     func startOver() {
+        cancelSave(); store?.forgetPlacement(); saveStatus = nil
         garden.unplace()
         garden.clearPins()
         tapA = nil; tapB = nil; fit = nil
@@ -223,6 +356,7 @@ final class Flow: ObservableObject {
         garden.showGuide(plantingGuide, hidden: hiddenPlants, selected: selectedPlantID)
         // A soil depth estimate must not swallow the centimetre-thin targets.
         garden.setOcclusion(hideBehindReal && !plantingGuide)
+        persistView()
     }
 
     func choose(_ point: PickPoint, photo: UIImage) {
@@ -233,7 +367,7 @@ final class Flow: ObservableObject {
 
     /// Back to the original scan to choose other points.
     func changePoints() {
-        startOver()
+        alignAgain()
         first = nil; second = nil; firstPhoto = nil; secondPhoto = nil
         note = nil
         step = .pick
@@ -246,10 +380,11 @@ final class Flow: ObservableObject {
 }
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var flow = Flow()
     @State private var settings = false
     @State private var started = false
-    @State private var controlsCollapsed = false
+    @AppStorage("controlsCollapsed") private var controlsCollapsed = false
     @State private var plantList = false
     @State private var detailPlant: PlantItem?
     @State private var scanRevision = 0
@@ -295,15 +430,26 @@ struct ContentView: View {
             #if DEBUG
             if ProcessInfo.processInfo.arguments.contains("-resetConnection") { UserDefaults.standard.removeObject(forKey: DesignSource.serverKey) }
             if ProcessInfo.processInfo.arguments.contains("-previewPlaced") {
-                Task { await flow.load(); await flow.previewPlaced() }; return
+                let saved = ProcessInfo.processInfo.arguments.contains("-useSavedDesign")
+                if !saved { controlsCollapsed = false }
+                Task {
+                    await flow.load(preferSaved: saved)
+                    guard flow.step != .failed else { return }
+                    await flow.previewPlaced(keepView: saved)
+                    if ProcessInfo.processInfo.arguments.contains("-previewRestoring") { flow.previewResumePrompt() }
+                }
+                return
             }
             #endif
             if DesignSource().candidates.isEmpty { settings = true }
             flow.begin()
         }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { flow.savePosition(immediate: true) }
+        }
         .sheet(item: $detailPlant) { PlantDetailsView(plant: $0) }
         .sheet(isPresented: $plantList) { PlantVisibilityView(flow: flow) }
-        .sheet(isPresented: $settings) { SettingsView { settings = false; Task { await flow.load() } } }
+        .sheet(isPresented: $settings) { SettingsView { settings = false; Task { await flow.load(preferSaved: true) } } }
     }
 
     @ViewBuilder private func reference(_ photo: UIImage?) -> some View {
@@ -344,6 +490,9 @@ struct ContentView: View {
                     Text(c.info?.design_name ?? "Design").font(.headline)
                     Text([c.info?.plants.map { "\($0) plants" }, c.made.map { "made \($0.formatted(.relative(presentation: .named)))" }]
                         .compactMap { $0 }.joined(separator: " · ")).font(.caption)
+                    if flow.savedDesignLoaded {
+                        Text("Saved on this iPhone · refresh for changes").font(.caption).foregroundStyle(.white.opacity(0.75))
+                    }
                 }
             }
             Spacer()
@@ -358,6 +507,8 @@ struct ContentView: View {
 
     private var alignmentControls: some View {
         VStack(alignment: .leading, spacing: 12) {
+            Button("Save position", systemImage: "square.and.arrow.down") { flow.savePosition() }
+                .buttonStyle(Quiet())
             if let f = flow.fit {
                 Text(String(format: "Your marks: %.1f m apart · scan: %.1f m", f.tappedApart, f.plannedApart))
                     .font(.caption)
@@ -398,11 +549,17 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 12) {
             switch flow.step {
             case .loading:
-                HStack { ProgressView().tint(.white); Text("Getting the design from your Mac…") }
+                HStack { ProgressView().tint(.white); Text("Loading the design…") }
             case .failed:
                 Text(flow.problem ?? "Something went wrong.")
                 Button("Connection settings") { settings = true }.buttonStyle(Quiet())
                 Button("Try again") { Task { await flow.load() } }.buttonStyle(Big())
+            case .resuming:
+                reference(flow.resumePhoto)
+                HStack { ProgressView().tint(.white); Text("Finding your saved position").font(.headline) }
+                Text("Point the camera at the same area and move slowly. The design will appear when this spot is recognized.")
+                    .font(.subheadline)
+                Button("Align again") { flow.alignAgain() }.buttonStyle(Quiet())
             case .pick:
                 Text("Original 3D scan").font(.headline)
                 Text("Rotate with one finger, pan with two, pinch to zoom. Tap two existing ground features far apart, such as paving corners or the foot of a fixed post.")
@@ -439,6 +596,9 @@ struct ContentView: View {
                 }
             case .placed:
                 selectedPlantBar
+                if let status = flow.saveStatus {
+                    Text(status).font(.caption).foregroundStyle(.white.opacity(0.8))
+                }
                 HStack {
                     Button("Individual plants", systemImage: "leaf") { plantList = true }.buttonStyle(Quiet())
                     Spacer()
@@ -534,7 +694,7 @@ struct SettingsView: View {
                     TextField("http://your-mac.local:5179/", text: $server)
                         .keyboardType(.URL).textInputAutocapitalization(.never).autocorrectionDisabled()
                     if let error { Text(error).foregroundStyle(.red) }
-                    Text("The address the Mac's ··· → See it on site sheet shows under its QR code.")
+                    Text("Enter the address shown in the Mac’s ··· → See it on site sheet.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }

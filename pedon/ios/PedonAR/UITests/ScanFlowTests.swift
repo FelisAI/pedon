@@ -118,6 +118,49 @@ import Foundation
         attach(app, "Reselect after alignment")
     }
 
+    func testSavedDesignAndPlantViewOpenOffline() throws {
+        let connection = try server()
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-previewPlaced", "-server", connection]
+        app.launch()
+        XCTAssertTrue(app.buttons["Individual plants"].waitForExistence(timeout: 60))
+        app.switches["Planting guide"].tap()
+        app.buttons["Hide controls"].tap()
+        app.buttons["Individual plants"].tap()
+        let select = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'select-'")).firstMatch
+        XCTAssertTrue(select.waitForExistence(timeout: 5))
+        select.tap()
+        XCTAssertTrue(app.buttons["Hide"].waitForExistence(timeout: 5))
+        app.buttons["Hide"].tap()
+        app.terminate()
+
+        // Any attempt to contact the Mac fails in this launch. Only the durable copy can load.
+        app.launchArguments = ["-previewPlaced", "-useSavedDesign", "-offline", "-server", connection]
+        app.launch()
+        XCTAssertTrue(app.buttons["Controls"].waitForExistence(timeout: 60))
+        XCTAssertTrue(app.buttons["3D view"].exists, "Guide mode must survive relaunch")
+        XCTAssertTrue(app.buttons["Show"].exists, "Selected and hidden plant must survive relaunch")
+        attach(app, "Offline saved design and hidden plant")
+        app.buttons["Show"].tap()
+        app.buttons["Plant details"].tap()
+        XCTAssertTrue(app.buttons["Done"].waitForExistence(timeout: 5))
+        attach(app, "Offline plant details")
+        app.buttons["Done"].tap()
+        app.terminate()
+
+        // Simulator cannot physically relocalize; exercise its waiting and recovery controls.
+        app.launchArguments = ["-previewPlaced", "-useSavedDesign", "-offline", "-previewRestoring", "-server", connection]
+        app.launch()
+        XCTAssertTrue(app.staticTexts["Finding your saved position"].waitForExistence(timeout: 60))
+        attach(app, "Recognizing saved location")
+        app.buttons["Align again"].tap()
+        XCTAssertTrue(app.buttons["Mark it"].waitForExistence(timeout: 5))
+        app.buttons["Change points"].tap()
+        XCTAssertTrue(app.staticTexts["Original 3D scan"].waitForExistence(timeout: 5))
+        attach(app, "Offline alignment recovery")
+    }
+
     private func attach(_ app: XCUIApplication, _ name: String) {
         let image = XCTAttachment(screenshot: app.screenshot())
         image.name = name; image.lifetime = .keepAlways; add(image)

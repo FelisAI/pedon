@@ -2,7 +2,7 @@
 import simd
 
 /** The ground's height every `step` metres over the design, relative to the file's origin. */
-struct Ground: Decodable {
+struct Ground: Codable {
     let x0: Float, z0: Float, step: Float, nx: Int, nz: Int
     let h: [Float?]
 
@@ -21,7 +21,7 @@ struct Ground: Decodable {
 }
 
 /** A point the user picked: its measured x, y, z on the original scan. */
-struct PickPoint: Equatable {
+struct PickPoint: Codable, Equatable {
     let x: Float
     let z: Float
     let label: String
