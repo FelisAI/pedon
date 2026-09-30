@@ -38,6 +38,10 @@ change, and:
   so a frame bug is invisible at yaw 0. The demo garden has north set at 25°.
 - **Look at a UI change in the running viewer** — the whole screen, clicked — not only in source.
 
+The native iPhone app lives in [`pedon/ios`](pedon/ios/README.md). Its build and test guide
+covers Xcode, Simulator tests without a site, and optional checks against your own exported
+scan. Build products, signing material, device identifiers and user state must stay out of git.
+
 ## Where your change goes
 
 - Code, tools, validators, docs: this repository.

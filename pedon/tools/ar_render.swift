@@ -1,11 +1,8 @@
 // SEE THE AR FILE THE WAY THE PHONE WILL, WITHOUT A PHONE.
 //
-// AR Quick Look draws with RealityKit, and RealityKit runs on a Mac. Rendering
-// data/ar/yard.usdz here, offscreen, shows what the phone will show — e.g. a scan drawn
-// as a grey shell over the whole yard, with the design and every plant marker under
-// it. `qlmanage -t` is NOT a substitute — on a whole-garden file it can run for over an
-// hour and make nothing — and the iOS Simulator opens the page but needs a tap to reach
-// Quick Look.
+// The native PEDON app draws with RealityKit, which also runs on a Mac. Render an
+// exported USDZ offscreen to check its geometry and materials without a phone.
+// For interactive UI checks use the app's Simulator preview (ios/README.md).
 //
 // Coordinates are RealityKit's: metres, Y up, and the AR file's origin is its "start here"
 // landmark on the ground. So an eye at (x, 1.6, z) is a person standing there.

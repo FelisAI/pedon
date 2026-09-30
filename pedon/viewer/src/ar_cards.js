@@ -1,8 +1,8 @@
-// THE GARDEN, AS A PHONE CAN CARRY IT INTO THE YARD.
+// THE DESIGN, AS THE PEDON APP CAN CARRY IT ON SITE.
 //
 // The phone must show the trees and plants clearly at their intended size.
 //
-// In RealityKit, the engine AR Quick Look runs on, a whole-site scan drawn as a flat
+// In RealityKit, the native app’s renderer, a whole-site scan drawn as a flat
 // grey shell can cover the design. Plants drawn as 3.5 cm rings and 2.4 cm posts are
 // hard to see even without the scan on top. Real foliage is too large for the phone:
 // full detail runs past a gigabyte, and even Fast preview is millions of triangles for
@@ -14,9 +14,8 @@
 // 6,000-155,000, and it looks like the plant, at mature size, where it will be planted.
 //
 // The scan is omitted: on site it duplicates what the camera shows and covers the
-// garden. The owner's landmarks provide alignment — a post and their name for it —
-// and the model's origin is the landmark nearest the planting, because Quick Look sets
-// a model's ORIGIN down on the ground it finds.
+// design. Landmark posts help check alignment. The native app picks reference points
+// on a separate original scan; the export origin stays near the planting.
 import * as THREE from "three";
 import { enuToWorld } from "./design.js";
 
@@ -59,7 +58,7 @@ export function yawOf(id) {
 /**
  * Append one quad as TWO faces, front and back.
  *
- * Not one double-sided face: Quick Look lights a double-sided back face with its normal
+ * Not one double-sided face: RealityKit lights a double-sided back face with its normal
  * turned away, so a card would go light and dark as it turned. Corners run bottom-left,
  * bottom-right, top-right, top-left, counter-clockwise seen from the front. `mirrorBack`
  * flips u on the back face, so text reads the right way round from behind.
@@ -123,13 +122,9 @@ export function cardGeometry(instances, card) {
 }
 
 /**
- * Which landmark the model hangs from, and which one turns it.
- *
- * Quick Look puts a model's ORIGIN on the ground it finds, and a two-finger turn
- * rotates about it. So the origin is a landmark the user can stand on — nearest to the
- * planting — and the second is the nearest other one at least `minApart` metres from
- * it: two posts a metre apart fix the turn only to within degrees, and a degree is
- * 17 cm at a bed 10 m away. Owner landmarks only; they are ground truth.
+ * Keep the export origin near the planting, with a second landmark for legacy metadata.
+ * Owner landmarks also appear as optional alignment-check posts in the app. Alignment
+ * itself uses the user's two surface picks on the original scan.
  */
 export function chooseAnchors(landmarks, centre, minApart = 4) {
   const lms = (landmarks ?? []).filter(l => Number.isFinite(l?.x) && Number.isFinite(l?.y));
@@ -349,15 +344,36 @@ export async function buildArScene(design, { heightAt, site, like, deps }) {
   const cards = new THREE.Group();
   cards.name = "planting";
   const groups = new Map();
+  const plantItems = [];
   for (const p of plants) {
     const k = cardKey(p);
     if (!pictures.has(k)) continue;
     const w = enuToWorld(p.position[0], p.position[1], 0);
     const y = heightAt(w.x, w.z);
     (groups.get(k) ?? groups.set(k, { species: p.species ?? p.common ?? "plant", at: [] }).get(k))
-      .at.push({ x: w.x, y: Number.isFinite(y) ? y : 0, z: w.z, yaw: yawOf(p.id) });
+      .at.push({ x: w.x, y: Number.isFinite(y) ? y : 0, z: w.z, yaw: yawOf(p.id), plant: p });
   }
-  for (const [k, { species, at }] of groups) cards.add(cardMesh(species, at, pictures.get(k)));
+  // One node per individual; shared material/atlas keeps pictures just as small.
+  for (const [k, { species, at }] of groups) {
+    let material;
+    for (const instance of at) {
+      const mesh = material
+        ? new THREE.Mesh(cardGeometry([instance], pictures.get(k).card), material)
+        : cardMesh(species, [instance], pictures.get(k));
+      material = mesh.material;
+      const index = plantItems.length;
+      mesh.name = `${CARD_PREFIX}:${index}`;
+      mesh.userData = { plants: 1 };
+      cards.add(mesh);
+      // USD replaces punctuation in node names with underscores.
+      plantItems.push({ id: String(instance.plant.id), name: instance.plant.common ?? species,
+                        species: instance.plant.species ?? null,
+                        mature_height_m: instance.plant.mature_height_m ?? null,
+                        mature_spread_m: instance.plant.mature_spread_m ?? null,
+                        size_override: instance.plant.size_override === true,
+                        node: `plant_card_${index}`, at: [instance.x, instance.y, instance.z] });
+    }
+  }
   lap("cards_ms");
 
   const centre = plantingCentre(plants);
@@ -380,6 +396,7 @@ export async function buildArScene(design, { heightAt, site, like, deps }) {
     shift = [o.x, o.y, o.z];
   }
   root.updateMatrixWorld(true);
+  for (const p of plantItems) p.at = new THREE.Vector3(...p.at).add(root.position).toArray();
   const d = (a, b) => a && b ? Math.round(Math.hypot(a.x - b.x, a.y - b.y) * 10) / 10 : null;
   // WHERE EACH LANDMARK IS IN THE FILE'S OWN FRAME — metres, Y up, origin on the start
   // landmark's ground. The phone app lines the garden up by two of these: the user taps the
@@ -393,7 +410,7 @@ export async function buildArScene(design, { heightAt, site, like, deps }) {
   };
   return { root, phases, info: {
     plants: [...groups.values()].reduce((s, g) => s + g.at.length, 0), plants_in_design: plants.length,
-    species: groups.size, landmarks: lms.map(l => ({ name: l.name, at: at(l) })),
+    plant_items: plantItems, species: groups.size, landmarks: lms.map(l => ({ name: l.name, at: at(l) })),
     plan: arPlan(design, root.position), ground: arGround(design, heightAt, root.position),
     origin: origin?.name ?? null, second: second?.name ?? null, apart_m: d(origin, second),
     shift } };

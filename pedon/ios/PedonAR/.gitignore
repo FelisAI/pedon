@@ -1,0 +1,5 @@
+build/
+*.xcodeproj/
+PedonAR/Info.plist
+PedonAR/BuildServers.swift
+build-sim/

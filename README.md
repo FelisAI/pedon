@@ -60,9 +60,9 @@ yours to keep, each item recording where it came from.
   walk, a retaining wall too tall, two plants in one hole. Taste — spacing, density, composition
   — is measured and reported, never overruled.
 - **From design to planting.** Print a planting plan at 1:50, a plant schedule and a
-  setting-out table that finds every plant by tape from your own landmarks. Or scan a QR code
-  with an iPhone and see the design at true size where it will grow (AR Quick Look — nothing to
-  install).
+  setting-out table that finds every plant by tape from your own landmarks. Or use the [PEDON iPhone app](pedon/ios/README.md) to align the design with the original
+  scan and see it on site at full size. Its planting guide marks each planting center; select
+  one for a translucent mature plant preview and its recorded details.
 - **Photoreal views** with Blender Cycles, at the real sun (optional).
 - **Nothing leaves your computer that you did not send.** No AI API keys: the AI runs on the
   Claude Code or Codex subscription you are already logged in to, and your sites and
@@ -141,7 +141,9 @@ distance while dragging to move it exactly. **Designs** saves and switches varia
 - **··· → Planting drawings to print…** — select the beds you are planting first; the plan,
   schedule and setting-out sheets open ready to print at 100%.
 - **··· → See it on site…** — makes the AR file from the design on screen. Open the phone door
-  in that sheet (it is shut until you do), then scan the code with an iPhone on the same Wi-Fi.
+  in that sheet (it is shut until you do), then enter the displayed address in the
+  [PEDON iPhone app](pedon/ios/README.md). The app is built from source with Xcode;
+  it is the only supported way to overlay a design on the real site.
 
 ## How it is organised
 

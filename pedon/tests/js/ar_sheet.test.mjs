@@ -17,7 +17,7 @@ const NOW = 1_800_000_000_000, MIN = 60000;
 
 const FILE = { name: "yard.usdz", bytes: 21_464_496, mtime_ms: NOW - 3 * MIN };
 const AR = { design_source: "data/design.json", design_name: "huajing_J_sunroom", plants: 159,
-             scan: {file: "reference.scan.usdz"}, origin: "side_yard_hedge_row", second: "south_fence_east_corner" };
+             plant_items: [], scan: {file: "reference.scan.usdz"}, origin: "side_yard_hedge_row", second: "south_fence_east_corner" };
 
 test("the file on offer is current only if it was made FROM the design on screen, AFTER it last changed", () => {
   const info = { files: [FILE], ar: AR, source: "data/design.json", source_mtime_ms: NOW - 5 * MIN };
@@ -29,6 +29,8 @@ test("the file on offer is current only if it was made FROM the design on screen
   assert.equal(isCurrent({ ...info, ar: null }), false);
   assert.equal(isCurrent({ ...info, files: [] }), false);
   assert.equal(isCurrent(null), false);
+  const batched = {...AR}; delete batched.plant_items;
+  assert.equal(isCurrent({...info, ar: batched}), false, "species batches need individual plant nodes");
   const legacy = {...AR}; delete legacy.scan;
   assert.equal(isCurrent({...info, ar: legacy}), false, "old plan-only exports need regeneration");
 });
@@ -61,7 +63,7 @@ test("OPENING the sheet makes the file when the one on disk is not this design a
     globalThis.fetch = async (url, opts) => {
       asked.push(`${opts?.method ?? "GET"} ${url}`);
       if (url.startsWith("/api/ar/export")) return { json: async () => ({ ok: true }) };
-      return { json: async () => ({ urls: ["http://mac.local:5179/"], qr_svg: "<svg/>", files: [FILE], ar: AR,
+      return { json: async () => ({ urls: ["http://mac.local:5179/"], files: [FILE], ar: AR,
                                     source: "data/design.json",
                                     source_mtime_ms: current ? NOW - 5 * MIN : NOW - MIN }) };
     };
@@ -86,7 +88,7 @@ test("the phone's door is SHUT until the user opens it, and the sheet offers to 
     asked.push(`${opts?.method ?? "GET"} ${url} ${opts?.body ?? ""}`.trim());
     if (url === "/api/ar/door") { open = JSON.parse(opts.body).open; return { json: async () => ({ ok: true }) }; }
     if (url.startsWith("/api/ar/export")) return { json: async () => ({ ok: true }) };
-    return { json: async () => ({ door: open, urls: open ? ["http://mac.local:5179/"] : [], qr_svg: open ? "<svg/>" : "",
+    return { json: async () => ({ door: open, urls: open ? ["http://mac.local:5179/"] : [],
                                   files: [FILE], ar: AR, source: "data/design.json", source_mtime_ms: NOW - 5 * MIN }) };
   };
   const sheet = mountArSheet({ source: () => "data/design.json", name: () => "x" });
@@ -97,6 +99,9 @@ test("the phone's door is SHUT until the user opens it, and the sheet offers to 
   assert.ok(asked.includes('POST /api/ar/door {"open":true}'), asked.join(" | "));
   assert.equal(made.get(".door").hidden, true);
   assert.equal(made.get(".reach").hidden, false, "the door opened and the code did not appear");
+  assert.equal(made.get(".url").textContent, "http://mac.local:5179/");
+  assert.match(sheet.element.innerHTML, /PEDON iPhone app/);
+  assert.doesNotMatch(sheet.element.innerHTML, /Safari|class="qr"|<details/);
   await made.get(".door-close").onclick();
   assert.ok(asked.includes('POST /api/ar/door {"open":false}'));
   assert.equal(made.get(".reach").hidden, true);
@@ -109,7 +114,7 @@ test("a door that did not open says why, and is still offered", async () => {
     if (url === "/api/ar/door") return { json: async () => ({ ok: false, door: false,
       err: "port 5179 is already in use — is another PEDON viewer running on this Mac?" }) };
     if (url.startsWith("/api/ar/export")) return { json: async () => ({ ok: true }) };
-    return { json: async () => ({ door: false, urls: [], qr_svg: "", files: [FILE], ar: AR,
+    return { json: async () => ({ door: false, urls: [], files: [FILE], ar: AR,
                                   source: "data/design.json", source_mtime_ms: NOW - 5 * MIN }) };
   };
   const sheet = mountArSheet({ source: () => "data/design.json", name: () => "x" });
@@ -162,7 +167,6 @@ test("the seams: a command with a clickable home, the sheet mounted, the dev ser
     "the sheet is not told which design is on screen, so it cannot tell a stale file");
   assert.match(cfg, /url === "\/api\/ar\/export"\) \{\s*if \(refuseForeign\(req, res\)\) return;/, "anyone who can reach the dev server can start a fifteen-minute Blender job");
   assert.match(cfg, /"tools", "ar_export\.py"/);
-  assert.match(read("viewer/src/pedon.css"), /#pArSheet \.qr \{ background: #fff;/, "a QR on a dark ground does not scan");
 });
 
 test("the planting drawings have a clickable home and are made for the beds the user selected", () => {

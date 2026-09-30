@@ -1,0 +1,18 @@
+# Generated products, signing secrets and personal Xcode/device state
+**/build*/
+**/DerivedData/
+**/*.xcodeproj/
+**/*.xcworkspace/
+**/xcuserdata/
+*.xcresult/
+*.xcarchive/
+*.dSYM/
+*.ipa
+*.app/
+*.mobileprovision
+*.provisionprofile
+*.p12
+*.p8
+*.cer
+*.entitlements
+*.xcconfig

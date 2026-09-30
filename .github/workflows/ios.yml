@@ -1,0 +1,23 @@
+name: iOS
+on:
+  push:
+    paths: ["pedon/ios/**", ".github/workflows/ios.yml"]
+  pull_request:
+    paths: ["pedon/ios/**", ".github/workflows/ios.yml"]
+  workflow_dispatch:
+jobs:
+  native:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: brew install xcodegen
+      - name: Check alignment math
+        run: |
+          swiftc -O pedon/ios/PedonAR/PedonAR/Alignment.swift pedon/ios/PedonAR/PedonAR/PlanPick.swift pedon/ios/PedonAR/PedonAR/DesignSource.swift pedon/ios/PedonAR/AlignmentTests/main.swift -o /tmp/pedon-alignment-tests
+          /tmp/pedon-alignment-tests
+      - name: Generate project and select Simulator
+        run: |
+          xcodegen generate --spec pedon/ios/PedonAR/project.yml
+          xcrun simctl list devices available -j | python3 -c 'import json,sys; ds=json.load(sys.stdin)["devices"]; print("PEDON_SIMULATOR=" + next(d["udid"] for devices in ds.values() for d in devices if "iPhone" in d["name"]))' >> "$GITHUB_ENV"
+      - name: Test without a site or signing account
+        run: xcodebuild -project pedon/ios/PedonAR/PedonAR.xcodeproj -scheme PedonAR -destination "platform=iOS Simulator,id=$PEDON_SIMULATOR" -only-testing:PedonARTests CODE_SIGNING_ALLOWED=NO test

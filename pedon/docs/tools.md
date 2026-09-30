@@ -74,9 +74,9 @@ python3 tools/project.py list | which | new "NAME" [--open] | open SLUG   # SITE
 python3 tools/planting_plan.py --design data/designs/X.json --beds a,b   # the TRADE'S drawings:
 #   planting plan, plant schedule, setting-out by two tapes from their landmarks, printable at
 #   1:50. The viewer makes them from ··· → Planting drawings to print…; docs/planting-out.md.
-python3 tools/ar_export.py                          # the design at 1:1 for AR Quick Look:
+python3 tools/ar_export.py                          # the design at 1:1 for the native PEDON iPhone app:
 #   hardscape + every plant as a PICTURE of itself + the site's landmarks as posts, no scan; 10-40 s.
-#   The viewer makes it when ··· → See it in the yard… opens, and the phone fetches it from the
+#   The viewer makes it when ··· → See it on site… opens, and the phone fetches it from the
 #   read-only server on :5179 (viewer/ar_server.js). docs/planting-out.md.
 swiftc -O -parse-as-library tools/ar_render.swift -o /tmp/ar_render   # see that file AS THE
 #   PHONE WILL: RealityKit, offscreen, from any eye. qlmanage -t is not a substitute.

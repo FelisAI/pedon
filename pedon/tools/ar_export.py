@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""SEE THE DESIGN IN THE YARD, AT 1:1 — a USDZ for AR Quick Look.
+"""SEE THE DESIGN ON SITE, AT 1:1 — a USDZ for the native PEDON app.
 
-The user needs AR Quick Look to show the design's plants and hardscape at 1:1 on site.
+The user needs the PEDON app to show the design's plants and hardscape at 1:1 on site.
 
-**WHAT GOES IN** must keep the planting visible. In RealityKit — the engine Quick
-Look runs on — a whole-site scan draws as a flat grey shell over the design, hiding
+**WHAT GOES IN** must keep the planting visible. In RealityKit — the native app’s renderer — a whole-site scan draws as a flat grey shell over the design, hiding
 planting represented by 3.5 cm rings. The export therefore contains:
 
 - **The plants, as pictures of themselves.** Each species is built once at full detail
@@ -16,10 +15,9 @@ planting represented by 3.5 cm rings. The export therefore contains:
   Landmarks provide alignment references; the scan is a second copy of what the
   camera already shows, drawn OVER the garden.
 
-**WHERE IT LANDS.** Quick Look sets the model's ORIGIN on the ground it finds and turns
-it about the origin, so the origin is the landmark nearest the planting: stand there,
-put the red post on the real spot, turn until the second post stands on its spot.
-North is not used: phone GPS is good to 3-5 m, and north may not be set.
+**WHERE IT LANDS.** The app matches two points on the original scan to the same points
+on real ground, solving a turn and translation at scale 1. The origin stays near the
+planting; the design and the separate textured scan use the same frame.
 
 **The geometry comes from the VIEWER**, through `export_scene`, because
 only the viewer knows the ground under each object and which model a species routes to.
@@ -45,7 +43,7 @@ BLENDER = project.BLENDER             # $PEDON_BLENDER, `blender` on the PATH, o
 # Names ar_cards.js gives what must never be decimated: a card is two triangles, and a
 # landmark ring decimated to 35% is a polygon. As USD prim names, ':' and '-' become '_'.
 KEEP_WHOLE = ("plant-card", "ar-landmark")
-# alpha cut-out for the pictures: Quick Look honours UsdPreviewSurface.opacityThreshold
+# alpha cut-out for the pictures: RealityKit honours UsdPreviewSurface.opacityThreshold
 ALPHA_CUT = 0.5
 
 CONVERT = r'''
@@ -95,7 +93,7 @@ bpy.ops.wm.usd_export(filepath=usdc, convert_scene_units="METERS", export_textur
                       export_lights=False, export_cameras=False)
 
 # WHAT BLENDER DOES NOT WRITE, written here and checked by counting. A picture card is a
-# cut-out: its alpha must drive opacity with a threshold, or Quick Look draws the
+# cut-out: its alpha must drive opacity with a threshold, or RealityKit draws the
 # transparent corners of every card as a pale box. And no face is double-sided — the
 # cards and labels carry their own back faces, and a double-sided front would fight them.
 st = Usd.Stage.Open(usdc)
@@ -122,7 +120,7 @@ for prim in st.Traverse():
         shader.CreateInput("opacityThreshold", Sdf.ValueTypeNames.Float).Set(cut)
         cutouts += 1
 st.Save()
-# the ARKit packager, not a plain zip: it lays the files out the way Quick Look reads them
+# the ARKit packager, not a plain zip: it lays the files out the way RealityKit reads them
 if not UsdUtils.CreateNewARKitUsdzPackage(Sdf.AssetPath(usdc), dst):
     raise SystemExit("could not package the usdz")
 shutil.rmtree(work, ignore_errors=True)
@@ -136,6 +134,23 @@ def design_name(source):
     if not s or s == "data/design.json":
         return "the working design"
     return os.path.splitext(os.path.basename(s))[0]
+
+
+def plant_details(items):
+    """Optional catalogue facts; the rendered plant's own dimensions always win."""
+    import plant_catalog
+    result = []
+    for item in items or []:
+        row = plant_catalog.lookup(item.get("species")) or {}
+        # lookup also has an evidence-scoped toxicity fallback. That cannot identify a
+        # cultivar or supply its horticultural description.
+        names = [row.get("species"), *row.get("aliases", [])]
+        if plant_catalog.normalize(item.get("species")) not in [plant_catalog.normalize(n) for n in names if n]:
+            row = {}
+        details = {key: row[key] for key in ("sun", "water", "bloom", "evergreen", "ca_native", "form",
+                                            "note", "cat_safe", "identity_status", "flowering_height_range_m") if key in row}
+        result.append({**item, "details": details if row else None})
+    return result
 
 
 def export_usdz(out_name=OUT_NAME, timeout_s=240, ratio=0.35, name=None):
@@ -206,7 +221,8 @@ def export_usdz(out_name=OUT_NAME, timeout_s=240, ratio=0.35, name=None):
             "scan": scan_info, "shift": data.get("shift"),
             **{k: data.get(k) for k in ("plants", "plants_in_design", "species", "landmarks",
                                         "origin", "second", "apart_m", "phases", "plan", "ground")}}
-    # what the phone page says about the file: which design, what is in it, where to stand
+    info["plant_items"] = plant_details(data.get("plant_items"))
+    # What the native app reads: the design, its plants and alignment reference.
     with open(os.path.join(OUT_DIR, os.path.splitext(out_name)[0] + ".json"), "w") as f:
         json.dump(info, f, indent=1)
     return dst, info

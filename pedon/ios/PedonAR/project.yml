@@ -1,0 +1,66 @@
+# PEDON on site — the iPhone app. Built and installed by ios/ar_app.py;
+# `xcodegen generate` makes PedonAR.xcodeproj from this file (the project is not committed).
+name: PedonAR
+settings:
+  base:
+    PEDON_TEST_SERVER: ""
+options:
+  deploymentTarget:
+    iOS: "18.0"
+targets:
+  PedonAR:
+    type: application
+    platform: iOS
+    sources: [PedonAR]
+    settings:
+      base:
+        PRODUCT_NAME: PedonAR
+        PRODUCT_BUNDLE_IDENTIFIER: com.felisai.pedon.ar
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.0"
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+    info:
+      path: PedonAR/Info.plist
+      properties:
+        CFBundleDisplayName: PEDON
+        UILaunchScreen: {}
+        UIRequiredDeviceCapabilities: [arm64, arkit]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSCameraUsageDescription: The camera shows the design standing on the real site.
+        NSLocalNetworkUsageDescription: To get the design from PEDON on your Mac.
+        # the Mac serves over plain HTTP on the LAN (viewer/ar_server.js); nothing else is allowed
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+  PedonARTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [Tests]
+    dependencies:
+      - target: PedonAR
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.felisai.pedon.ar.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/PedonAR.app/PedonAR"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+  PedonARUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: PedonAR
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.felisai.pedon.ar.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: PedonAR
+schemes:
+  PedonAR:
+    build:
+      targets:
+        PedonAR: all
+    test:
+      environmentVariables:
+        PEDON_TEST_SERVER: "$(PEDON_TEST_SERVER)"
+      targets: [PedonARTests, PedonARUITests]

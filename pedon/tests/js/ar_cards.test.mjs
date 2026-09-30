@@ -3,7 +3,7 @@
 // THE PLANTS GO TO THE PHONE AS PICTURES OF THEMSELVES.
 //
 // The plants are what the user needs to see on the phone. Measured in RealityKit, the
-// engine AR Quick Look runs on: with the scan, the scan is a grey shell over the whole
+// engine the native PEDON app runs on: with the scan, the scan is a grey shell over the whole
 // yard and the planting 3.5 cm rings underneath it. Real foliage is 1.5 GB; Fast preview
 // is 3.9 M triangles. So each species is photographed once at full detail and every
 // plant is crossed cards of that picture — and what is tested here is that every plant
@@ -140,8 +140,14 @@ test("the scene: hardscape without plants, ONE full-detail plant per picture, ev
 
   const cards = root.children.find(c => c.name === "planting");
   const meshes = cards.children.filter(m => m.name.startsWith(CARD_PREFIX));
-  assert.equal(meshes.length, 2);
+  assert.equal(meshes.length, 3, "each plant must be independently hideable");
+  assert.equal(meshes[0].material, meshes[1].material, "same species still shares its texture");
+  assert.deepEqual(info.plant_items.map(p => p.id), ["p1", "p2", "p3"]);
+  assert.equal(new Set(info.plant_items.map(p => p.node)).size, 3);
   assert.equal(meshes.reduce((s, m) => s + m.userData.plants, 0), 3, "a plant is missing from the phone");
+  assert.equal(info.plant_items[0].species, design.plants[0].species);
+  assert.equal(info.plant_items[0].mature_height_m, design.plants[0].mature_height_m);
+  assert.equal(info.plant_items[0].mature_spread_m, design.plants[0].mature_spread_m);
   assert.equal(info.plants, 3);
   assert.equal(info.plants_in_design, 3);
 
@@ -151,11 +157,19 @@ test("the scene: hardscape without plants, ONE full-detail plant per picture, ev
   const o = new THREE.Vector3(8.21, heightAt(8.21, 1.88), 1.88);
   assert.ok(root.position.clone().add(o).length() < 1e-9, "the model does not hang from the landmark");
   // and the plant stands on ITS ground, relative to that
-  const muhly = meshes.find(m => m.name.includes("Muhlenbergia"));
+  const muhly = meshes[0];
   muhly.geometry.computeBoundingBox();
   const lowest = muhly.geometry.boundingBox.min.y + root.position.y;
   const expect = Math.min(heightAt(10, 3), heightAt(11, 4)) - o.y;
   assert.ok(Math.abs(lowest - expect) < 1e-6, `the planting floats or sinks: ${lowest} vs ${expect}`);
+
+  for (const item of info.plant_items) {
+    const plant = design.plants.find(p => p.id === item.id);
+    const [x,y] = plant.position;
+    const expected = new THREE.Vector3(x, heightAt(x,-y), -y).add(root.position);
+    assert.ok(new THREE.Vector3(...item.at).distanceTo(expected) < 1e-6,
+      "planting target moved away from the plant's stem or lost its ground height");
+  }
 
   // each landmark's place in the FILE's frame, for the phone to line up by: the origin
   // landmark is (0, 0, 0) and the other is where its post stands

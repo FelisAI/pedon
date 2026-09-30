@@ -6,11 +6,9 @@ import os from "node:os";
 import crypto, { randomUUID } from "node:crypto";
 import { execFile } from "node:child_process";
 import { designAgentArgs, codexImageArgs, DESIGN_TIMEOUT_MS } from "./agent_cli.js";
-import { createRequire } from "node:module";
 import { startArServer, stopArServer, arServerListening, arServerSettled, arFiles, arInfo, lanUrls, AR_PORT } from "./ar_server.js";
 import { dataPath, resolvePath, dataBase, activeProject, projectFolder, phoneDoorFile, phoneDoorOpen, libraryRoot, libraryRealRoot, speciesDir, speciesFiles } from "./project_paths.js";
 import { refuseForeign, readBody } from "./server_http.js";
-const qrcode = createRequire(import.meta.url)("qrcode-generator");
 
 const repoRoot = path.resolve(__dirname, "..");
 
@@ -339,11 +337,10 @@ function pedonPlugin() {
           return;
         }
         if (req.method === "GET" && url === "/api/ar") {
-          // what the user needs on their phone: where, what, and a QR — the address only while
+          // what the user needs on their phone: the connection address and current export — the address only while
           // the door is open
           const door = phoneDoorOpen() && arServerListening(AR_PORT);
           const urls = door ? lanUrls(AR_PORT) : [];
-          const qr = qrcode(0, "M"); qr.addData(urls[0] ?? ""); qr.make();
           res.setHeader("Content-Type", "application/json");
           res.setHeader("Cache-Control", "no-store");
           // the design ON SCREEN, which may be a saved one — a file made from it is
@@ -354,8 +351,7 @@ function pedonPlugin() {
             try { sourceMtime = fs.statSync(resolvePath(source)).mtimeMs; } catch { /* not there */ }
           const files = arFiles(arDir());
           res.end(JSON.stringify({ door, urls, files, ar: arInfo(arDir(), files[0]?.name), exporting: !!arExport,
-                                   source, source_mtime_ms: sourceMtime,
-                                   qr_svg: urls[0] ? qr.createSvgTag({ cellSize: 6, margin: 3, scalable: true }) : "" }));
+                                   source, source_mtime_ms: sourceMtime }));
           return;
         }
         if (req.method === "POST" && url === "/api/ar/export") {

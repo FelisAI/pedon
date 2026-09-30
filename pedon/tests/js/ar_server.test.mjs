@@ -12,7 +12,15 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { arRequestHandler, arFiles, arInfo, arPage, lanUrls, startArServer, stopArServer, arServerSettled, AR_PORT } from "../../viewer/ar_server.js";
+import { arRequestHandler, arFiles, arInfo, lanUrls, startArServer, stopArServer, arServerSettled, AR_PORT } from "../../viewer/ar_server.js";
+
+test("the phone door has no browser AR viewer", async () => {
+  for (const url of ["/", "/index.html"]) {
+    const got = await ask(fixture(), "GET", url);
+    assert.equal(got.code, 404);
+    assert.doesNotMatch(got.body, /rel="ar"|allowsContentScaling|<html/);
+  }
+});
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -42,7 +50,7 @@ function ask(dir, method, url, status) {
   });
 }
 
-test("it serves the model, as the type that makes iOS open AR Quick Look", async () => {
+test("it serves the model to the native app with the USDZ content type", async () => {
   const got = await ask(fixture(), "GET", "/yard.usdz");
   assert.equal(got.code, 200);
   assert.equal(got.headers["Content-Type"], "model/vnd.usdz+zip");
@@ -65,29 +73,13 @@ test("nothing but a USDZ that is really in the folder — no paths, no APIs, no 
     assert.equal(got.code, 404, `GET ${url} answered ${got.code}: ${got.body.slice(0, 40)}`);
     assert.ok(!got.body.includes("secret") && !got.body.includes("outside the folder"));
   }
-  // a URL that NORMALISES to the root is the index page, and only that
+  // A URL that normalizes to root has no browser viewer.
   const root = await ask(dir, "GET", "/yard.usdz/..");
-  assert.equal(root.code, 200);
-  assert.match(root.headers["Content-Type"], /text\/html/);
+  assert.equal(root.code, 404);
   assert.ok(!root.body.includes("secret"));
 });
 
-test("the page hands the link to Quick Look at TRUE SIZE", async () => {
-  const got = await ask(fixture(), "GET", "/");
-  assert.equal(got.code, 200);
-  assert.match(got.headers["Content-Type"], /text\/html/);
-  // rel="ar" with an <img> child is what iOS requires to open the viewer rather than download
-  assert.match(got.body, /<a class="ar" rel="ar" href="\/yard\.usdz#allowsContentScaling=0">\s*<img /);
-  // 1:1 is the whole requirement: a pinch must not be able to rescale the garden
-  assert.ok(got.body.includes("#allowsContentScaling=0"));
-  assert.ok(!got.body.includes("notes.txt"), "the page lists a file that is not a model");
-  assert.ok(!got.body.includes("half a model") && !got.body.includes(".making"), "the page offers a file still being made");
-  assert.match(arPage([]), /Nothing to show yet[\s\S]*See it on site/, "an empty folder must say what to do, not show a blank page");
-});
-
-test("the page says WHICH design it is and where to stand — and nothing about a scan", async () => {
-  // A page that offers "yard · 32 MB · made 5 hours ago" gives a file with no name,
-  // made from an unknown design; the page must name the design it shows.
+test("the app gets the newest design metadata and export status", async () => {
   const dir = fixture();
   const info = { design_source: "data/design.json", design_name: "huajing_J_sunroom", plants: 159,
                  origin: "side_yard_hedge_row", second: "south_fence_east_corner", apart_m: 15.7 };
@@ -98,22 +90,11 @@ test("the page says WHICH design it is and where to stand — and nothing about 
   fs.utimesSync(older, new Date(0), new Date(0));
   assert.deepEqual(arInfo(dir, "yard.usdz"), info);
   assert.equal(arInfo(dir, "../site.json"), null, "the sidecar reader takes a path");
-  const page = (await ask(dir, "GET", "/")).body;
-  assert.match(page, /huajing_J_sunroom · 159 plants/);
-  assert.match(page, /Stand at <b>side yard hedge row<\/b>/);
-  assert.match(page, /<b>south fence east corner<\/b> post stands on the real south fence east corner \(15\.7 m away\)/);
-  assert.match(page, /tap <b>AR<\/b> at the top/, "Quick Look opens as a small model first; the user must be told how to get to AR");
-  assert.ok(!/scan|ghost|fence lies/i.test(page), "the page talks about the scan, which the AR file does not contain");
-  assert.equal((page.match(/rel="ar"/g) ?? []).length, 1, "more than one file offered: which one is the garden?");
-  // the phone app reads the same thing as JSON, landmarks and all
   const cur = JSON.parse((await ask(dir, "GET", "/current.json")).body);
   assert.equal(cur.name, "yard.usdz", "the app is pointed at an older file");
   assert.equal(cur.info.origin, "side_yard_hedge_row");
   assert.equal(JSON.parse((await ask(dir, "GET", "/current.json", () => ({ making: true }))).body).making, true);
   assert.equal((await ask(dir, "POST", "/current.json")).code, 405);
-  // while a new one is being made, the page says so rather than passing the old one off as current
-  assert.match((await ask(dir, "GET", "/", () => ({ making: true }))).body, /being made on the Mac/);
-  assert.ok(!/being made/.test(page));
 });
 
 test("the newest file comes first, and the address the phone is given is a LAN one", () => {
@@ -168,9 +149,9 @@ test("a restart puts the NEW code behind the door, not just the old server back"
   try {
     const again = startArServer(fixture(), port, () => ({ making: true }));
     assert.ok(again === stale, "a second server was started to race the first for the port");
-    const body = await (await fetch(`http://127.0.0.1:${port}/`)).text();
+    const body = await (await fetch(`http://127.0.0.1:${port}/current.json`)).text();
     assert.ok(!body.includes("OLD PAGE"), "the restarted server still runs the old module's code");
-    assert.match(body, /being made on the Mac/, "the new status is not read");
+    assert.equal(JSON.parse(body).making, true, "the new status is not read");
   } finally {
     // closed whatever happened: a failure here must fail the suite, not hang it
     stale.closeAllConnections();

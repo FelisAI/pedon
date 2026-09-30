@@ -255,8 +255,8 @@ full detail in the viewer and
 photographed side-on and from above; every plant is three crossed cards of that picture at
 mature size (+1 flat card for low spreaders), cut out by alpha with `opacityThreshold`.
 A 159-plant design is 2,300 triangles; the file is 21 MB and made in 10-40 s. The site's landmarks are
-posts, and the origin is the landmark nearest the planting, because Quick Look sets a
-model's origin on the ground it finds. Size limits rule out the alternatives: real
+posts, and the origin is kept near the planting. The native PEDON app aligns this frame
+from two points picked on the original scan and matched on real ground (`ios/README.md`). Size limits rule out the alternatives: real
 foliage 472 MB / 1.5 GB of GLB; Fast preview 3.9 M triangles; leaf cards decimate into
 nothing. Two traps in the conversion, both measured: the viewer's drapes arrive in Blender
 as unshared triangles, so decimating without welding keeps 1.02 M points for 160 k triangles;

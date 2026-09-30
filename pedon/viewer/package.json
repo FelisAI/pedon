@@ -12,7 +12,6 @@
   "dependencies": {
     "@sparkjsdev/spark": "^2.1.0",
     "meshoptimizer": "^1.2.0",
-    "qrcode-generator": "^2.0.4",
     "three": "^0.185.1"
   },
   "devDependencies": {

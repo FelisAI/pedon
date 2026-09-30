@@ -1,7 +1,7 @@
-"""A USDZ for AR Quick Look, at 1:1 — with the PLANTS in it, and no scan.
+"""A USDZ for the native PEDON app, at 1:1 — with the PLANTS in it, and no scan.
 
 The plants are what the user needs to see on the phone. A file carrying the scan renders
-in RealityKit, the engine Quick Look runs on, as a grey shell of scan over the whole yard
+in RealityKit, the native app’s renderer, as a grey shell of scan over the whole yard
 with the design underneath it. So the viewer sends the plants as pictures of themselves
 and the owner's landmarks as posts, and this file converts that — without the scan.
 
@@ -185,3 +185,25 @@ def test_scan_is_a_separate_full_resolution_file_in_the_same_frame(monkeypatch, 
     assert len(called) == 2 and called[1][2] == "1.0"
     assert os.path.isfile(os.path.join(ar_export.OUT_DIR, info["scan"]["file"]))
     assert not scan.exists()
+
+
+def test_plant_details_keep_design_sizes_and_only_exact_catalogue_facts(monkeypatch):
+    import plant_catalog
+    doc = {"plants": [
+        {"species": "Salvia microphylla 'Hot Lips'", "aliases": ["Hot Lips"],
+         "sun": "sun", "water": "low", "bloom": "spring_autumn", "evergreen": True,
+         "note": "Bicolour flowers", "cat_safe": None, "mature_height_m": 2.0},
+        {"species": "Unsafe genus", "cat_safe": False,
+         "cat_safety": {"evidence_scope": "genus"}, "note": "Not this cultivar's description"},
+    ]}
+    monkeypatch.setattr(plant_catalog, "catalog", lambda: doc)
+    original = [{"id": "p1", "species": "Hot Lips", "mature_height_m": 0.9144, "size_override": True},
+                {"id": "p2", "species": "Unsafe unknown"}, {"id": "p3", "species": "Missing"}]
+    result = ar_export.plant_details(original)
+    assert result[0]["mature_height_m"] == 0.9144
+    assert result[0]["size_override"] is True
+    assert result[0]["details"]["sun"] == "sun"
+    assert result[0]["details"]["evergreen"] is True
+    assert result[0]["details"]["cat_safe"] is None
+    assert result[1]["details"] is None and result[2]["details"] is None
+    assert "details" not in original[0]

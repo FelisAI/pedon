@@ -41,8 +41,9 @@ Opening it makes the design's AR file from the design on screen (10-40 s) unless
 is already of that design and newer than it. A phone on the same Wi-Fi reaches it through a
 read-only door on this Mac (`:5179`, `viewer/ar_server.js`) that serves the design and its alignment scan — SHUT until the user opens it in the sheet, and remembered for this machine
 (`<projects>/.phone-door`) only once it has opened: when another program holds :5179 (a second
-PEDON viewer, usually) the sheet says so and the door stays shut. The sheet's QR code opens the file in Safari's AR Quick Look, which
-sets the garden down at true size wherever the phone finds ground; the user lines it up by hand.
+PEDON viewer, usually) the sheet says so and the door stays shut. Open the
+[PEDON iPhone app](../ios/README.md) on the same Wi-Fi and enter the sheet's address in its
+Settings. The app is built from source with Xcode; browser AR viewing is not supported.
 The file also carries a plan of the design, the ground's height every 0.5 m and every landmark's
 place in its frame (`yard.json`) — legacy metadata. For app alignment the export also includes a separate, textured original
 capture (`scan.file` in `yard.json`, a `*.scan.usdz`). The user rotates and zooms that capture,
@@ -56,8 +57,8 @@ is built into the app. A fresh installation opens those settings. Builds can be 
 carrying the developer's network details. The original scan is served read-only alongside the
 current design; it cannot become the design selected by `current.json`. Older exports are
 regenerated once to add the scan metadata. Without a mesh capture the app asks for one instead
-of substituting a plan. The native app remains local under `ios/`; physical camera alignment
-must still be checked on site.
+of substituting a plan. The native source, build instructions and tests are in `ios/`. Alignment and tracking
+accuracy must still be checked against fixed references on site.
 
 **The plants travel as PICTURES of themselves** (`viewer/src/ar_cards.js`). Each
 species is built once at full detail and photographed from the side and from above; every
@@ -65,7 +66,7 @@ plant is three crossed cards of that picture at its mature size, plus a card acr
 top for low spreading plants. A garden of ~160 plants is a few thousand triangles, where its
 real foliage runs to gigabytes and even Fast preview to millions of triangles.
 
-**The AR overlay omits the scan.** In RealityKit (the engine Quick Look runs on) the scan draws as a grey shell
+**The AR overlay omits the scan.** In RealityKit (the native app’s renderer) the scan draws as a grey shell
 over the whole site with the design underneath. The site's LANDMARKS go instead: an orange
 post and its name at each, so after lining up you can see whether the other posts stand on
 their real spots. The file's origin is the landmark nearest the planting (a red post, "start
@@ -73,17 +74,43 @@ here") and `yard.json` carries every landmark's place in the file's frame — ch
 RealityKit to the millimetre — which is what lining it up from marks needs. A vague landmark ("a hedge
 row") makes a vague mark; corners and stakes are better, and can be added in Places.
 
-**Checking it without a phone — `tools/ar_render.swift`.** RealityKit, the engine Quick
-Look runs on, renders the file offscreen on the Mac from any eye, so scan occlusion can
+**Checking it without a phone — `tools/ar_render.swift`.** RealityKit, the native app’s renderer, renders the file offscreen on the Mac from any eye, so scan occlusion can
 be checked directly. `qlmanage -t` is not a substitute: it can take over an hour without
-producing an image. The iOS Simulator opens the phone page but needs a tap to reach Quick
-Look. Usage is in the file's header.
+producing an image. The native app also has a Simulator preview for UI checks; see `ios/README.md`.
+Usage for the offscreen renderer is in its header.
 
 **The phone has its own door** — `viewer/ar_server.js`, a second server on `:5179` that
 is read-only and serves the design `.usdz` files, the current alignment scan in `data/ar`,
-current export metadata and one page. The dev
+and current export metadata; it serves no browser viewer. The dev
 server stays on localhost: `host: true` would put `/api/ops`, `/api/delete` and
 `POST /api/site` on the whole Wi-Fi. It is a per-process singleton, because Vite re-runs
 its config on every restart and a second server racing the first for the port can leave
 nothing listening. A restart hands the running server the NEW module's handler because
 the server outlives module edits and would otherwise serve stale content.
+
+### Native phone controls
+
+After alignment, **Planting guide** replaces the 3D planting and hardscape with small crosses
+at the exported planting centers, with plant IDs. The cross is the stem location, not a hole
+size or mature spread. Tap a target to select it, or use **Individual plants** to search by
+name/ID, show/hide individuals, or isolate one. The selected plant's name and Hide/Show button
+stay available when controls are collapsed. Guide mode preserves the 3D layer settings so
+returning to **3D view** restores them. It also turns off real-world occlusion for the thin
+markers so a soil-depth estimate cannot swallow them. Targets still depend on the user's
+alignment and AR tracking; check a fixed reference before using them to set out plants.
+
+**Hide controls** leaves a compact bar; **Controls** restores the panel. Move/turn/re-mark
+controls live under **Adjust alignment**. Returning to **Change points / Other points** starts
+a fresh scan camera, and **Show whole scan** recovers the full capture after panning or zooming.
+Each picker owns its scene nodes (shared geometry/textures), so old cameras and badges cannot
+alter the next picker's bounds. The export keeps one named node per plant while sharing the
+species pictures, plus `plant_items` mapping IDs/names/nodes to exact, Y-up planting positions.
+
+Selecting a visible target in **Planting guide** shows that individual at **50% opacity**, at
+its exported mature dimensions, while the other plant models stay hidden. Deselecting or hiding
+it removes the preview; returning to 3D view restores ordinary opacity and visibility. The
+selected bar shows its planned height/width. **Plant details** opens recorded botanical name,
+dimensions (feet/inches and metres), sun, water, flowering, habit and notes from the catalogue,
+when present. Design-specific sizes take priority over catalogue sizes. Unidentified plants
+and unknown cat safety remain unverified; a genus toxicity match cannot supply cultivar facts.
+Details come from the same export as the preview; opening the sheet makes no additional network request.

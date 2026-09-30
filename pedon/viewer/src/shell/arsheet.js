@@ -24,7 +24,7 @@ const bare = p => String(p ?? "").replace(/^\//, "");
  */
 export function isCurrent(info) {
   const file = info?.files?.[0], ar = info?.ar;
-  if (!file || !ar || !("scan" in ar)) return false;
+  if (!file || !ar || !("scan" in ar) || !Array.isArray(ar.plant_items) || !ar.plant_items.every(p => p.at?.length === 3 && "details" in p)) return false;
   if (bare(ar.design_source) !== bare(info.source ?? "data/design.json")) return false;
   return !Number.isFinite(info.source_mtime_ms) || file.mtime_ms >= info.source_mtime_ms;
 }
@@ -47,10 +47,7 @@ export function mountArSheet({ notify = () => {}, source = () => "data/design.js
   const el = document.createElement("div");
   el.id = "pArSheet";
   el.hidden = true;
-  // QUICK LOOK FIRST: any iPhone opens the file from Safari, no app needed. It lands wherever the
-  // phone finds ground and is lined up by hand. The PEDON app, where it is installed, lines it up
-  // from two marked points instead. Phones reach this Mac through the PHONE'S DOOR, which is shut
-  // until the user opens it here, and remembered for this machine.
+  // The native app aligns the export from two points on the original scan.
   el.innerHTML = `
     <header><b>See it on site</b><button class="x" title="close">✕</button></header>
     <p class="file"></p>
@@ -61,18 +58,16 @@ export function mountArSheet({ notify = () => {}, source = () => "data/design.js
       <p class="door-err"></p>
     </div>
     <div class="reach">
-      <div class="qr" aria-label="QR code for the phone"></div>
+      <p>Use the <b>PEDON iPhone app</b> on the same Wi-Fi as this Mac.</p>
+      <p>In the app’s <b>Settings</b>, enter this Mac’s address:</p>
       <p class="url"></p>
-      <p>On the iPhone, same Wi-Fi as this Mac: scan the code with the camera. Safari opens the
-        garden at true size wherever the phone finds ground; line it up by hand.</p>
-      <details class="app"><summary>With the PEDON iPhone app</summary>
-        <ol>
-          <li>Open <b>PEDON</b>. In Settings, enter this Mac’s address shown above. It remembers your connection.</li>
-          <li>On the original 3D scan, tap two existing features you can find on site — paving corners or fixed posts. Mark each on the real ground; the design locks in place at true size.</li>
-          <li>Walk through it: every plant at full size, where it goes in the ground.</li>
-        </ol>
-        <p class="stand"></p>
-      </details>
+      <ol>
+        <li>On the original 3D scan, pick two existing features you can find on site.</li>
+        <li>Match each point on the real ground to align the design at full size.</li>
+        <li>Use <b>Planting guide</b> to see planting centers. Tap a target for a translucent plant preview and its details.</li>
+      </ol>
+      <p class="stand"></p>
+      <p><a href="https://github.com/FelisAI/pedon/tree/main/pedon/ios#build-and-install" target="_blank" rel="noopener">Install the PEDON iPhone app</a> · requires a Mac with Xcode.</p>
       <button class="door-close" title="phones on this Wi-Fi can no longer fetch it">Close the phone door</button>
     </div>`;
   document.body.appendChild(el);
@@ -106,11 +101,8 @@ export function mountArSheet({ notify = () => {}, source = () => "data/design.js
     catch { /* dev server down */ }
     $(".door").hidden = !!info?.door;
     $(".reach").hidden = !info?.door;
-    // our own dev server's SVG — the one place innerHTML takes markup here
-    $(".qr").innerHTML = info?.qr_svg ?? "";
     $(".url").textContent = info?.urls?.[0]
-      ? `or type ${info.urls[0].replace(/^http:\/\//, "").replace(/\/$/, "")} into Safari`
-      : "this Mac has no address on the network — is Wi-Fi on?";
+      ?? "This Mac has no address on the network — is Wi-Fi on?";
     if (!making) {
       $(".file").textContent = isCurrent(info) ? `Ready — ${readyLine(info)}` : "";
       $(".file").classList.toggle("stale", false);
@@ -132,7 +124,7 @@ export function mountArSheet({ notify = () => {}, source = () => "data/design.js
       } catch (e) { r = { ok: false, err: String(e) }; }
       clearInterval(timer);
       making = null;
-      if (r?.ok) notify("ready — open it on your phone", "ok");
+      if (r?.ok) notify("ready — open the PEDON app", "ok");
       else {
         const why = (r?.err || r?.out || "no reply").trim().split("\n").pop();
         $(".file").textContent = `It was not made: ${why}`;

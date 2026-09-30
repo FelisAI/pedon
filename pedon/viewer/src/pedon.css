@@ -349,10 +349,10 @@
 /* the shortcuts sheet reuses the HUD, wider and centred */
 .hud-sheet { max-width: 380px; min-width: 320px; }
 
-/* ── SEE IT IN THE YARD — the way from the viewer to the user's phone ──── */
+/* ── SEE IT ON SITE — the way from the viewer to the user's phone ──── */
 #pArSheet {
   position: fixed; z-index: 62; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  width: 340px; padding: var(--p-4); border-radius: var(--p-r-lg);
+  width: min(380px, calc(100vw - 64px)); max-height: calc(100vh - 64px); overflow-y: auto; padding: var(--p-4); border-radius: var(--p-r-lg);
   background: var(--p-soil-800); border: 1px solid var(--p-line); box-shadow: var(--p-shadow-3);
   color: var(--p-ink); font-size: var(--p-t-sm);
 }
@@ -360,10 +360,8 @@
 #pArSheet header b { font-size: var(--p-t-md); color: var(--p-chalk); }
 #pArSheet .x { background: none; border: 0; color: var(--p-dim); cursor: pointer; padding: 4px 6px; border-radius: 4px; }
 #pArSheet .x:hover { background: var(--p-soil-600); color: var(--p-chalk); }
-/* WHITE, whatever the theme: a phone camera reads dark modules on a light ground */
-#pArSheet .qr { background: #fff; border-radius: var(--p-r-md); padding: 6px; width: 212px; height: 212px; margin: 0 auto; }
-#pArSheet .qr svg { display: block; width: 100%; height: 100%; }
-#pArSheet .url { text-align: center; color: var(--p-dim); margin: var(--p-2) 0 var(--p-3); font-size: var(--p-t-xs); }
+#pArSheet .url { color: var(--p-chalk); background: var(--p-soil-600); padding: var(--p-2); border-radius: var(--p-r-md); overflow-wrap: anywhere; user-select: all; }
+#pArSheet a { color: var(--p-clay-lit); }
 #pArSheet .file { margin: 0 0 var(--p-2); color: var(--p-dim); }
 #pArSheet .file:not(:empty) { color: var(--p-chalk); }
 #pArSheet .file.stale { color: var(--p-warn); }
@@ -375,8 +373,6 @@
 #pArSheet .door-open:disabled { opacity: .6; cursor: progress; }
 #pArSheet .door p.door-err { margin: var(--p-2) 0 0; color: var(--p-warn); }
 #pArSheet .door-err:empty { display: none; }
-#pArSheet .app { margin-top: var(--p-2); }
-#pArSheet .app summary { cursor: pointer; color: var(--p-ink); }
 #pArSheet .door-close { margin-top: var(--p-3); background: none; border: 0; padding: 0; color: var(--p-faint);
   font: inherit; font-size: var(--p-t-xs); text-decoration: underline; cursor: pointer; }
 #pArSheet ol { margin: var(--p-3) 0 0; padding-left: 18px; color: var(--p-dim); font-size: var(--p-t-xs); }

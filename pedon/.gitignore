@@ -19,8 +19,7 @@ BACKLOG.md
 QUEUE.md
 /review/
 
-# the iPhone app is not part of the published source (it and ar_app.py stay on the owner's disk)
-/ios/
+# Native source is public; builds, signing and device state stay private (ios/.gitignore).
 
 # Xcode's per-user state
 **/xcuserdata/
