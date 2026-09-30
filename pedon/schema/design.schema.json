@@ -1,0 +1,479 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PEDON design.json",
+  "type": "object",
+  "required": [
+    "version",
+    "units",
+    "beds",
+    "paths",
+    "plants"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer"
+    },
+    "units": {
+      "const": "meters"
+    },
+    "style": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "beds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "polygon"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "polygon": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "mulch": {
+            "type": "string",
+            "default": "shredded_hardwood"
+          },
+          "depth_m": {
+            "type": "number",
+            "minimum": 0.02,
+            "maximum": 0.3,
+            "default": 0.08
+          },
+          "level_m": {
+            "type": "number",
+            "description": "finished elevation of the planting surface. Set it when the bed sits on a cut/filled terrace bench (normally the same level as the path and retaining edge beside it); omit to let the bed follow existing ground."
+          }
+        }
+      }
+    },
+    "paths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "spline",
+          "width_m",
+          "material"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "spline": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "width_m": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 3.0
+          },
+          "material": {
+            "description": "free text; flagstone, paver, gravel, decomposed_granite, concrete, stepping_stones are modelled and render as themselves, anything else draws as the nearest surface and is recorded as a want"
+          },
+          "level_m": {
+            "type": "number",
+            "description": "finished elevation of the walking surface. Set it when the path is cut/filled to a level bench (retained by edging); omit to follow existing ground."
+          }
+        }
+      }
+    },
+    "patios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "polygon",
+          "material"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "polygon": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "material": {
+            "description": "free text; flagstone, paver, gravel, decomposed_granite, concrete, stepping_stones, deck, lawn are modelled and render as themselves, anything else draws as the nearest surface and is recorded as a want"
+          },
+          "level_m": {
+            "type": "number",
+            "description": "finished elevation of the paved/decked surface. A usable area on a slope is almost always cut or built to a level, so set this; omit only for a surface that genuinely follows the ground."
+          },
+          "purpose": {
+            "type": "string",
+            "description": "free text; sitting, dining, fire_pit, lawn, kitchen_garden, play, utility, landing are modelled and render as themselves, anything else draws as the nearest surface and is recorded as a want"
+          }
+        }
+      }
+    },
+    "plants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "species",
+          "position"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "species": {
+            "type": "string",
+            "description": "Botanical name, e.g. 'Acer palmatum'"
+          },
+          "common": {
+            "type": "string"
+          },
+          "position": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "number"
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "mature_spread_m": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 20
+          },
+          "mature_height_m": {
+            "type": "number",
+            "minimum": 0.02,
+            "maximum": 30
+          },
+          "size_override": {
+            "type": "boolean",
+            "description": "True when the designer deliberately chose this plant's planning height and spread. Catalogue resync preserves these dimensions. Reset to catalogue size removes this flag; dimensions still undergo normal validation."
+          },
+          "container": {
+            "type": "string"
+          },
+          "asset": {
+            "type": "string",
+            "description": "A library MODEL NAME \u2014 a key of assets/plants/manifest.json, e.g. stone_pine \u2014 overriding the species regexes in viewer/src/assets.js. Not a filename: a bare name is what the preloaded, height-corrected path in assets.js looks up, and it is the only path that measures the model and puts its base on the ground."
+          },
+          "form": {
+            "type": "string",
+            "description": "Growth habit, for a species the regex tables in viewer/src/assets.js and viewer/src/plants.js do not name: rosette, grass, column, tree, palm, mat, mound, cane, vine, rush, strap, perennial, meadow. The last four exist because a Juncus, a Phormium, a yarrow and a poppy drift are four different silhouettes, and drawing them all as `mound` makes massed planting read as wallpaper. Free text is normalised ('spreading groundcover' -> mat, 'multi-trunk shrub' -> mound), and a species the tables DO name wins over it. Without it an unrecognised species falls to a size heuristic and renders as a generic blob, which is what would stop the plant library following a design to another climate."
+          },
+          "foliage": {
+            "type": "string",
+            "description": "Foliage COLOUR, when the plant is not simply green: silver, grey_green, blue_green, dark_green, bright_green, chartreuse, purple, bronze, variegated. Free text is normalised the same way form is ('silver-grey', 'blue-grey glaucous', 'dark glossy green'), and an explicit #rrggbb wins outright. Omit it and the plant takes the green ramp of its growth FORM, which every species of that form shares \u2014 half the plants in a garden can be `mound`, and that one ramp is 25 RGB units wide, 5.7% of the cube, so a silver lavender and a glossy dark toyon come out the same colour. A bare 'green' is deliberately ignored: it says no more than the form already does. Only the procedural path reads this; a plant big enough for a library model keeps that model's own leaf colour."
+          },
+          "flower": {
+            "type": "string",
+            "description": "Flower colour as #rrggbb. Optional; the viewer supplies the catalog default when absent. Use the named species or cultivar colour; foliage and flower colours are independent."
+          }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "description": "retaining / border edging: a vertical strip standing along a line, used to hold a grade change or contain a bed",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "spline",
+          "height_m",
+          "material"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "spline": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "height_m": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 1.2,
+            "description": "exposed height. The bounds here are the SHIPPED DEFAULTS so this file still validates on its own; agent.validate() overwrites them with site.constraints.edge_min_height_m and site.constraints.retain_limit_m before validating, because how tall a wall may stand is a rule about the address, not about the format. Above site.constraints.footing_threshold_m a face needs an engineered footing."
+          },
+          "material": {
+            "description": "free text; corten_steel, aluminium, concrete, timber, stone, brick, dry_stone, boulder are modelled and render as themselves, anything else draws as the nearest surface and is recorded as a want"
+          },
+          "retains": {
+            "type": "string",
+            "enum": [
+              "uphill",
+              "downhill",
+              "none"
+            ],
+            "description": "which side the edge holds back"
+          },
+          "thickness_m": {
+            "type": "number",
+            "minimum": 0.003,
+            "maximum": 1.0,
+            "description": "how thick the wall is built. Omit and it is agent.EDGE_SECTION[material].thickness_m, the same number viewer/src/design.js builds the solid from. It is not decoration: the setback between two stacked walls is measured face to face, so thickness spends it."
+          },
+          "batter_deg": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 25,
+            "description": "how far the face leans back into what it retains. Omit for the material default. A battered wall's top moves toward the terrace above it, so this spends setback too."
+          },
+          "footing_depth_m": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2.0,
+            "description": "depth of footing below finished grade. Omit for the material default. A wall standing over site.constraints.footing_threshold_m with a stated footing shallower than its material needs is REJECTED \u2014 that is the one thing about a footing a drawing can check."
+          },
+          "level_m": {
+            "type": "number",
+            "description": "elevation the edge retains TO (top of wall). When set, exposed height varies with the ground along its run and height_m is the nominal figure."
+          }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "description": "a flight of steps: the vocabulary for a route too steep to walk as a ramp. Put one across the stretch where a path runs over site.constraints.max_grade \u2014 the path is not graded as a ramp where a flight covers it.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "spline",
+          "riser_m",
+          "going_m"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "spline": {
+            "type": "array",
+            "minItems": 2,
+            "description": "the line the flight runs down, top to bottom. Its ends give the fall the risers must absorb and its length gives the run they have to do it in.",
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "width_m": {
+            "type": "number",
+            "minimum": 0.5,
+            "maximum": 3.0,
+            "default": 1.0
+          },
+          "riser_m": {
+            "type": "number",
+            "minimum": 0.05,
+            "maximum": 0.18,
+            "description": "height of one step. The bounds here are the SHIPPED DEFAULTS so this file still validates on its own; agent.validate() overwrites the maximum with site.constraints.step_riser_max_m, because how tall a step may rise is a rule about the address, not about the format."
+          },
+          "going_m": {
+            "type": "number",
+            "minimum": 0.28,
+            "maximum": 1.0,
+            "description": "tread depth of one step. The minimum is overwritten by validate() with site.constraints.step_going_min_m. risers x going is the run the flight eats; a flight whose spline is shorter than that is rejected."
+          },
+          "material": {
+            "description": "free text; corten_steel, aluminium, concrete, timber, stone, brick, dry_stone, boulder are modelled and render as themselves, anything else draws as the nearest surface and is recorded as a want"
+          }
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "description": "Owner-authored groupings of design objects \u2014 'the fire pit and its two retaining walls' as one thing that hides, locks and moves together. The key is `members`, which is what viewer saveGroups actually writes; this schema follows the code that writes a group, never an assumption about it, or every real group fails validation while a test built on the same assumption passes.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "members"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "ids of the design objects in this group"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "alt_of": {
+            "type": "string",
+            "description": "This group is one PROPOSAL in the named set; the others in that set are alternatives to it and are never built together. Measuring and judging resolve to the chosen one; the document keeps them all."
+          }
+        }
+      }
+    },
+    "objects": {
+      "type": "array",
+      "description": "Things a garden is made of that are not ground: a bench, a boulder, a stone lantern, a water basin, a pot, a fire pit, a screen, a pergola. `kind` is FREE TEXT on purpose \u2014 ask for what the design needs. A kind the library can build gets real geometry; one it cannot gets an honest placeholder at the size you asked for AND is recorded as a want, so a missing model is a work item rather than a silent downgrade. Never trim a design to what happens to be modelled.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "position"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "description": "what it is, in your own words: 'stone lantern', 'tsukubai', 'olive jar', 'moon gate'"
+          },
+          "position": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "ENU metres [x, y]"
+          },
+          "height_m": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "width_m": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "rotation_deg": {
+            "type": "number"
+          },
+          "material": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "level_m": {
+            "type": "number",
+            "description": "absolute elevation of the object's BASE, in the same datum as the terrain. Omit and it stands on the measured ground, which is the normal case. Set it to stand a thing on a plinth, a wall top or a deck \u2014 float_check still measures where it really ends up, so a lantern hanging in the air is reported, not silently accepted."
+          },
+          "tilt_deg": {
+            "type": "number",
+            "description": "lean, in degrees, about the object's own horizontal axis. 0 stands it plumb, which is the normal case. A set boulder leans; a screen or a gate does not. Taste is reported, never enforced \u2014 but float_check measures the geometry a lean actually produces, so a tilt that buries or floats the thing is still caught."
+          },
+          "model": {
+            "type": "string",
+            "pattern": "^assets/objects/[^./][^/]*(/[^./][^/]*)*\\.(glb|gltf)$",
+            "description": "A path under assets/objects/ to a .glb the OWNER scanned \u2014 their own stone, their own pot. It beats the builder for that kind, the way a plant's `asset` beats the species table, and it is what lets a scan be placed rather than a preset that resembles one. The pattern forbids `..` and anything outside that directory: this string arrives in a document a model writes and reaches a loader in the browser. execute() additionally refuses a path that is not on disk, because a design naming a file nobody has draws nothing."
+          }
+        }
+      }
+    },
+    "from": {
+      "type": "string",
+      "description": "The design this one was saved out of. Written by Save-as; never inferred from a name. A fact about THIS document's origin, so it is replaced rather than inherited when a whole document is written."
+    },
+    "alternatives": {
+      "type": "object",
+      "description": "Which proposal is live, per set of mutually exclusive groups: {set_id: group_id}. Groups declare their set with alt_of. Membership has one home (the groups) and the choice has one home (here). An undeclared choice falls back to the first group of the set, never to showing both.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}

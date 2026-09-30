@@ -1,0 +1,21 @@
+# The whole suite on a clean checkout: no site and an empty library, so the tests about a real
+# measured site or a user's own library skip, and everything else — Python and the viewer — runs.
+name: tests
+on: [push, pull_request]
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: pedon/viewer/package-lock.json
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - run: pip install -r pedon/requirements.txt
+      - run: npm ci
+        working-directory: pedon/viewer
+      - run: python3 pedon/tools/selftest.py

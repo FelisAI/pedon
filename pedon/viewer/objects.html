@@ -1,0 +1,182 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>garden objects, at body scale</title>
+<!--
+  An instrument, and the twin of compare.html.
+
+  Every object the library can build, drawn at the size OBJECT_META says it is,
+  beside a 1.7 m human figure. The asset window shows them as small thumbnails
+  with the camera fitted to each one, which is exactly the framing that hides a
+  scale error — a lantern rendered at 0.8 m and a lantern rendered at 1.4 m
+  produce the identical thumbnail.
+
+  So the ONE thing this page does that a thumbnail cannot: it keeps the camera
+  fixed across every card and puts a body in the frame. An ishidoro is chest-high,
+  a tsukubai is something you stoop to, a bench seat is knee-high, a moon gate is
+  walked through. All of those are claims about the human body and none of them can
+  be checked without one.
+
+  Three views per object, because the faults hide in different ones:
+    front   the silhouette, and the scale against the figure
+    close   at 1.2 m, where facets and flat colour show
+    top     the footprint, where a "screen" that is really a slab shows
+
+  Anything you can see is a bug.
+-->
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #14150f; color: #d8d4c4;
+         font: 13px/1.45 ui-sans-serif, system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: #14150f;
+           padding: 10px 14px; border-bottom: 1px solid #2f3126; display: flex;
+           gap: 12px; align-items: center; flex-wrap: wrap; }
+  input { background: #1e2018; color: inherit; border: 1px solid #3a3d2f;
+          border-radius: 5px; padding: 4px 7px; font: inherit; }
+  .row { display: grid; grid-template-columns: repeat(3, 300px) 1fr; gap: 12px;
+         padding: 12px 14px; border-bottom: 1px solid #23251c; align-items: start; }
+  /* `display: grid` beats [hidden]'s user-agent `display: none`, so without this
+     the filter updates the count and hides nothing (compare.html has the same rule) */
+  .row[hidden] { display: none; }
+  .row canvas { width: 300px; height: 230px; border-radius: 6px;
+                background: #0e0f0a; display: block; }
+  .meta b { color: #eae6d6; font-size: 15px; }
+  .meta i { color: #8d9078; }
+  .tag { display: inline-block; background: #262a1d; border: 1px solid #3a3d2f;
+         border-radius: 4px; padding: 1px 6px; margin: 3px 4px 0 0; font-size: 12px; }
+  .note { color: #9aa07e; margin-top: 6px; max-width: 34em; }
+</style>
+<header>
+  <strong>garden objects</strong>
+  <input id="q" placeholder="filter — lantern, gate, pond…" size="24">
+  <span id="count" class="meta"></span>
+  <span class="meta"><i>front · close (1.2 m) · plan — the figure is 1.7 m</i></span>
+</header>
+<div id="list"></div>
+<script type="module">
+import * as THREE from "/node_modules/three/build/three.module.js";
+import { objectMesh, objectCatalog } from "/src/objects.js";
+
+const W = 600, H = 460;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(W, H, false);
+renderer.setClearColor(0x1a1c14, 1);
+const scene = new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0xdfe6ef, 0x4a4632, 1.5));
+const sun = new THREE.DirectionalLight(0xfff2dc, 2.4);
+sun.position.set(2.5, 4, 2); scene.add(sun);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60),
+  new THREE.MeshStandardMaterial({ color: 0x6b6a52, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+
+/**
+ * A 1.7 m person, as plainly as possible.
+ *
+ * Deliberately a featureless grey mannequin rather than anything characterful:
+ * it is a RULER, and the moment it draws attention to itself it stops doing its
+ * job. The proportions are the standard ones — head an eighth of the height,
+ * shoulders a quarter wide — because a figure with the wrong proportions is a
+ * ruler with the wrong markings.
+ */
+function figure(h = 1.7) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: 0x8d8f84, roughness: 0.95 });
+  const add = (geo, x, y, z) => { const m = new THREE.Mesh(geo, mat);
+                                  m.position.set(x, y, z); g.add(m); };
+  const head = h * 0.125;
+  add(new THREE.SphereGeometry(head * 0.46, 16, 12), 0, h - head * 0.46, 0);
+  add(new THREE.CapsuleGeometry(h * 0.052, h * 0.30, 4, 12), 0, h * 0.66, 0);  // torso
+  add(new THREE.BoxGeometry(h * 0.235, h * 0.03, h * 0.08), 0, h * 0.80, 0);   // shoulders
+  for (const s of [-1, 1]) {
+    add(new THREE.CapsuleGeometry(h * 0.022, h * 0.28, 4, 8), s * h * 0.105, h * 0.63, 0);
+    add(new THREE.CapsuleGeometry(h * 0.032, h * 0.40, 4, 8), s * h * 0.05, h * 0.24, 0);
+  }
+  return g;
+}
+
+const CAMS = ["front", "close", "plan"];
+
+function shoot(entry, canvas, view) {
+  // objectMesh, not the raw builder: it is the path the viewer itself uses, so
+  // this sheet reviews the object the garden really draws — including the base
+  // placement, which is where float bugs live.
+  const g = objectMesh({ kind: entry.kind, height_m: entry.height_m,
+                         width_m: entry.width_m || entry.height_m, position: [0, 0] });
+  if (!g) return null;
+  scene.add(g);
+  const who = figure();
+  // a pace and a half to the side, so it never occludes the object
+  who.position.set(-(entry.width_m || 1) * 0.5 - 0.55, 0, 0.35);
+  if (view !== "plan") scene.add(who);
+
+  const box = new THREE.Box3().setFromObject(g);
+  const size = box.getSize(new THREE.Vector3());
+  const mid = box.getCenter(new THREE.Vector3());
+  const cam = new THREE.PerspectiveCamera(34, W / H, 0.05, 200);
+
+  if (view === "front") {
+    // ONE framing for the whole column, so scale is comparable card to card. The
+    // asset window fits the camera per object, which is precisely why a lantern
+    // at half its size looks identical to one at full size.
+    const span = Math.max(2.6, size.x + 2.0, size.y + 0.9);
+    const vHalf = Math.tan(THREE.MathUtils.degToRad(cam.fov * 0.5));
+    const dist = (span * 0.5) / vHalf * 1.15;
+    cam.position.set(-0.35, 1.55, dist);
+    cam.lookAt(0, Math.min(1.0, span * 0.36), 0);
+  } else if (view === "close") {
+    // eye height at arm's length: where a flat colour or a coarse facet shows
+    cam.position.set(mid.x + 0.75, Math.max(1.2, mid.y + 0.35), mid.z + 1.15);
+    cam.lookAt(mid.x, mid.y, mid.z);
+  } else {
+    const wide = Math.max(size.x, size.z, 0.6);
+    const vHalf = Math.tan(THREE.MathUtils.degToRad(cam.fov * 0.5));
+    cam.position.set(mid.x, box.max.y + (wide * 0.7) / vHalf, mid.z + 0.001);
+    cam.lookAt(mid.x, 0, mid.z);
+  }
+  renderer.render(scene, cam);
+  canvas.getContext("2d").drawImage(renderer.domElement, 0, 0, canvas.width, canvas.height);
+  scene.remove(g); scene.remove(who);
+  g.traverse(o => { if (o.isMesh) o.geometry.dispose(); });
+  who.traverse(o => { if (o.isMesh) o.geometry.dispose(); });
+  // what a reviewer needs to check the claim against the drawing
+  return { h: +size.y.toFixed(2), w: +Math.max(size.x, size.z).toFixed(2),
+           base: +box.min.y.toFixed(3) };
+}
+
+const list = document.getElementById("list");
+const cat = objectCatalog();
+const rows = cat.map(entry => {
+  const el = document.createElement("div");
+  el.className = "row";
+  el.dataset.hay = `${entry.kind} ${entry.label}`.toLowerCase();
+  el.innerHTML = `${CAMS.map(() => `<canvas width="${W}" height="${H}"></canvas>`).join("")}
+    <div class="meta">
+      <b>${entry.label}</b><br><i>${entry.kind}</i><br>
+      <span class="tag">declared ${entry.height_m} × ${entry.width_m || "—"} m</span>
+      <span class="tag drawn"></span>
+      <span class="tag base"></span>
+      <div class="note">${entry.note}</div>
+    </div>`;
+  list.append(el);
+  const cs = el.querySelectorAll("canvas");
+  let got = null;
+  CAMS.forEach((v, i) => { const m = shoot(entry, cs[i], v); if (m) got = m; });
+  if (got) {
+    el.querySelector(".drawn").textContent = `drawn ${got.h} × ${got.w} m`;
+    // A base that is not 0 is the float/bury bug, and it is invisible in any
+    // view that frames the object on its own.
+    const t = el.querySelector(".base");
+    t.textContent = `base ${got.base} m`;
+    if (Math.abs(got.base) > 0.02) { t.style.background = "#5a2f22"; t.style.borderColor = "#8a4a33"; }
+  }
+  return el;
+});
+const apply = () => {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  let n = 0;
+  for (const el of rows) { const ok = !q || el.dataset.hay.includes(q); el.hidden = !ok; if (ok) n++; }
+  document.getElementById("count").textContent = `${n} of ${rows.length}`;
+};
+document.getElementById("q").oninput = apply;
+apply();
+window.__ready = true;
+</script>

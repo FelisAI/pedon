@@ -1,0 +1,17 @@
+# Dependencies and caches — reinstallable, never source
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# The owner's working notes for this checkout — AGENTS.md says to read them when present
+AGENTS.local.md
+
+# Research notes are the owner's, not the product's; design reviews live in each site's
+# <projects>/<slug>/review/.
+research/
+
+# Claude Code session state
+.claude/scheduled_tasks.lock

@@ -1,0 +1,28 @@
+node_modules/
+dist/
+.env
+.venv/
+vendor/
+__pycache__/
+
+# SITES ARE NOT THE SYSTEM. Every site's scan, ground truth, designs and reviews live in
+# ~/PEDON/<site>/; a projects/ or data/ an older checkout kept here is its owner's, not source.
+/projects/
+/data/
+
+# ASSETS ARE THE USER'S LIBRARY (~/PEDON/library, docs/library.md), never the app's: a model,
+# texture or photograph an older checkout left in assets/ is not source.
+/assets/
+
+# the owner's local work log, queue and review renders — history, not the product
+BACKLOG.md
+QUEUE.md
+/review/
+
+# the iPhone app is not part of the published source (it and ar_app.py stay on the owner's disk)
+/ios/
+
+# Xcode's per-user state
+**/xcuserdata/
+# tests of this checkout's own working notes (QUEUE.md, AGENTS.local.md) — local, like the notes
+/tests/local/

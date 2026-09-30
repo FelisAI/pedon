@@ -1,0 +1,21 @@
+{
+  "name": "pedon-viewer",
+  "private": true,
+  "license": "AGPL-3.0-only",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@sparkjsdev/spark": "^2.1.0",
+    "meshoptimizer": "^1.2.0",
+    "qrcode-generator": "^2.0.4",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0"
+  }
+}

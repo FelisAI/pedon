@@ -1,0 +1,196 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>paving, walls and steps</title>
+<!--
+  A review sheet, beside compare.html (plants) and objects.html (objects).
+
+  Paving, walls and steps are most of what a garden is made of by AREA — a path
+  and a terrace are usually the two biggest surfaces in a design, and the ground
+  is what every plant is seen against.
+
+  A surface has nowhere to be a thumbnail. An object has a silhouette you can
+  frame; a paving material is a TEXTURE at a DISTANCE, and it is either right at
+  4 m and wrong at 1 m or the other way round.
+  So each one is drawn three times:
+
+    walking   1.6 m eye, 3 m away — how you meet a path
+    standing  1.6 m eye, 1.2 m away — where a repeat or a flat colour shows
+    plan      straight down — the joint pattern, which is what says "laid"
+
+  Everything is drawn through the real builders (patioMesh, edgeMesh, stepsMesh),
+  not through a copy of the material table, so what is on this page is what the
+  garden renders. Anything you can see is a bug.
+-->
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #14150f; color: #d8d4c4;
+         font: 13px/1.45 ui-sans-serif, system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: #14150f;
+           padding: 10px 14px; border-bottom: 1px solid #2f3126; display: flex;
+           gap: 12px; align-items: center; flex-wrap: wrap; }
+  input, select { background: #1e2018; color: inherit; border: 1px solid #3a3d2f;
+                  border-radius: 5px; padding: 4px 7px; font: inherit; }
+  h2 { margin: 20px 14px 4px; font-size: 13px; letter-spacing: .08em;
+       text-transform: uppercase; color: #8d9078; }
+  .row { display: grid; grid-template-columns: repeat(3, 300px) 1fr; gap: 12px;
+         padding: 12px 14px; border-bottom: 1px solid #23251c; align-items: start; }
+  .row[hidden] { display: none; }
+  .row canvas { width: 300px; height: 220px; border-radius: 6px;
+                background: #0e0f0a; display: block; }
+  .meta b { color: #eae6d6; font-size: 15px; }
+  .tag { display: inline-block; background: #262a1d; border: 1px solid #3a3d2f;
+         border-radius: 4px; padding: 1px 6px; margin: 3px 4px 0 0; font-size: 12px; }
+  .note { color: #9aa07e; margin-top: 6px; max-width: 32em; }
+</style>
+<header>
+  <strong>paving, walls and steps</strong>
+  <input id="q" placeholder="filter — gravel, brick, deck…" size="22">
+  <span id="count" class="meta"></span>
+  <span class="meta"><i>walking (3 m) · standing (1.2 m) · plan — the post is 1.0 m</i></span>
+</header>
+<div id="list"></div>
+<script type="module">
+import * as THREE from "/node_modules/three/build/three.module.js";
+import { GROUND_SURFACES, WALL_SURFACES, patioMesh, edgeMesh, stepsMesh }
+  from "/src/design.js";
+
+const W = 600, H = 440;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(W, H, false);
+renderer.setClearColor(0x1a1c14, 1);
+const scene = new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0xdfe6ef, 0x4a4632, 1.4));
+const sun = new THREE.DirectionalLight(0xfff2dc, 2.5);
+sun.position.set(3, 4.5, 2); scene.add(sun);
+// a dull surround so the sample reads against something, as it does in the garden
+const around = new THREE.Mesh(new THREE.PlaneGeometry(80, 80),
+  new THREE.MeshStandardMaterial({ color: 0x55563f, roughness: 1 }));
+around.rotation.x = -Math.PI / 2; around.position.y = -0.02; scene.add(around);
+
+/**
+ * A 1 m post, for scale.
+ *
+ * Paving has no size of its own — a flagstone sample fills the frame whatever
+ * the joints are, which is exactly how a 1.4 m tile repeat and a 0.4 m one look
+ * identical in a thumbnail. The post is the only thing on this page that says how
+ * big the pattern is.
+ */
+function post() {
+  const g = new THREE.Group();
+  const m = new THREE.MeshStandardMaterial({ color: 0xb9b5a4, roughness: 0.9 });
+  const p = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 1.0, 10), m);
+  p.position.y = 0.5; g.add(p);
+  // a band at 0.5 m, so the eye can halve it
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.03, 10),
+    new THREE.MeshStandardMaterial({ color: 0x3b3c33, roughness: 0.9 }));
+  band.position.y = 0.5; g.add(band);
+  return g;
+}
+
+const flat = () => 0;
+// A retaining wall and a flight of steps are only themselves ON A SLOPE: edgeMesh
+// reads the ground either side to decide which way the masonry batters, and
+// stepsMesh derives its RISER COUNT from the fall, so on flat ground a five-step
+// flight builds exactly one step. The sheet has to supply real terrain or it is
+// reviewing a degenerate case.
+const SLOPE = 0.47;                                   // ~25 deg, a steep garden slope
+const sloped = (x, z) => -z * SLOPE;
+const VIEWS = ["walking", "standing", "plan"];
+
+function place(cam, view, mid, span) {
+  if (view === "plan") {
+    cam.position.set(mid.x, 3.4, mid.z + 0.001);
+    cam.lookAt(mid.x, 0, mid.z);
+  } else {
+    const back = view === "walking" ? 3.0 : 1.2;
+    cam.position.set(mid.x + back * 0.35, 1.6, mid.z + back);
+    cam.lookAt(mid.x, view === "walking" ? 0.15 : 0.05, mid.z - span * 0.15);
+  }
+}
+
+function shoot(make, canvas, view, slope = 0) {
+  const g = make();
+  if (!g) return;
+  scene.add(g);
+  // tilt the surround to match the terrain the piece was built against, or a
+  // retaining wall floats over a floor it is supposed to be holding back
+  around.rotation.x = -Math.PI / 2 + Math.atan(slope);
+  // OUTSIDE the sample, not on it. A post inside the 4 x 3 m patch is hidden by
+  // it in every frame — a scale reference you cannot see is the same as no scale
+  // reference, and this page exists because paving has no
+  // size of its own.
+  const who = post(); who.position.set(-2.35, 0, 1.15); scene.add(who);
+  const box = new THREE.Box3().setFromObject(g);
+  const mid = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const cam = new THREE.PerspectiveCamera(38, W / H, 0.03, 200);
+  place(cam, view, mid, Math.max(size.x, size.z));
+  renderer.render(scene, cam);
+  canvas.getContext("2d").drawImage(renderer.domElement, 0, 0, canvas.width, canvas.height);
+  scene.remove(g); scene.remove(who);
+  g.traverse(o => { if (o.isMesh) o.geometry.dispose(); });
+  who.traverse(o => { if (o.isMesh) o.geometry.dispose(); });
+}
+
+const list = document.getElementById("list");
+const rows = [];
+
+function section(title) {
+  const h = document.createElement("h2"); h.textContent = title; list.append(h);
+}
+function card(name, tags, note, make, slope = 0) {
+  const el = document.createElement("div");
+  el.className = "row";
+  el.dataset.hay = `${name} ${tags.join(" ")}`.toLowerCase();
+  el.innerHTML = `${VIEWS.map(() => `<canvas width="${W}" height="${H}"></canvas>`).join("")}
+    <div class="meta"><b>${name}</b><br>
+      ${tags.map(t => `<span class="tag">${t}</span>`).join("")}
+      <div class="note">${note}</div></div>`;
+  list.append(el);
+  const cs = el.querySelectorAll("canvas");
+  VIEWS.forEach((v, i) => shoot(make, cs[i], v, slope));
+  rows.push(el);
+}
+
+// ── paving: a 4 x 3 m patch, which is about the width of a real terrace ───────
+section("ground surfaces — a 4 × 3 m patch");
+const PATCH = [[-2, -1.5], [2, -1.5], [2, 1.5], [-2, 1.5]];
+for (const [key, s] of Object.entries(GROUND_SURFACES)) {
+  card(key.replace(/_/g, " "),
+    [`tile ${s.tile_m} m`, s.courses ? `${s.courses}×${s.units} bond` : "no bond",
+     `grain ${s.grain}`],
+    "the joint pattern is what says LAID rather than poured; a surface with no "
+    + "bond has to earn its texture from grain alone",
+    () => patioMesh({ id: `p_${key}`, polygon: PATCH, material: key, level_m: 0 }, flat));
+}
+
+// ── walls: a 3 m run at 0.8 m, a common retaining height ─────────────────────
+section("wall and edge materials — a 3 m run, 0.8 m high");
+for (const [key, s] of Object.entries(WALL_SURFACES)) {
+  card(key.replace(/_/g, " "),
+    [`${s.thickness_m} m thick`, `batter ${s.batter_deg}°`,
+     s.course_m ? `course ${s.course_m} m` : "monolithic"],
+    "a retaining wall is seen from BELOW and along its length; the batter and the "
+    + "course lines are what separate built stone from a swept solid",
+    () => edgeMesh({ id: `w_${key}`, spline: [[-1.5, 0], [1.5, 0]], material: key,
+                     height_m: 0.8, retains: "uphill" }, sloped), SLOPE);
+}
+
+// ── steps: the one piece of hardscape with a building code attached ───────────
+section("steps — 5 risers, 150 mm × 320 mm");
+card("steps", ["riser 0.15 m", "going 0.32 m", "5 risers"],
+  "riser and going are CODE, not taste. What this sheet is for is whether the "
+  + "flight reads as cut into the slope or as a stack of boxes standing on it",
+  () => stepsMesh({ id: "s_1", spline: [[0, -0.85], [0, 0.85]], width_m: 1.2,
+                    riser_m: 0.15, going_m: 0.32, material: "stone" }, sloped), SLOPE);
+
+const apply = () => {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  let n = 0;
+  for (const el of rows) { const ok = !q || el.dataset.hay.includes(q); el.hidden = !ok; if (ok) n++; }
+  document.getElementById("count").textContent = `${n} of ${rows.length}`;
+};
+document.getElementById("q").oninput = apply;
+apply();
+window.__ready = true;
+</script>

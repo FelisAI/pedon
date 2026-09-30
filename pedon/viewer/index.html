@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PEDON</title>
+  <link rel="stylesheet" href="/src/pedon.css" />
+  <style>
+    :root {
+      color-scheme: dark;
+      /* src/pedon.css defines these names as aliases, so the panel works
+         with the shell's --p-* tokens */
+    }
+    html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+      font: 13px/1.45 system-ui, -apple-system, sans-serif; }
+    #app { position: fixed; inset: 0; }
+    /* The tool rail: the daily tools, always visible, never scrolled past.
+       Walking and maturity controls need visible homes so the user can find
+       them. Positioned HERE and not in main.js, so ui_no_overlap.test.mjs and
+       ui_toolbar.test.mjs can both reason about where it sits. */
+
+    /* project settings: its own surface, beside the panel rather than over the
+       scene — the calibration modes (north, span, corner pairs) are driven by
+       clicking the ground, so this window must never cover it */
+    /* GEOMETRY AND CHROME LIVE IN src/pedon.css. This inline block is loaded
+       AFTER it, so an `#settings` rule here wins at equal specificity. A window
+       at top:12px under a 44 px top bar at z-index 40 hides its close button.
+       Keep geometry there; the window is fixed, it scrolls, and it is a
+       WINDOW rather than a modal because the calibration modes (north, span,
+       corner pairs) are driven by clicking the ground underneath it. */
+    #settings { position: fixed; }
+    #settings h1 { margin: 0; display: flex; align-items: center; }
+    #settings h1 button { margin-left: auto; }
+
+    /* collapsible task sections; the header is the whole hit target */
+
+    .row { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; align-items: center; }
+    .row.subhead { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--line);
+      font-size: 11.5px; font-weight: 600; color: var(--dim); }
+    .row.subhead > span:first-child { flex: 1; }
+
+    button { background: #1c2b22; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12px; line-height: 1.2; }
+    button:hover:not(:disabled) { background: var(--accent-bg); border-color: #3f6a4e; }
+    button:disabled { opacity: .38; cursor: default; }
+    button.primary { background: var(--accent-bg); border-color: #3f6a4e; font-weight: 600; }
+    button.primary:hover:not(:disabled) { background: #2c5039; }
+    button.active { background: #4f8763; border-color: var(--accent); }
+
+    input[type=text], input[type=number], select, textarea {
+      background: #0c110e; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 6px; padding: 5px 7px; font: inherit; font-size: 12px; }
+    select, input[type=file] { max-width: 100%; }
+    input[type=file] { font-size: 11px; color: var(--dim); }
+    textarea { width: 100%; box-sizing: border-box; resize: vertical; margin: 6px 0 0; }
+    textarea:focus, input:focus { outline: 1px solid #3f6a4e; }
+    label.small, .hint { color: var(--dim); font-size: 11.5px; }
+    /* A want: something the design asked for that nothing could build. It sits in
+       the object list's own flow, so it must NOT inherit .row's flex — the two
+       lines (what / where) stack. The amber comes from objects.js's
+       PLACEHOLDER_COLOUR via an inline border-left, so the note in the panel and
+       the marked box standing in the yard read as one fact. */
+    /* the measuring readout, in the panel's flow beside the button that starts it */
+    /* The asset window. A modal like #settings, positioned by a rule HERE rather
+       than in main.js, so tests/js/ui_no_overlap.test.mjs can reason about it —
+       an overlay created in script with its own position is one nothing can check. */
+    #assetWindow { position: fixed; top: 12px; right: 12px; width: min(760px, calc(100vw - 360px));
+      background: var(--panel); border: 1px solid var(--line); border-radius: 10px; z-index: 12;
+      max-height: calc(100vh - 24px); display: flex; flex-direction: column;
+      backdrop-filter: blur(6px); box-shadow: 0 8px 28px rgba(0,0,0,0.45); }
+    #assetWindow h1 { font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+      color: var(--dim); margin: 0; padding: 11px 13px 9px; border-bottom: 1px solid var(--line);
+      display: flex; align-items: center; gap: 8px; }
+    #assetWindow h1 .grow { flex: 1; }
+    #assetFilters { padding: 9px 13px; border-bottom: 1px solid var(--line);
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    #assetGrid { overflow-y: auto; padding: 11px 13px 14px; display: grid; gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+    #assetGrid .group { grid-column: 1 / -1; color: var(--dim); font-size: 11.5px;
+      letter-spacing: .04em; text-transform: uppercase; margin: 6px 0 -2px; }
+    .card { border: 1px solid var(--line); border-radius: 7px; padding: 7px; cursor: pointer;
+      background: rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 4px; }
+    .card:hover { border-color: var(--accent); background: rgba(127,198,154,0.10); }
+    .card[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-bg); }
+    .card img, .card .noimg { width: 100%; aspect-ratio: 1; border-radius: 5px; object-fit: contain;
+      background: rgba(0,0,0,0.22); }
+    .card img.pending { color: transparent; }   /* its picture is still being drawn */
+    .card .noimg { display: flex; align-items: center; justify-content: center;
+      color: var(--dim); font-size: 10.5px; text-align: center; padding: 6px; }
+    .card b { font-size: 12px; font-weight: 600; line-height: 1.25; }
+    .card .sci { color: var(--dim); font-size: 10.5px; font-style: italic; line-height: 1.2; }
+    .card .facts { color: var(--dim); font-size: 10.5px; line-height: 1.35; }
+    .card.unplaceable { opacity: .55; cursor: not-allowed; }
+    /* the property inspector, in the panel's flow under the selection bar */
+    /* which design is on screen, so the user can distinguish saved variants.
+       In the panel's flow. */
+    #whichDesign { display: block; margin: 4px 0 6px; padding: 4px 8px; border-radius: 3px;
+                   background: rgba(127,198,154,0.10); border-left: 3px solid var(--accent); }
+    #whichDesign.preview { background: rgba(185,139,74,0.12); border-left-color: #b98b4a; }
+    /* the pick tile: what you press to choose what to place */
+    #pickTile { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px;
+                text-align: left; padding: 5px 8px; }
+    #pickTile .thumb { width: 30px; height: 30px; flex: 0 0 30px; border-radius: 4px;
+                       background: rgba(0,0,0,0.25) center/contain no-repeat; }
+    #pickTile .what { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+                      white-space: nowrap; }
+    #pickTile .hint { flex: 0 0 auto; }
+    /* the view strip: the daily viewing controls, above the sections */
+    .row.want { display: block; cursor: pointer; margin: 5px 0; padding: 5px 8px;
+                background: rgba(185,139,74,0.08); border-radius: 3px; }
+    .row.want:hover { background: rgba(185,139,74,0.18); }
+    .row.want .hint { margin-top: 2px; }
+    #groundWarn.bad { color: #e4b25c; cursor: help; }
+    /* the show/hide affordance, shared by the design list and the group headers
+       in the object list — one look for "this is a toggle, not an action" */
+    .drow .eye, #objList .grow .eye, #objList .orow .eye { min-width: 22px; padding: 1px 4px; font-size: 12px; line-height: 1.2;
+                 background: none; border: 0; color: var(--dim); cursor: pointer; }
+    .drow .eye:hover, #objList .grow .eye:hover, #objList .orow .eye:hover { color: var(--ink); }
+    .drow .eye.on, #objList .grow .eye.on, #objList .orow .eye.on { color: #4dd2ff; }
+    .drow .eye.active { color: #8ed1a6; cursor: default; }
+    label.small { display: inline-flex; align-items: center; gap: 4px; }
+
+    /* world-anchored HTML labels: DOM text can't mirror the way canvas textures
+       can, and stays crisp at any distance */
+    #labels { position: fixed; inset: 0; pointer-events: none; z-index: 5; }
+    #labels .lbl { position: absolute; transform: translate(-50%, -50%);
+      background: rgba(14,20,17,0.86); border: 1px solid #3a5c46; color: #eaf2ea;
+      font: 11.5px/1.2 system-ui, sans-serif; padding: 2px 6px; border-radius: 5px; white-space: nowrap; }
+    #labels .lbl.landmark { background: rgba(9,38,50,0.9); border-color: #4dd2ff; color: #d9f6ff; pointer-events: auto; }
+    #labels .lbl.landmark button { margin-left: 5px; padding: 0 4px; font-size: 11px;
+      background: #123; border-color: #4dd2ff; color: #cfeaff; }
+    #labels .lbl.proposal { background: rgba(56,35,6,0.9); border-color: #ffb020; color: #ffe9c5; }
+    #labels .lbl.north { background: rgba(9,26,50,0.86); border-color: #66aaff; color: #d6e8ff; }
+
+    .list { max-height: 150px; overflow-y: auto; margin: 4px 0; }
+    .list .r { display: flex; gap: 6px; align-items: center; padding: 3px 5px;
+      border-radius: 5px; font-size: 11.5px; }
+    .list .r:hover { background: #182219; }
+    .list .r button { padding: 1px 6px; font-size: 11px; }
+
+    #objList .orow { display: flex; gap: 6px; align-items: center; padding: 3px 5px;
+      border-radius: 5px; cursor: pointer; font-size: 11.5px; }
+    #objList .orow:hover { background: #182219; }
+    #objList .orow.sel { background: #16334a; outline: 1px solid var(--sel); }
+    #objList .orow .kind { color: var(--accent); width: 32px; flex: none; }
+    #objList .orow .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #objList .orow .meta { color: var(--dim); flex: none; }
+    /* the hierarchy: a group header, then its members indented under it. The
+       rule on the indent is what makes a fold read as containment rather than
+       as two unrelated lists that happen to be adjacent. */
+    #objList .orow.child { margin-left: 10px; padding-left: 6px; border-left: 1px solid #2b3a30; }
+    #objList .orow.locked { cursor: default; opacity: .62; }
+    #objList .orow.off .kind, #objList .orow.off .nm,
+    #objList .orow.off .meta { opacity: .42; text-decoration: line-through; }
+    #objList .grow { display: flex; gap: 4px; align-items: center; padding: 3px 4px;
+      border-radius: 5px; cursor: pointer; font-size: 11.5px; margin-top: 3px;
+      background: #16201a; border: 1px solid var(--line); }
+    #objList .grow:hover { background: #1d2a21; }
+    #objList .grow.sel { background: #16334a; border-color: var(--sel); }
+    #objList .grow.off .gn { color: var(--dim); text-decoration: line-through; }
+    #objList .grow .twisty { min-width: 16px; padding: 0 2px; background: none; border: 0;
+      color: var(--dim); cursor: pointer; font-size: 11px; }
+    #objList .grow .gn { flex: 1; min-width: 0; background: none; border: 0; padding: 1px 2px;
+      color: var(--ink); font: inherit; font-size: 11.5px; font-weight: 600; }
+    #objList .grow .gn:hover { background: #0c110e; }
+    #objList .grow .meta { color: var(--dim); flex: none; }
+    #objList .grow button { padding: 1px 5px; font-size: 11px; }
+    #objList, #lmList, #designList, #proposals { max-height: 150px; overflow-y: auto; margin: 4px 0; }
+
+    #lmList .lrow, #proposals .prow, #designList .drow {
+      display: flex; gap: 5px; align-items: center; padding: 2px 4px; border-radius: 5px;
+      margin: 2px 0; font-size: 11.5px; }
+    #lmList .lrow:hover, #proposals .prow:hover, #designList .drow:hover { background: #182219; }
+    #lmList .lrow input, #proposals .prow input { flex: 1; min-width: 0; }
+    #lmList .lrow input { color: #cfeaff; border-color: #24424c; }
+    #lmList .lrow button, #proposals .prow button, #designList .drow button { padding: 2px 6px; font-size: 11px; }
+    #designList .drow.cur { background: #17301f; outline: 1px solid #4f8763; }
+    /* flex/min-width belong in pedon.css, which loads BEFORE this block and
+       cannot win at equal specificity — the same source-order rule as
+       #settings. Only clipping belongs here. */
+    #designList .drow .dn { overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; cursor: pointer; }
+
+    #selChips { display: flex; flex-wrap: wrap; gap: 4px; }
+    #selChips .chip { background: #16334a; border: 1px solid var(--sel); color: #d6ecff;
+      border-radius: 11px; padding: 1px 4px 1px 8px; font-size: 11px;
+      display: flex; align-items: center; gap: 3px; }
+    #selChips .chip button { background: none; border: none; color: #9dc9ee; padding: 0 2px;
+      font-size: 12px; line-height: 1; }
+
+    [hidden] { display: none !important; }
+
+    /* left:336px, not 12px: the panel is 312px wide at left:12px and can reach the
+       bottom of a short window. A full-width status bar can cover the last panel
+       section and intercept its clicks, so it must start beyond the panel. */
+    /* The transform gizmo's live readout. Centred at the top so it is never under
+       the hand that is dragging, and pointer-events:none so it can never eat the
+       drag it is reporting on. */
+    #gizmoHud { position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+      z-index: 13; pointer-events: none; background: var(--panel);
+      border: 1px solid var(--line); border-radius: 8px; padding: 5px 12px;
+      font-family: ui-monospace, Menlo, monospace; font-size: 12.5px;
+      backdrop-filter: blur(6px); white-space: nowrap; }
+
+    /* eye-level walkthrough overlay: the frames are the content, so the chrome
+       stays out of the way and the grid gets the whole viewport */
+    #walkOverlay { position:fixed; inset:0; z-index:60; background:#0b0f0d;
+      display:none; grid-template-rows:auto 1fr; }
+    #walkOverlay[open] { display:grid; }
+    #walkBar { display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+      padding:.5rem .7rem; border-bottom:1px solid var(--line, #2c3427); color:var(--fg, #e7ebdf); }
+    #walkBar .t { font-weight:600; margin-right:.2rem; }
+    #walkBar .sub { color:var(--dim, #869080); font-size:.82em; }
+    #walkBar .grow { flex:1; }
+    #walkGrid { overflow:auto; padding:6px; display:grid; gap:6px;
+      grid-template-columns:repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); align-content:start; }
+    #walkGrid figure { margin:0; position:relative; background:#000; border-radius:3px; overflow:hidden; }
+    #walkGrid img { display:block; width:100%; height:auto; }
+    #walkGrid figcaption { position:absolute; left:6px; bottom:6px; background:#000a;
+      color:#e7ebdf; font:12px/1.4 ui-monospace, Menlo, monospace; padding:3px 7px; border-radius:2px; }
+    #walkCritique { grid-column:1/-1; white-space:pre-wrap; color:var(--fg, #e7ebdf);
+      background:#131813; border:1px solid var(--line, #2c3427); border-radius:3px;
+      padding:.9rem 1.1rem; font-size:.92em; line-height:1.55; max-width:60rem; }
+    /* which design is on screen — must be legible with the panel collapsed */
+    #nowShowing { float: right; font-weight: 500; text-transform: none; letter-spacing: 0;
+      color: var(--accent); max-width: 160px; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; }
+    #nowShowing.dirty, #designCur.dirty { color: #e4b25c; }
+      /* a control that reads as a link: used by the preview-escape in the
+       design status line, where a heavy button would shout. */
+    .linkish { background: none; border: 0; padding: 0 0 0 .35em; font: inherit;
+               color: inherit; text-decoration: underline; cursor: pointer; }
+    .linkish:hover { opacity: .75; }
+    /* read-only facts in an inspector: a property of the species, not of this
+       plant, so it is shown rather than offered as a field. */
+    .factval { color: var(--dim); font-variant-numeric: tabular-nums; }
+    .factval.ok    { color: #7fbf8a; }
+    .factval.bad   { color: #e07a6a; }
+    .factval.unsure{ color: #e4b25c; }
+</style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="labels"></div>
+    <!-- the floating dock (src/shell/dock.js) is built from the extension
+       registry rather than from markup. -->
+
+
+  <!-- what a gizmo drag has moved or turned so far -->
+  <div id="gizmoHud" hidden></div>
+
+  <!-- ═══ THE SHELL'S STATE, NOT A PANEL ═══════════════════════════════════════
+       This is a never-rendered store, with no heading, collapsible sections,
+       way to open it, entry in ⌘K or the ··· menu, or panel stylesheet. It must
+       not be a panel the user can reach.
+
+       It cannot be a <template>, which is where markup-not-yet-placed normally
+       lives: `document.getElementById` cannot see inside one, and the whole
+       shell finds these by id. And it cannot simply be deleted, because a third
+       of what is in here IS THE STATE rather than a copy of it — `btnMeasure`,
+       `btnDrawArea`, `btnAssets` and `btnDetect` carry the `.active` flag the
+       dock reads back, and `placeWhat` is the one thing that decides what a
+       ground click puts down. Deleting those would not remove a duplicate, it
+       would remove the original. The side surfaces also borrow nodes from here
+       and hand them back, and `applyLayers` reads `layScan` whether or not the
+       Display surface is open — detach it and the scan disappears.
+
+       So: hidden, inert, and named for what it is. -->
+  <div id="shellStore" hidden aria-hidden="true">
+    <button id="btnSettings" hidden title="project settings"></button>
+    <span id="nowShowing" hidden></span>
+
+
+    <!-- The walking and maturity controls need visible homes above the sections.
+         Burying them in a long panel's last collapsible section makes existing
+         features hard to discover. -->
+    <div class="row subhead" id="sunHead"><span>Sun</span></div>
+        <!-- DRAG IT. You cannot see how a garden works at five in the afternoon
+             by typing 17:00; you see it by moving the handle and watching the
+             shadows swing, because the change is the thing being judged. The
+             whole day's track is fetched once and interpolated locally, so the
+             handle does not fire a python subprocess per pixel. -->
+        <div class="row" id="sunRow">
+          <input type="range" id="sunSlider" min="360" max="1200" step="5"
+                 title="drag the sun across the day" />
+          <span id="sunClock" class="p-num"></span>
+        </div>
+        <div class="row" id="sunWhenRow">
+          <select id="sunSeason" title="the same garden in a different season — the sun is 23 degrees higher in June than in December, and the shadows are a different garden">
+            <option value="capture">the day it was scanned</option>
+            <option value="today">today</option>
+            <option value="march_equinox">spring equinox</option>
+            <option value="june_solstice">midsummer</option>
+            <option value="september_equinox">autumn equinox</option>
+            <option value="december_solstice">midwinter</option>
+          </select>
+          <input type="time" id="sunTime" class="small" style="width:74px"
+                 title="or type the hour exactly. The BEARING needs north set on this capture; until then only the height of the sun is real." />
+          <button id="sunCapture" class="small" title="back to the hour the scan was photographed">capture hour</button>
+        </div>
+        <div class="row" id="sunShadowRow">
+          <label class="small" title="the sun casts real shadows independently of plant detail, including in Fast preview, so moving the sun shows how shadows change through the day"><input type="checkbox" id="chkShadows" checked /> cast shadows</label>
+        </div>
+        <div class="row" id="sunLabelRow"><span id="sunLabel" class="hint"></span></div>
+        <!-- THE ONE LIGHTING ERROR YOU CANNOT ART-DIRECT AROUND: the scan
+             is a photograph and its shadows are painted into it. -->
+        <div class="row" id="sunTwoSunsRow"><span id="sunTwoSuns" class="hint bad"></span></div>
+        <div class="row subhead" id="drawHead"><span>How plants are drawn</span></div>
+        <div class="row" id="growthRow">
+          <span class="hint">plants at</span>
+          <select id="growthStage" title="a plan is spaced for full size, so that is what it opens at; the other two show it younger">
+            <option value="0.45">planting size</option>
+            <option value="0.7">~5 years</option>
+            <option value="1" selected>mature</option>
+          </select>
+        </div>
+        <div class="row subhead" id="editHead"><span>While editing</span></div>
+        <div class="row" id="editRow">
+          <label class="small" title="pull points onto a grid, and onto other objects' corners when they are close"><input type="checkbox" id="snapOn" /> snap</label>
+          <select id="snapStep" class="small" title="how far apart the snap grid's lines are">
+            <option value="0.1">every 10 cm</option>
+            <option value="0.25">every 25 cm</option>
+            <option value="0.5" selected>every 50 cm</option>
+            <option value="1">every 1 m</option>
+          </select>
+          <label class="small" title="show the move arrows and rotation ring on the selection — turn it off to judge the design with nothing sitting on top of it"><input type="checkbox" id="gizmoOn" checked /> gizmo</label>
+          <label class="small" title="stay at eye level over the real ground instead of flying, while walking"><input type="checkbox" id="flyGround" checked /> stay on the ground</label>
+          <button id="btnFly" hidden>Walk the garden</button>
+        </div>
+    <section data-sec="design" class="open">
+      <h2>Design</h2>
+      <div class="body">
+        <div class="row">
+          <button id="btnDesignSaveAs" title="save the current design under a name">Save as…</button>
+          <button id="btnDesignNew" title="start an empty design">New</button>
+          <span class="hint" id="designCur"></span>
+        </div>
+        <!-- SAVED and HISTORY answer the same question from two directions:
+             the designs the user chooses to keep by name, and the ones the app
+             archives on every switch. Both need a way to open them.
+             One surface, two lists. -->
+        <div class="row" id="designSource">
+          <button id="btnSrcSaved" class="active"
+                  title="the designs you saved under a name">Saved</button>
+          <button id="btnSrcHistory"
+                  title="every version the app archived for you, newest first — nothing here was deleted">History</button>
+        </div>
+        <div class="row" id="designFind">
+          <input id="designFilter" placeholder="find a design…" size="14"
+                 title="filter the list by name">
+          <label for="designSort">sort</label>
+          <select id="designSort" title="how to order the saved designs">
+            <option value="recent">most recent</option>
+            <option value="name">name</option>
+            <option value="oldest">oldest</option>
+          </select>
+          <span class="hint" id="designCount"></span>
+        </div>
+        <!-- The NUMBERS half of comparing designs. The 3D half is the eye on a
+             row, which ghosts that design behind the working one. Measurements
+             help distinguish variants that names alone cannot describe.
+             Filled by renderCompare(). -->
+        <div id="designCompare"></div>
+        <div id="designList"></div>
+
+        <div class="row">
+          <label for="nameBackend">Reviewer</label>
+          <select id="nameBackend" title="Which model writes the visual critique and names detected structures. Designing itself happens in a chat session, not here.">
+            <option value="claude">Claude</option>
+            <option value="codex">Codex</option>
+          </select>
+        </div>
+        <div id="whichDesign" class="hint"></div>
+        <div class="row" id="selBar" hidden><div id="selChips"></div></div>
+        <div class="row" id="selActions" hidden>
+          <span class="hint" id="selMeasure" style="flex:1"></span>
+          <button id="btnFrameSel" title="move the camera so the selection fills the view (F)">Zoom to it</button>
+          <button id="btnSelGroup" title="fold these into one thing that hides, locks and moves together">group</button>
+          <button id="btnSubstitute" title="make the selected plants the species picked below, where they stand — the new plant's mature size is checked for spacing and fit before it lands">Change species</button>
+          <button id="btnSelDuplicate" title="another one of these, set down beside it — checked against the ground, and undoable">Duplicate</button>
+          <select id="alignHow" title="line the selection up, or space it evenly. Axes are COMPASS, not screen — they mean the same thing whichever way the camera is pointing">
+            <option value="">align…</option>
+            <option value="west">align west edges</option>
+            <option value="east">align east edges</option>
+            <option value="north">align north edges</option>
+            <option value="south">align south edges</option>
+            <option value="centre_ew">centre east–west</option>
+            <option value="centre_ns">centre north–south</option>
+            <option value="spread_x">space evenly east–west</option>
+            <option value="spread_y">space evenly north–south</option>
+          </select>
+          <button id="btnSelClear">deselect</button>
+          <button id="btnSelDelete" title="remove the selected objects — Back undoes it">delete</button>
+        </div>
+        <!-- selProps belongs to the inspector card beside the selection
+             (src/shell/inspector.js). -->
+
+        <div class="row subhead"><span>Place by hand</span></div>
+        <div class="row">
+          <button id="btnPlace" data-mode="place" title="click the ground to put this down — it is checked against the real ground before it lands, exactly like anything the model places">Place</button>
+          <button id="pickTile" title="choose what to place — browse every plant with a picture">
+            <span class="thumb"></span><span class="what">nothing picked</span><span class="hint">choose…</span>
+          </button>
+          <!-- The <select> is the STATE, not the interface. pickedEntry() reads it
+               and ui_palette.test.mjs asserts there is exactly one DOM read of it,
+               so the storage stays put while the user chooses through the
+               picker with the pictures. -->
+          <select id="placeWhat" hidden></select>
+        </div>
+        <div class="hint">Anything you place by hand is checked the same way the model's designs are: on the house, off the scan, or too close to its neighbours at full size and it is refused, with the reason. Drag a selected object to move it the same way, or select plants and press <b>Change species</b> to make them this species where they stand.</div>
+
+        <!-- The panel's own header says OBJECTS and the top bar owns undo/redo
+             with its timeline position. Two bare ◀ ▶ arrows beside an object
+             count read as page-through rather than undo/redo. The BUTTONS stay
+             as the state — topbar delegates to them, the same way placeWhat is
+             the hidden state behind the assets window — and this row carries only the
+             sort control and the floating-object warning. -->
+        <!-- ONE LINE, then what it says. The filter and the sort SHARE a line,
+             because they are the two things that narrow the list. The count
+             sits under it because it is a report rather than a control;
+             "Show all" appears BESIDE the count only when something is actually
+             hidden — a reset for a state you are
+             not in is a button that can only do nothing. #objRow keeps the sort
+             control and the floating warning; undo/redo and the timeline live in
+             the top bar and are hidden here. -->
+        <div class="row subhead" id="objRow">
+          <span class="objhead"><span class="hint" id="objCount"></span><span class="hint" id="groundWarn" style="margin-left:6px"></span></span>
+          <span class="hint" id="tlPos"></span>
+          <button id="btnUndo" title="step back (⌘Z)">◀</button>
+          <button id="btnRedo" title="step forward (⇧⌘Z)">▶</button>
+        </div>
+        <div class="row" id="objFind">
+          <input id="objFilter" placeholder="find an object…" title="filter by name or kind" />
+        </div>
+        <!-- TWO PROPOSALS FOR ONE CORNER. Only present when the design
+             declares alternatives, which is almost never — it must not cost a
+             row of chrome to the designs that have none. -->
+        <div id="objAlts" hidden></div>
+        <div class="row" id="objTally">
+          <span class="hint" id="objShown"></span>
+          <button id="btnShowAllObjects" hidden title="everything hidden with an eye comes back">Show all</button>
+        </div>
+        <div id="objList"></div>
+      </div>
+    </section>
+
+    <section data-sec="places" class="open">
+      <h2>Places</h2>
+      <div class="body">
+        <div class="row">
+          <button id="btnDetect" class="primary">Find walls and structures</button>
+        </div>
+        <div class="row" id="proposalActions" hidden>
+          <button id="btnKeepAll">Keep all</button>
+          <button id="btnKeepSure">Keep confident</button>
+          <button id="btnDropAll">Discard</button>
+        </div>
+        <div id="proposals"></div>
+        <div class="row" id="lmNewRow">
+          <input type="text" id="lmName" placeholder="name" style="flex:1;min-width:0" />
+          <button id="btnMark" data-mode="landmark">Mark</button>
+        </div>
+        <div class="row subhead" id="lmHead"><span>Landmarks <span class="hint" id="lmCount"></span></span></div>
+        <div id="lmList"></div>
+        <div class="row subhead" id="areaHead"><span>Areas</span></div>
+        <div class="row">
+          <button id="btnLassoSelect" data-mode="pick" title="hold and drag a loop around part of the site to select everything inside it; shift adds to the selection">Select a section</button>
+          <button id="btnDrawArea" data-mode="area" title="hold and drag across the ground to draw a region on the ground">Draw area</button>
+          <button id="btnMeasure" data-mode="measure" title="click points on the ground; click again to add, Esc to clear">Measure</button>
+          <button id="btnAssets" title="browse every plant with a picture of the model, and filter by habit, water, native and cat safety">Plants…</button>
+        </div>
+        <div class="row">
+          <!-- measureOut belongs on the canvas so the readout remains visible
+               when panel sections are collapsed. -->
+          <input type="text" id="areaName" placeholder="optional name" title="leave blank and it is called area 6 until you rename it" style="flex:1;min-width:0" />
+        </div>
+        <div class="hint">Drag across the ground to draw one. It is saved straight away and you can rename it in the list.</div>
+        <div id="areaList" class="list"></div>
+        <div class="row subhead" id="vpRow"><span>Saved views <span class="hint" id="vpCount"></span></span></div>
+        <div id="vpList" class="list"></div>
+        <!-- The label must describe the photos the user gets, not only where
+             the camera stands. -->
+        <div class="row subhead" id="shotsHead"><span>Photographs of the garden</span></div>
+        <div id="shotsList"></div>
+        <!-- A PATH-TRACED FRAME. Minutes for the first of a session and about
+             half a minute after that, so it is a deliberate act with a button
+             rather than something that happens while you look around. Truthful,
+             never generative: every pixel is the geometry that is really there
+            . -->
+        <div class="row subhead" id="prHead"><span>Render one view properly</span></div>
+        <div class="row" id="prRow">
+          <select id="prSubject" title="what to point the camera at"></select>
+          <button id="btnPhotoreal" title="path-trace this view with Cycles at the hour the scan was photographed. Slow on purpose — it draws the real geometry rather than inventing a prettier one.">Render it</button>
+        </div>
+        <div class="row" id="prMsgRow"><span id="prMsg" class="hint"></span></div>
+        <div id="prOut"></div>
+      </div>
+    </section>
+
+    <section data-sec="scene" class="open">
+      <h2>Scene</h2>
+      <div class="body">
+        <div class="row" id="qualityRow">
+          <label for="renderQuality">Plant detail</label>
+          <select id="renderQuality" title="Fast uses simplified plants. Full detail loads the botanical masters — richer, and much heavier on this design.">
+            <option value="fast" selected>Fast preview</option>
+            <option value="full">Full detail</option>
+          </select>
+          <span id="renderQualityNote" class="hint" role="status">Simplified plants · faster loading</span>
+        </div>
+        <div class="row subhead" id="showHead"><span>Show</span></div>
+        <div class="row" id="layerRow">
+          <label class="small"><input type="checkbox" id="layDesign" checked /> design</label>
+          <label class="small"><input type="checkbox" id="laySite" checked /> markers</label>
+          <label class="small"><input type="checkbox" id="layHouse" checked /> house</label>
+          <label class="small"><input type="checkbox" id="layScan" checked /> scan</label>
+          <label class="small" title="the species name floating over every plant"><input type="checkbox" id="layPlantLabels" checked /> plant names</label>
+        </div>
+        <div class="row">
+          <button id="btnFrameAll" title="move the camera back until the whole site is in view (F)">See the whole site</button>
+          <button id="btnTopView">Top</button>
+          <button id="viewTop" hidden></button>
+          <button id="viewFront" title="look north — the elevation you see from the house">Front</button>
+          <button id="viewSide" title="look east — the section across the slope">Side</button>
+          <button id="viewIso" title="three-quarter view, the one a plan is usually drawn from">Iso</button>
+          <button id="btnWalk" title="take eight photographs from standing height on the design's own paths — pictures to look through, and to send for a critique. To walk it yourself, use Walk the garden.">Photograph the garden</button>
+        </div>
+        <div class="row">
+          <button id="btnBookmark">Save view</button>
+          <button id="btnGoBookmark">Go to view</button>
+          <button id="btnShot">Screenshot</button>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /#shellStore -->
+
+  <!-- Project settings: everything here is done ONCE per property (level the
+       scan, set north, set scale, place the footprint, choose the capture) and
+       then never again, so it does not belong beside the daily design loop.
+       Deliberately NOT a modal: Set north, Click span and Corner pairs all need
+       the user to click points in the scene while this window is open. -->
+  <div id="assetWindow" hidden aria-label="Plants and materials">
+    <h1><span class="grow">Plants</span>
+      <span id="assetCount" class="hint"></span>
+      <span class="hint">Simplified previews · use Inspect on a plant for full detail</span>
+      <button id="btnAssetsClose" title="close (Esc)">×</button></h1>
+    <div id="assetFilters">
+      <input id="assetSearch" type="search" placeholder="search — manzanita, sage, grass…" style="flex:1;min-width:140px" />
+      <select id="assetForm"><option value="">any habit</option></select>
+      <select id="assetWater">
+        <option value="">any water</option>
+        <option value="very_low">very low water</option>
+        <option value="low">low water or less</option>
+        <option value="moderate">moderate or less</option>
+      </select>
+      <label class="small"><input type="checkbox" id="assetNative" /> CA native</label>
+      <label class="small" title="only species on your own cat-safe list; anything not assessed is excluded"><input type="checkbox" id="assetCat" /> cat-safe</label>
+      <label class="small" title="only the plants you have — mark one with ☆ mine on its card; the list is kept with this site"><input type="checkbox" id="assetMine" /> mine</label>
+    </div>
+    <div id="assetGrid"></div>
+    <!-- THE OWNER'S PHOTOGRAPH. The user can add photos of their own plants,
+         stones and other assets with measured sizes. The size is asked for in
+         METRES and never inferred from the image, and nothing here touches
+         cat safety — a photograph says what a plant looks like, not what it is
+         toxicologically. -->
+    <form id="ownerPhoto" hidden>
+      <div class="op-head"><b>Add your photo</b><span id="opFor" class="hint"></span>
+        <button type="button" id="opClose" title="close">×</button></div>
+      <label class="op-file">the photograph
+        <input type="file" id="opFile" accept="image/jpeg,image/png,image/webp" required /></label>
+      <div class="op-row">
+        <label>how tall it is now <input type="text" id="opHeight" placeholder="e.g. 2 ft 7 in or 0.8 m" /></label>
+        <label>how wide it is now <input type="text" id="opSpread" placeholder="e.g. 3 ft or 0.9 m" /></label>
+      </div>
+      <span class="hint">Measured, in metres — this records what the plant IS today.
+        Mature size stays what the species does, and is not changed by this.</span>
+      <label class="op-where">where it is <input type="text" id="opWhere" placeholder="e.g. entry court, by the terrace" /></label>
+      <div class="op-row op-actions">
+        <button type="submit" id="opSave">Save my photo</button>
+        <span id="opMsg" class="hint"></span>
+      </div>
+    </form>
+  </div>
+
+  <div id="settings" hidden aria-label="Project settings">
+    <h1>Project settings <button id="btnSettingsClose" title="close (Esc)">✕</button></h1>
+    <div class="body">
+      <!-- SETUP IS A PATH, not a pile of buttons. analyze_site.py has a strict
+           order and doing it out of order silently produces a wrong yard. This
+           says where you are on it; main.js fills it from setupSteps(). -->
+      <!-- THE PROJECT, named and inventoried. There is no "save project" button
+           because there is nothing unsaved: every part below is written the
+           moment it changes, including calibration. Losing north when the tab
+           closes would leave saved designs with invalid spatial references. -->
+      <div class="row subhead" id="projHead"><span>Project</span></div>
+      <!-- WHICH SITE: every site is its own project — its scan, its ground truth,
+           its designs — and this is where another one is started or opened. -->
+      <div class="row" id="projSwitchRow" hidden>
+        <label for="projSwitch">Site</label>
+        <select id="projSwitch" title="open another site's project"></select>
+      </div>
+      <div class="row" id="projNewRow">
+        <button id="btnProjNew" title="start a project for another site: its own scan, ground and designs">New project…</button>
+        <button id="btnProjDemo" title="a made-up garden to try things on — made once, then opened">Open the demo garden</button>
+      </div>
+      <div class="row" id="projNewForm" hidden>
+        <input id="projNewName" type="text" maxlength="80" placeholder="an address or a name for the new site" />
+        <button id="btnProjCreate">Create</button>
+      </div>
+      <div class="row" id="projNameRow">
+        <input id="projName" type="text" placeholder="name this site" />
+      </div>
+      <div class="row"><span class="hint" id="projWhere"></span></div>
+      <!-- SIZES ON SCREEN. Everything is stored and checked in metres; this is
+           the last step before a number becomes text. It belongs to the PROPERTY
+           rather than to this browser, because a quote, a delivery and a
+           neighbour all read the same yard. -->
+      <div class="row" id="projUnitsRow">
+        <label for="projUnits">Sizes shown in</label>
+        <select id="projUnits" title="Everything stays measured in metres; this only changes how sizes are written on screen.">
+          <option value="metric">metres and centimetres</option>
+          <option value="imperial">feet and inches</option>
+        </select>
+      </div>
+      <div id="projParts"></div>
+
+      <!-- WHO this property is, above; what is still to be DONE to it, here. -->
+      <div id="setupPath"></div>
+
+      <div class="row subhead"><span>Capture</span></div>
+      <div class="row"><select id="captureSel"><option value="">— a scan already in this site —</option></select></div>
+      <div class="row"><input type="file" id="splatFile" accept=".ply,.spz,.splat,.ksplat,.sog,.glb" /></div>
+      <div class="row"><button id="btnDemo" title="load the sample capture that ships with the app, to try it without your own scan">Load the sample site</button></div>
+
+      <div class="row subhead"><span>Ground &amp; north</span></div>
+      <div class="row">
+        <button id="btnLevel" title="RANSAC ground plane, level the scene">Fit ground</button>
+        <button id="btnNorth" data-mode="north">Set north</button>
+        <button id="btnSave">Save calibration</button>
+      </div>
+
+      <div class="row subhead"><span>Scale</span></div>
+      <!-- ACCEPTING THE DEFAULT IS A REAL ANSWER. Measuring before locking the
+           scale is optional. A LiDAR capture arrives in metres already — a
+           measured span does not CREATE the scale, it checks it. So the capture's
+           own scale is offered, with what it implies shown, and taking it counts
+           as a decision rather than as a step skipped. It records that it was
+           accepted, not measured, because those are different claims. -->
+      <div class="row" id="scaleDefaultRow">
+        <span class="hint" id="scaleNow"></span>
+        <button id="btnAcceptScale" title="take the scale the scanner recorded. It is usually right to about a percent; measuring a taped span is how you find out.">Use the capture's own scale</button>
+      </div>
+      <div class="row"><span class="hint">or check it against something you have measured:</span></div>
+      <div class="row">
+        <button id="btnSpan" data-mode="span">Click span</button>
+        <input type="number" id="spanLen" step="0.01" placeholder="length" style="width:70px" />
+        <select id="spanUnit"><option value="m">m</option><option value="ft" selected>ft</option></select>
+      </div>
+      <div class="row">
+        <button id="btnApplyScale">Set scale</button>
+        <button id="btnCheckSpan" title="measure a SECOND known distance and report how far off the scale still is">Check it on a second span</button>
+      </div>
+
+      <!-- THE LAST TWO SETUP STEPS AS CONTROLS. tools/analyze_site.py and
+           tools/geodata.py need viewer controls so the user can run them
+           without typing commands. -->
+      <div class="row subhead"><span>Survey &amp; address</span></div>
+      <div class="row">
+        <button id="btnSurvey" title="raycast the scan every metre and find the slope, the areas and the gentle pockets — a minute or two">Survey the ground</button>
+      </div>
+      <div class="row">
+        <input id="siteAddress" type="text" maxlength="160" placeholder="street address" title="for the climate zone and the building outline" />
+        <button id="btnAddress">Look up</button>
+      </div>
+
+      <div class="row subhead"><span>House footprint <span class="hint">(optional)</span></span></div>
+      <div class="row">
+        <button id="btnLoadSite">Load site.json</button>
+        <button id="btnAlign" data-mode="align">Corner pairs</button>
+        <button id="btnSolveAlign">Solve</button>
+      </div>
+
+      <div class="row subhead"><span>Another site</span></div>
+      <div class="row"><span class="hint" id="newProjectHow"></span></div>
+
+      <div class="row subhead"><span>Working file</span></div>
+      <div class="row">
+        <button id="btnDesign">Reload design.json</button>
+        <label class="small"><input type="checkbox" id="chkPoll" checked /> update when the file changes</label>
+      </div>
+    </div>
+  </div>
+
+  <div id="walkOverlay" aria-hidden="true">
+  <div id="walkBar">
+    <span class="t">Photos from inside your garden</span>
+    <span class="sub" id="walkWhere">—</span>
+    <span class="grow"></span>
+    <button id="btnWalkAsk" title="send these eye-level frames to the model and ask what is wrong">Ask what's wrong</button>
+    <button id="btnWalkClose" title="close (Esc)">Close</button>
+  </div>
+  <div id="walkGrid"></div>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

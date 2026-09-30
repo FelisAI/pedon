@@ -1,0 +1,97 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Plant library preview</title>
+<style>
+  html,body{margin:0;height:100%;background:#8fa5b8;overflow:hidden}
+  #hud{position:fixed;left:10px;top:10px;font:13px ui-monospace,monospace;
+       color:#12202c;background:#ffffffcc;padding:8px 10px;border-radius:6px;white-space:pre}
+</style>
+<div id="hud">loading…</div>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { loadPlantLibrary, libraryNames } from "/src/assets.js";
+import { buildPlant } from "/src/plants.js";
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x8fa5b8);
+scene.fog = new THREE.Fog(0x8fa5b8, 40, 120);
+const cam = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 500);
+const rend = new THREE.WebGLRenderer({ antialias: true });
+rend.setSize(innerWidth, innerHeight);
+rend.setPixelRatio(Math.min(devicePixelRatio, 2));
+rend.shadowMap.enabled = true;
+rend.shadowMap.type = THREE.PCFSoftShadowMap;
+rend.toneMapping = THREE.NeutralToneMapping;
+rend.toneMappingExposure = 1.15;
+document.body.appendChild(rend.domElement);
+
+scene.add(new THREE.HemisphereLight(0xcfe6d8, 0x2a2420, 1.0));
+const sun = new THREE.DirectionalLight(0xfff2dd, 2.0);
+sun.position.set(14, 22, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -25, right: 25, top: 25, bottom: -25, near: 1, far: 70 });
+scene.add(sun);
+
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200, 200),
+  new THREE.MeshStandardMaterial({ color: 0x7f8a63, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// a 1 m grid so scale is readable at a glance
+const grid = new THREE.GridHelper(60, 60, 0x445544, 0x66775f);
+grid.material.opacity = 0.35; grid.material.transparent = true;
+grid.position.y = 0.01;
+scene.add(grid);
+
+const SPECS = [
+  { id: "a", species: "Quercus agrifolia", common: "coast live oak", mature_height_m: 7.0, mature_spread_m: 8.0 },
+  { id: "b", species: "Arctostaphylos 'Howard McMinn'", common: "manzanita", mature_height_m: 1.8, mature_spread_m: 2.6 },
+  { id: "c", species: "Heteromeles arbutifolia", common: "toyon", mature_height_m: 3.5, mature_spread_m: 2.8 },
+  { id: "d", species: "Cercis occidentalis", common: "western redbud", mature_height_m: 4.0, mature_spread_m: 4.0 },
+  { id: "e", species: "Chilopsis linearis", common: "desert willow", mature_height_m: 4.5, mature_spread_m: 4.0 },
+  { id: "f", species: "Pinus pinea", common: "stone pine", mature_height_m: 9.0, mature_spread_m: 7.0 },
+  { id: "g", species: "Ficus carica", common: "fig", mature_height_m: 4.0, mature_spread_m: 4.5 },
+  { id: "h", species: "Olea europaea 'Swan Hill'", common: "olive", mature_height_m: 5.0, mature_spread_m: 4.5 },
+  { id: "i", species: "Cupressus sempervirens 'Glauca'", common: "italian cypress", mature_height_m: 7.0, mature_spread_m: 1.2 },
+  { id: "j", species: "Ceanothus 'Ray Hartman'", common: "california lilac", mature_height_m: 3.0, mature_spread_m: 3.5 },
+  { id: "k", species: "Salvia clevelandii", common: "cleveland sage", mature_height_m: 1.2, mature_spread_m: 1.5 },
+  { id: "l", species: "Muhlenbergia rigens", common: "deergrass", mature_height_m: 1.2, mature_spread_m: 1.2 },
+  { id: "m", species: "Romneya coulteri", common: "matilija poppy", mature_height_m: 2.0, mature_spread_m: 2.0 },
+  { id: "n", species: "Dudleya brittonii", common: "chalk dudleya", mature_height_m: 0.4, mature_spread_m: 0.5 },
+  { id: "o", species: "Eriogonum fasciculatum", common: "california buckwheat", mature_height_m: 1.0, mature_spread_m: 1.5 },
+];
+
+await loadPlantLibrary();
+
+const labels = [];
+SPECS.forEach((p, i) => {
+  const g = buildPlant(p, { specimen: true });
+  const x = (i % 5) * 8 - 16, z = Math.floor(i / 5) * 9 - 9;
+  g.position.set(x, 0, z);
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  scene.add(g);
+  const box = new THREE.Box3().setFromObject(g);
+  labels.push(`${p.common}: `
+    + `${(box.max.y - box.min.y).toFixed(2)}m tall, `
+    + `${(box.max.x - box.min.x).toFixed(2)}m wide`
+    + `${g.userData.assetName ? ` [${g.userData.assetName}.glb]` : " [procedural]"}`);
+});
+
+document.getElementById("hud").textContent =
+  `library: ${libraryNames().join(", ") || "(none)"}\n\n` + labels.join("\n");
+
+cam.position.set(0, 9, 34);
+const ctl = new OrbitControls(cam, rend.domElement);
+ctl.target.set(0, 2.5, 0);
+ctl.update();
+addEventListener("resize", () => {
+  cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix();
+  rend.setSize(innerWidth, innerHeight);
+});
+rend.setAnimationLoop(() => rend.render(scene, cam));
+window.__preview = { scene, cam, rend, ctl };
+</script>

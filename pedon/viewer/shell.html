@@ -1,0 +1,45 @@
+<meta charset="utf-8" />
+<title>PEDON shell — review sheet</title>
+<!--
+  THE CHROME, WITHOUT THE YARD.
+
+  Building the UI means looking at the actual UI like a user — using it, finding
+  issues and fixing them — not reading source text. The obstacle is that the real
+  viewer loads a photogrammetry scan and hundreds of plants, so it can be busy for
+  over a minute and a screenshot times out.
+
+  So this is a review sheet, beside compare.html (plants against their
+  reference photos), objects.html (every object beside a 1.7 m figure) and
+  surfaces.html (paving and walls at eye level). It mounts the REAL shell modules
+  against a painted backdrop and a fixture design — same CSS, same icons, same
+  components — so the chrome can be looked at, clicked and criticised in a second
+  rather than a minute.
+
+  It is a REVIEW INSTRUMENT, not a mock: if a control looks wrong here it is
+  wrong in the app, because it is the same code.
+-->
+<link rel="stylesheet" href="/src/pedon.css" />
+<style>
+  html, body { margin: 0; height: 100%; background: var(--p-soil-900); }
+  /* a stand-in for the yard: enough tone and texture that the chrome is judged
+     against something, since every surface here is translucent over it */
+  #stage { position: fixed; inset: 0;
+    background:
+      radial-gradient(120% 90% at 30% 20%, #3c4a3a 0%, #27302a 45%, #161c18 100%),
+      repeating-linear-gradient(72deg, rgba(255,255,255,.018) 0 3px, transparent 3px 9px);
+  }
+  #note { position: fixed; right: 16px; bottom: 92px; z-index: 5;
+    font: 11px var(--p-sans); color: var(--p-faint); text-align: right; max-width: 260px; }
+</style>
+<div id="stage"></div>
+<div id="note">PEDON shell review sheet — real components, fixture data, no scan.<br />
+  Click anything. This is the same code the viewer runs.</div>
+
+<!-- THE PANEL MARKUP IS FETCHED FROM index.html, NOT COPIED.
+     A hand-written copy here drifts the moment index.html changes, and a panel
+     "fixed" here is then not the panel the app shows. Two copies of a vocabulary
+     is the mistake tests/test_dry.py exists to catch, and a review sheet with its
+     own copy reviews the copy. -->
+<div id="adopted" hidden></div>
+
+<script type="module" src="/src/shell_preview.js"></script>

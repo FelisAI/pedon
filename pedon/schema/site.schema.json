@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PEDON site.json",
+  "type": "object",
+  "required": ["version", "units", "origin", "footprint"],
+  "properties": {
+    "version": { "type": "integer" },
+    "units": { "const": "meters" },
+    "crs": { "const": "local ENU, x=east y=north, origin at `origin`" },
+    "address": { "type": "string" },
+    "zip": { "type": "string" },
+    "origin": { "type": "object", "required": ["lat", "lon"], "properties": { "lat": { "type": "number" }, "lon": { "type": "number" } } },
+    "usda_zone": { "type": "string" },
+    "usda_temp_range_f": { "type": "string" },
+    "footprint": { "type": "array", "minItems": 3, "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } } },
+    "footprint_source": { "type": "string" },
+    "roof_segments": { "type": "array", "items": { "type": "object" } },
+    "imagery_quality": { "type": "string" },
+    "existing_trees": { "type": "array", "items": { "type": "object", "properties": { "position": {}, "canopy_r_m": {}, "height_m": {}, "species": {} } } },
+    "lot": { "type": ["array", "null"] },
+    "fetched_at": { "type": "string" }
+  }
+}

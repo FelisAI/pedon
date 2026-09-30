@@ -1,0 +1,2846 @@
+{
+ "version": 2,
+ "for": "coastal California — USDA 10a, Sunset 16, summer-dry",
+ "source": "A TEST FIXTURE: rows copied from a working catalogue, for the Python tests that need a species' facts as input. The app ships no catalogue; the user's library holds theirs.",
+ "note": "Mature planning dimensions in metres, with evidence and uncertainty. Generic entries require identification. Generated models remain approximations.",
+ "cat_safe_note": "This catalog is not a veterinary source. True means linked ASPCA evidence at the stated taxon scope; false known toxic; NULL unverified / not assessed. No extrapolation across genera. Cultivars and essential oils are separate questions.",
+ "plants": [
+  {
+   "species": "Arctostaphylos spp.",
+   "common": "Manzanita",
+   "form": "mound",
+   "mature_height_m": 2.5,
+   "mature_spread_m": 2.5,
+   "foliage": "#7f8f7a",
+   "flower": "#f2dfe4",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "winter",
+   "note": "Exact manzanita species/cultivar is unresolved. Preview uses the separately named Howard McMinn example at legacy planning dimensions; identify the intended plant before final selection. Mahogany bark and mature canopy both need space.",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "reference_taxon": "Arctostaphylos 'Howard McMinn'",
+    "review": "review/plant-workflow/plants/arctostaphylos_spp/README.md",
+    "note": "Howard McMinn is a named visual example, not identification of this generic entry. Generic planning dimensions and cat safety remain unverified.",
+    "asset_file": "assets/plants/botanical/models/arctostaphylos_spp.glb"
+   },
+   "reference_links": [
+    {
+     "url": "https://www.calfloranursery.com/plants/arctostaphylos-howard-mcminn/",
+     "scope": "Howard McMinn example only"
+    }
+   ]
+  },
+  {
+   "species": "Ceanothus spp.",
+   "common": "California lilac",
+   "form": "mound",
+   "mature_height_m": 2.44,
+   "mature_spread_m": 3.66,
+   "foliage": "#3f5d3f",
+   "flower": "#5470b8",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "Exact Ceanothus species/cultivar remains unresolved. Preview is explicitly the Concha example at sourced mature example dimensions, not a genus-wide size or identification. Record the intended cultivar and its drainage/watering requirements before selecting; establishment irrigation is required.",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "example_taxon_only",
+    "sources": [
+     "https://uclpit.ucdavis.edu/ceanothus_concha"
+    ],
+    "note": "Concha example only: UC Davis separately reports mature 6–8 ft high × 6–12 ft wide. The 2.44 × 3.66 m preview uses the upper reported dimensions. This does not establish generic Ceanothus dimensions. Two-year trial measurements are not mature size."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "reference_taxon": "Ceanothus 'Concha'",
+    "review": "review/plant-workflow/plants/ceanothus_spp/README.md",
+    "note": "Concha is a labeled visual example, not identification of the generic selection. Leaf/flower architecture is reference modeled; photographic acceptance and exact cat safety remain open.",
+    "asset_file": "assets/plants/botanical/models/ceanothus_spp.glb"
+   },
+   "reference_links": [
+    {
+     "url": "https://www.calfloranursery.com/plants/ceanothus-concha/",
+     "scope": "Concha example only"
+    },
+    {
+     "url": "https://landscapeplants.oregonstate.edu/plants/ceanothus-concha",
+     "scope": "Concha example only"
+    },
+    {
+     "url": "https://uclpit.ucdavis.edu/ceanothus_concha",
+     "scope": "Concha example only"
+    }
+   ]
+  },
+  {
+   "species": "Heteromeles arbutifolia",
+   "common": "Toyon",
+   "form": "tree",
+   "mature_height_m": 4.5,
+   "mature_spread_m": 3.5,
+   "foliage": "#3d5a41",
+   "flower": "#e8e4d2",
+   "water": "low",
+   "sun": "sun_part",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "summer",
+   "note": "red berries in winter; takes shearing into a small tree",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "foliage": "#657847",
+   "flower": "#e8ddda",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "summer",
+   "note": "Model represents coastal var. fasciculatum with green rolled leaves and woolly undersides. Mature habit varies from decumbent to upright. Dense cream/pink heads age to rust-brown and may persist into winter. Well-drained dry-slope candidate; establishment irrigation required. Exact E. fasciculatum feline safety remains unverified.",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.61,
+    2.0
+   ],
+   "mature_spread_range_m": [
+    1.22,
+    3.0
+   ],
+   "size_evidence": {
+    "status": "sourced_species_range",
+    "reviewed_on": "2026-09-08",
+    "sources": [
+     "https://plants.sdsu.edu/sdpls/plants/Eriogonum_fasciculatum/",
+     "https://theodorepayne.org/nativeplantdatabase/index.php?title=Eriogonum_fasciculatum_var._fasciculatum",
+     "https://waterwisegardenplanner.org/plants/eriogonum-fasciculatum/",
+     "https://cpp.msi.ucsb.edu/ERFA"
+    ],
+    "note": ".90 × 1.50 m mature planning example. Coastal var. fasciculatum examples: SDSU 2–3 ft high, Theodore Payne 3–4 ft × 4 ft. Waterwise species account 2–4 ft × 4–6+ ft; UCSB species maximum 2 × 3 m. Combined range is a variable planning envelope, not guaranteed size or nursery-pot dimensions. UCI 2–4 ft branch lengths are not treated as spread. Exact clone and conditions control habit."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "reference_taxon": "Eriogonum fasciculatum var. fasciculatum — coastal example",
+    "asset_file": "assets/plants/botanical/models/eriogonum_fasciculatum.glb",
+    "note": "Connected woody scaffold, short leaf fascicles, 6–15 mm revolute leaves with abaxial hairs, five-toothed involucres, six tepals, nine stamens and three styles. Original generated surface atlas; final visual review pending, not a scan or accepted photorealistic asset."
+   },
+   "reference_links": [
+    "https://plants.sdsu.edu/sdpls/plants/Eriogonum_fasciculatum/",
+    "https://theodorepayne.org/nativeplantdatabase/index.php?title=Eriogonum_fasciculatum_var._fasciculatum",
+    "https://waterwisegardenplanner.org/plants/eriogonum-fasciculatum/",
+    "https://cpp.msi.ucsb.edu/ERFA",
+    "https://nathistoc.bio.uci.edu/plants/Polygonaceae/Eriogonum%20fasciculatum.htm"
+   ]
+  },
+  {
+   "species": "Baccharis pilularis 'Pigeon Point'",
+   "common": "Dwarf coyote brush",
+   "form": "mat",
+   "mature_height_m": 0.91,
+   "mature_spread_m": 2.44,
+   "foliage": "#5d7a4c",
+   "flower": "#dfe0d2",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "autumn",
+   "note": "Bright green, undulating low male selection, 2–3 ft tall × 6–8 ft wide; no cottony seed heads. Very low summer water near the coast after establishment; establishment irrigation is required. Exact cat safety remains unverified.",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.61,
+    0.91
+   ],
+   "mature_spread_range_m": [
+    1.83,
+    2.44
+   ],
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://www.calfloranursery.com/plants/baccharis-pilularis-pigeon-point/",
+     "https://research.fs.usda.gov/feis/species-reviews/bacpil"
+    ],
+    "reviewed_on": "2026-09-07",
+    "note": "Local nursery gives 2–3 ft height and 6–8 ft typical spread. Pruning, age and site affect ultimate dimensions; all plants need establishment irrigation."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "review": "review/plant-workflow/plants/baccharis_pilularis/README.md",
+    "note": "Connected branching, alternate wedge-shaped toothed leaves, generated leaf albedo and small male disc-flower heads. Photorealistic and app review remain open.",
+    "model_sex": "male_clone",
+    "asset_file": "assets/plants/botanical/models/baccharis_pilularis_pigeon_point.glb"
+   },
+   "reference_links": [
+    {
+     "url": "https://www.calfloranursery.com/plants/baccharis-pilularis-pigeon-point/",
+     "scope": "named cultivar"
+    }
+   ]
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "mature_height_m": 0.91,
+   "mature_spread_m": 1.22,
+   "foliage": "#849350",
+   "flower": "#c8bda0",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "summer",
+   "note": "the strongest single texture in a dry garden; use in odd-numbered drifts",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.76,
+    1.22
+   ],
+   "mature_spread_range_m": [
+    0.91,
+    1.22
+   ],
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://www.calfloranursery.com/plants/muhlenbergia-rigens/"
+    ],
+    "reviewed_on": "2026-09-05",
+    "note": "Typical mature foliage clump about 3 ft (0.91 m) high and 3–4 ft wide; source range 2.5–4 ft high. Flower stalk height is separate: representative display 1.5 m, broader planning range 1.2–1.8 m. A 2-inch plug is a starting size, not the mature footprint."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "note": "Attached tillers, rolled arching blades and dense pointed spikelets replace generic strips and cylindrical heads. Whole-plant uniformity still needs revision; photorealism not accepted.",
+    "review": "review/plant-workflow/plants/muhlenbergia_rigens/README.md",
+    "asset_file": "assets/plants/botanical/models/muhlenbergia_rigens.glb"
+   },
+   "flowering_height_range_m": [
+    1.2,
+    1.8
+   ],
+   "flowering_height_m": 1.5
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "foliage": "#8b9b86",
+   "flower": "#c9c3ab",
+   "water": "low",
+   "sun": "part_shade",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "California native clumping grass with coarse gray-green to blue-green basal blades and persistent pale dry sheaths/skirt. Open lax or nodding panicles; appropriate in part shade and woodland slope conditions. UC Davis trial in 50% shade performed well at low irrigation after establishment. Establishment irrigation remains necessary.",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.3048,
+    1.2192
+   ],
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "sourced_species_example",
+    "sources": [
+     "https://uclpit.ucdavis.edu/Festuca_californica",
+     "https://plants.sc.egov.usda.gov/DocumentLibrary/factsheet/pdf/fs_feca.pdf",
+     "https://floranorthamerica.org/Festuca_californica"
+    ],
+    "note": "UC Davis reports maturity 1–4 ft high × about 3 ft wide, separately from 1.8 × 2.9 ft after two trial years. .75 × .9 m planning example retained. USDA culms .60–1.40 m and FNA broader .30–1.50(2.0) m reflect flowering/species variation, not a guaranteed maximum. Existing .9–1.2 m flowering example remains within those sources. The source gives an approximate spread point, not a numerical spread range."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "note": "Species-specific thick rough folded/rolled blades, short modeled adaxial hairs, attached sheaths/ligules, flag leaves and five-flowered green/purple to aging spikelets. Hair spacing and organ widths not directly measured from a specimen remain estimates. Native and app fidelity review required; not a scan."
+   },
+   "flowering_height_range_m": [
+    0.9,
+    1.2
+   ]
+  },
+  {
+   "species": "Salvia apiana",
+   "common": "White sage",
+   "form": "mound",
+   "mature_height_m": 1.0,
+   "mature_spread_m": 1.4,
+   "foliage": "#c3c9bd",
+   "flower": "#eceae0",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "near-white foliage; the brightest thing you can plant in full sun",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.75,
+    1.2
+   ],
+   "mature_spread_range_m": [
+    1.2,
+    1.5
+   ],
+   "size_evidence": {
+    "status": "sourced",
+    "sources": [
+     "https://www.laspilitas.com/nature-of-california/plants/604--salvia-apiana",
+     "https://en.wikipedia.org/wiki/Salvia_apiana",
+     "https://waterwisegardenplanner.org/plants/salvia-apiana/"
+    ],
+    "reviewed_on": "2026-09-16",
+    "note": "The FOLIAGE mound is 2.5-4 ft; the flower wands add another 2-4 ft above it. The old 1.8 m was the FLOWERING height used as the foliage height, which built a 2.29 m cone where the plant is a low silver mound with wands over it."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   },
+   "flowering_height_range_m": [
+    1.8,
+    3.0
+   ],
+   "flowering_height_m": 1.8
+  },
+  {
+   "species": "Salvia leucophylla",
+   "common": "Purple sage",
+   "form": "mound",
+   "mature_height_m": 1.5,
+   "mature_spread_m": 2.0,
+   "foliage": "#a8ae9c",
+   "flower": "#c39bc0",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "summer-deciduous — expect it to look thin in August",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia clevelandii",
+   "common": "Cleveland sage",
+   "form": "mound",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 2.4,
+   "foliage": "#8d9a86",
+   "flower": "#8f8ec7",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "the scent plant; put it where people brush past",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.9,
+    1.4
+   ],
+   "mature_spread_range_m": [
+    1.8,
+    2.7
+   ],
+   "size_evidence": {
+    "status": "sourced",
+    "sources": [
+     "https://horticultureunlimited.com/salvia-clevelandii-is-the-plant-of-the-month/",
+     "https://chapters.cnps.org/montereybay/local-heroes-salvias/"
+    ],
+    "reviewed_on": "2026-09-16",
+    "note": "3-4.5 ft tall and 'usually twice as wide as it is high'. The height was about right; the SPREAD was far too narrow at 1.5 m, which is why it read as a tight ball rather than the broad low dome it makes."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "foliage": "#7f9280",
+   "flower": "#d9c3dc",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring_summer",
+   "note": "coastal — good at a path edge where it can spill",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Penstemon spp.",
+   "common": "Penstemon",
+   "form": "perennial",
+   "mature_height_m": 0.8,
+   "mature_spread_m": 0.6,
+   "foliage": "#6f8a5f",
+   "flower": "#8c5fbf",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "needs sharp drainage; superb on a slope, sulks on flat clay",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia greggii",
+   "common": "Autumn sage",
+   "form": "mound",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 0.9,
+   "foliage": "#5f7a52",
+   "flower": "#d4405a",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring_autumn",
+   "note": "the longest bloom of any salvia here",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia rosmarinus",
+   "common": "Rosemary",
+   "form": "mound",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "foliage": "#4e6b57",
+   "flower": "#8fa8cc",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "winter_spring",
+   "note": "upright form; hedges well, and it is culinary",
+   "cat_safe": true,
+   "aliases": [
+    "Rosmarinus officinalis"
+   ],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "listed_non_toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Rosmarinus officinalis",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/rosemary"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists the stated taxon. Cultivars are not separately listed; living-plant evidence does not cover oils or extracts."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "evidence_supported",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "note": "Attached leaf-bearing shoots and curved surfaces; reviewed at whole-plant and leaf scale. Not a scan or accepted photorealistic asset.",
+    "review": "review/plant-fidelity-2026-09-07/README.md",
+    "asset_file": "assets/plants/botanical/models/salvia_rosmarinus.glb"
+   }
+  },
+  {
+   "species": "Olea europaea (fruitless)",
+   "common": "Olive",
+   "form": "tree",
+   "mature_height_m": 6.0,
+   "mature_spread_m": 5.0,
+   "foliage": "#8a9587",
+   "flower": "#efe9d8",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "specify a fruitless cultivar or you will be sweeping fruit for 40 years",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "shared_library_approximation",
+    "note": "Shared procedural GLB resized to this entry; not an exact-cultivar scan. Crown architecture and cultivar-specific foliage still need specialist reference matching."
+   }
+  },
+  {
+   "species": "Santolina chamaecyparissus",
+   "common": "Lavender cotton",
+   "form": "mound",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.9,
+   "foliage": "#b9bfae",
+   "flower": "#e8d264",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "silver; shear after bloom or it opens in the middle",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Lavandula angustifolia",
+   "common": "English lavender",
+   "form": "mound",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.75,
+   "foliage": "#94a08d",
+   "flower": "#8f7ec4",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "CAT CAUTION: the owner flagged lavender toxicity — keep it off cat routes",
+   "cat_safe": false,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Lavandula angustifolia",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/lavender"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists this species as toxic to cats; excluded from new planting."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "excluded_toxic",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Cistus spp.",
+   "common": "Rockrose",
+   "form": "mound",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.5,
+   "foliage": "#5f7060",
+   "flower": "#e6b9cc",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "Resolve exact species/cultivar before selection. Current model is a labeled C. × purpureus example. Requires establishment irrigation. Chino Basin Water Conservation District advises against rockroses near Southern California wildlands due to escapes; assess the exact taxon and local context before planting.",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "example_taxon_only",
+    "sources": [
+     "https://landscapeplants.oregonstate.edu/plants/cistus-purpureus",
+     "https://waterwisegardenplanner.org/plants/cistus-x-purpureus/"
+    ],
+    "note": "Only the labeled C. × purpureus example: OSU .6–1.2 m high/wide; Chino Basin California description 3–5 ft tall × 5–8 ft wide, its table 3–4 ft tall. The 1.2 × 1.5 m planning model is not the maximum or verified size of the unresolved generic choice."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "reference_taxon": "Cistus × purpureus — labeled example only",
+    "note": "Generic intended selection remains unidentified. Dedicated opposite narrow leaves, stellate down, five crinkled pink petals with maroon spots and yellow stamens. Not a scan or photorealistically accepted asset."
+   }
+  },
+  {
+   "species": "Oenothera lindheimeri",
+   "common": "Gaura",
+   "form": "perennial",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 0.75,
+   "foliage": "#7a8f64",
+   "flower": "#f2dce4",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": false,
+   "bloom": "summer_autumn",
+   "note": "airy — it moves in wind, which is the reason to use it",
+   "cat_safe": null,
+   "aliases": [
+    "Gaura lindheimeri"
+   ],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Teucrium spp.",
+   "common": "Germander",
+   "form": "mound",
+   "mature_height_m": 0.8,
+   "mature_spread_m": 1.0,
+   "foliage": "#6b7d64",
+   "flower": "#c2a2cc",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "the low evergreen hedge that is not boxwood",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Eschscholzia californica",
+   "common": "California poppy",
+   "form": "meadow",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.3,
+   "foliage": "#8fa89a",
+   "flower": "#f0993a",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "fall-sown; reseeds forever once it likes you",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Nemophila menziesii",
+   "common": "Baby blue eyes",
+   "form": "meadow",
+   "mature_height_m": 0.2,
+   "mature_spread_m": 0.3,
+   "foliage": "#9db56f",
+   "flower": "#7ea8e0",
+   "water": "low",
+   "sun": "sun_part",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "wants a little shade and a little water to last",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Lasthenia spp.",
+   "common": "Goldfields",
+   "form": "meadow",
+   "mature_height_m": 0.2,
+   "mature_spread_m": 0.2,
+   "foliage": "#a3b473",
+   "flower": "#f5c93a",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "sheets of gold in a wet spring, nothing in a dry one",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Gilia spp.",
+   "common": "Gilia",
+   "form": "meadow",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.2,
+   "foliage": "#93a860",
+   "flower": "#8f9ede",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "fine blue globes on wiry stems",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "foliage": "#7f9a5f",
+   "flower": "#f0c53a",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "Resolve species/cultivar. Labeled lanceleaf example has yellow spring–summer heads and narrow basal foliage. Deadheading can extend bloom and reduce self-seeding; occasional division may be needed. Establishment irrigation required.",
+   "cat_safe": true,
+   "aliases": [
+    "Coreopsis spp."
+   ],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "listed_non_toxic",
+    "evidence_scope": "genus",
+    "source_taxon": "Coreopsis spp.",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/coreopsis"
+    ],
+    "reviewed_on": "2026-09-08",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists the stated taxon. Cultivars are not separately listed; living-plant evidence does not cover oils or extracts."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "example_taxon_only",
+    "sources": [
+     "https://plants.ces.ncsu.edu/plants/coreopsis-lanceolata/",
+     "https://floranorthamerica.org/Coreopsis_lanceolata"
+    ],
+    "reviewed_on": "2026-09-08",
+    "note": "Labeled C. lanceolata example .5 × .5 m, within NCSU .30–.91 × .30–.61 m garden range. Not a genus-wide range, exact identification or maximum. FNA documents smaller wild individuals; Florida ecotypes differ from garden forms."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "reference_taxon": "Coreopsis lanceolata — labeled example only",
+    "asset_file": "assets/plants/botanical/models/coreopsis.glb",
+    "note": "Lanceleaf example with physical narrow basal/lower opposite leaves, notched yellow rays, actual disc florets, dimorphic involucre and buds. Generic intended identity remains unresolved; not a scan or photorealistic acceptance."
+   },
+   "reference_links": [
+    "https://missouriplants.com/Coreopsis_lanceolata_page.html",
+    "https://floranorthamerica.org/Coreopsis_lanceolata",
+    "https://plants.ces.ncsu.edu/plants/coreopsis-lanceolata/"
+   ]
+  },
+  {
+   "species": "Geranium",
+   "common": "Cranesbill",
+   "form": "perennial",
+   "mature_height_m": 0.4,
+   "mature_spread_m": 0.6,
+   "foliage": "#6d8a5a",
+   "flower": "#b06fbf",
+   "water": "low",
+   "sun": "sun_part",
+   "evergreen": false,
+   "ca_native": false,
+   "bloom": "spring_summer",
+   "note": "hardy geranium, not pelargonium",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/geranium"
+    ],
+    "reviewed_on": "2026-09-07",
+    "cultivar_explicitly_listed": false,
+    "note": "Exact species needs identification. ASPCA toxic Geranium entry names Pelargonium species, a different genus; do not transfer that listing to true Geranium or substitute a common-name Pelargonium."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Heuchera",
+   "common": "Coral bells",
+   "form": "perennial",
+   "mature_height_m": 0.4,
+   "mature_spread_m": 0.5,
+   "foliage": "#9a6f7a",
+   "flower": "#e8c9cc",
+   "water": "moderate",
+   "sun": "sun_part",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "grown for leaf colour; needs shade here",
+   "cat_safe": null,
+   "aliases": [
+    "Heuchera spp."
+   ],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "cooler_part_shade_irrigated",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Fragaria spp.",
+   "common": "Wild strawberry",
+   "form": "mat",
+   "mature_height_m": 0.15,
+   "mature_spread_m": 0.6,
+   "foliage": "#5f7a4f",
+   "flower": "#f0ece0",
+   "water": "moderate",
+   "sun": "sun_part",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "evergreen groundcover that takes some traffic",
+   "cat_safe": true,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "listed_non_toxic",
+    "evidence_scope": "genus",
+    "source_taxon": "Fragaria",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/wild-strawberry"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists the stated taxon. Cultivars are not separately listed; living-plant evidence does not cover oils or extracts."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "cooler_part_shade_irrigated",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Fremontodendron spp.",
+   "common": "Flannel bush",
+   "form": "tree",
+   "mature_height_m": 5.0,
+   "mature_spread_m": 4.0,
+   "foliage": "#6b7a5f",
+   "flower": "#f0b83a",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "spectacular and touchy: absolutely no summer water near the crown",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Festuca idahoensis 'Tomales Bay'",
+   "common": "Tomales Bay fescue",
+   "form": "grass",
+   "mature_height_m": 0.305,
+   "mature_spread_m": 0.46,
+   "foliage": "#7d9099",
+   "flower": "#c9c3ab",
+   "water": "moderate",
+   "sun": "sun_part",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "tighter and bluer than the straight species; a good mass under oaks",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "cooler_part_shade_irrigated",
+   "mature_height_range_m": [
+    0.25,
+    0.305
+   ],
+   "mature_spread_range_m": [
+    0.4,
+    0.46
+   ],
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://www.calfloranursery.com/plants/festuca-idahoensis-tomales-bay/"
+    ],
+    "reviewed_on": "2026-09-05",
+    "note": "Nursery narrative specifies foliage to 1 ft high, about 1.5 ft wide; inflorescences to 18 in. Lower bounds are planning allowances."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   },
+   "flowering_height_range_m": [
+    0.38,
+    0.457
+   ]
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "foliage": "#8fa8b5",
+   "flower": "#c9c3ab",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "Fine chalky blue-gray arching cultivar; coastally suited, with mixed pale aging blades and wheat-colored seedheads. El Nativo describes suspected F. idahoensis × F. glauca parentage, not confirmed identity. Nursery water advice ranges from low after establishment to moderate/regular; give establishment irrigation and avoid assuming lush foliage on a wholly unirrigated slope. Inland heat may require afternoon protection. Some growers describe evergreen foliage; Santa Barbara Botanic Garden lists summer dormancy.",
+   "cat_safe": null,
+   "aliases": [
+    "Festuca idahoensis 'Siskiyou Blue'"
+   ],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.3048,
+    0.6096
+   ],
+   "mature_spread_range_m": [
+    0.3048,
+    0.6096
+   ],
+   "size_evidence": {
+    "status": "sourced_cultivar_range",
+    "sources": [
+     "https://www.boethingtreeland.com/plants/festuca-siskiyou-blue/",
+     "https://devilmountainnursery.com/festuca-idahoensis-x-siskiyou-blue/",
+     "https://elnativogrowers.com/festuca-siskiyou-blue-1g/"
+    ],
+    "note": "Grower descriptions give typical mature 1–2 ft height and spread (Devil Mountain 12–24 in height). Retain .45 × .5 m planning example. Long arching blades can extend beyond the tuft; exported model dimensions are measured separately and do not redefine the sourced range."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "note": "Physical inrolled blades, attached sheaths and provisional six-flowered seedheads; exact cultivar floral evidence unresolved. Whole habit, surface fidelity and source-range fit require further review; not a scan or accepted photorealistic asset."
+   }
+  },
+  {
+   "species": "Lomandra",
+   "common": "Mat rush",
+   "form": "grass",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.7,
+   "foliage": "#5f7f63",
+   "flower": "#c4b070",
+   "water": "low",
+   "sun": "sun_part",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "tough strappy clump, near-zero maintenance; reads like a rush without the water",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "needs_identification",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.9,
+   "foliage": "#9aa89b",
+   "flower": "#9a8fc4",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "Broad silver-green culinary leaves; rarely flowers. The default model shows its mature foliage habit.",
+   "cat_safe": true,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "listed_non_toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Salvia officinalis",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/sage"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists the stated taxon. Cultivars are not separately listed; living-plant evidence does not cover oils or extracts."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "evidence_supported",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.5,
+    1.0
+   ],
+   "mature_spread_range_m": [
+    0.5,
+    1.0
+   ],
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://www.rhs.org.uk/plants/68040/salvia-officinalis-berggarten/details",
+     "https://lambley.com.au/product/salvia-officinalis-berggarten/"
+    ],
+    "note": "RHS describes a 60 cm compact subshrub and gives broad ultimate H/W ranges of 0.5–1 m; planning height 0.6 m, spread 0.9 m. Nursery references report rare flowering; default model shows the foliage habit."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "note": "Attached leaf-bearing shoots and curved surfaces; reviewed at whole-plant and leaf scale. Not a scan or accepted photorealistic asset.",
+    "review": "review/plant-fidelity-2026-09-07/README.md",
+    "asset_file": "assets/plants/botanical/models/salvia_officinalis_berggarten.glb"
+   }
+  },
+  {
+   "species": "Origanum majorana",
+   "common": "Sweet marjoram",
+   "form": "mound",
+   "mature_height_m": 0.4,
+   "mature_spread_m": 0.4,
+   "foliage": "#8a9a78",
+   "flower": "#e6dfd2",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "soft grey-green mound; culinary, and it takes a path edge",
+   "cat_safe": false,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Origanum majorana",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/marjoram"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists this species as toxic to cats; excluded from new planting."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "excluded_toxic",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia leucantha",
+   "common": "Mexican bush sage",
+   "form": "mound",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.5,
+   "foliage": "#8e9c8a",
+   "flower": "#7b5ea8",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer_autumn",
+   "note": "velvet purple spikes from August until the rain — the plant that carries this garden through the dry end of the year; cut the whole clump to 15 cm in late winter or it goes woody and bare at the base",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia nemorosa 'Caradonna'",
+   "common": "Caradonna sage",
+   "form": "perennial",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.5,
+   "foliage": "#6f7f58",
+   "flower": "#4a3a86",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": false,
+   "bloom": "spring_summer",
+   "note": "the upright violet spike on near-black stems; every other salvia here is a dome, and a border needs something that stands up out of one. Shear the first flush hard and it repeats; the black stems hold the line into winter",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia spathacea",
+   "common": "Hummingbird sage",
+   "form": "perennial",
+   "mature_height_m": 0.8,
+   "mature_spread_m": 1.5,
+   "foliage": "#5d7a4a",
+   "flower": "#c8447e",
+   "water": "moderate",
+   "sun": "sun_part",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "the only salvia here for dry shade — under the olive, or the north side, where nothing else in this genus will go. Big fruity rugose leaves, magenta whorls; it runs on rhizomes, so give it ground to fill rather than a slot",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "cooler_part_shade_irrigated",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia 'Bee's Bliss'",
+   "common": "Bee's Bliss sage",
+   "form": "mat",
+   "mature_height_m": 0.4,
+   "mature_spread_m": 2.4,
+   "foliage": "#a9b0a2",
+   "flower": "#a89bc6",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "a garden hybrid of two California natives (sonomensis x leucophylla) and the grey carpet for a hot slope top or the head of a wall; it rots with summer water, so keep irrigation off it entirely once it has taken",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia chamaedryoides",
+   "common": "Germander sage",
+   "form": "mound",
+   "mature_height_m": 0.4,
+   "mature_spread_m": 0.9,
+   "foliage": "#9aa495",
+   "flower": "#3f63b5",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring_autumn",
+   "note": "the truest blue in this palette, carried on silver — small, and it travels by underground stems, so it knits between rocks and along a path edge instead of holding one spot",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia mellifera",
+   "common": "Black sage",
+   "form": "mound",
+   "mature_height_m": 1.5,
+   "mature_spread_m": 2.0,
+   "foliage": "#4d6146",
+   "flower": "#cfc9de",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "the local chaparral sage and the strongest bee plant on this list; dark narrow rugose leaves against all the grey ones. It drops leaves and looks thin by September in a dry year — that is the plant working, not failing",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia argentea",
+   "common": "Silver sage",
+   "form": "perennial",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.6,
+   "foliage": "#d3d3c6",
+   "flower": "#efece0",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "grown for the huge woolly white rosette and not for the flower — the brightest foliage texture available here. Short-lived: take the flower stem off to keep the leaves coming, and let one plant seed so there is a replacement",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia lavandulifolia",
+   "common": "Spanish sage",
+   "form": "mound",
+   "mature_height_m": 0.4,
+   "mature_spread_m": 0.9,
+   "foliage": "#8b9683",
+   "flower": "#8d8ec2",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "late_spring",
+   "note": "narrow grey aromatic leaves, and it stays tight and low where Salvia officinalis sprawls and splits open after three years; culinary, and the better of the two for a hot dry edge here",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Thymus vulgaris",
+   "common": "Common / Garden Thyme",
+   "form": "mound",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "mature_height_range_m": [
+    0.15,
+    0.3
+   ],
+   "mature_spread_range_m": [
+    0.3,
+    0.6
+   ],
+   "foliage": "#71806b",
+   "flower": "#d2aec6",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "Upright culinary thyme, distinct from creeping thyme mats.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": true,
+   "cat_safety": {
+    "status": "listed_non_toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Thymus vulgaris",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/thyme"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists the stated taxon. Cultivars are not separately listed; living-plant evidence does not cover oils or extracts."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "evidence_supported",
+   "site_zone": "dry_slope_candidate",
+   "size_evidence": {
+    "status": "planning_estimate",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Foeniculum vulgare 'Purpureum'",
+   "common": "Bronze Fennel",
+   "form": "perennial",
+   "mature_height_m": 2.1,
+   "mature_spread_m": 1.2,
+   "mature_height_range_m": [
+    1.2,
+    2.1
+   ],
+   "mature_spread_range_m": [
+    0.6,
+    1.2
+   ],
+   "foliage": "#776150",
+   "flower": "#d5be48",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "Airy perennial. Species invasive in California; cultivar escape risk unresolved. Remove seedheads.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": true,
+   "cat_safety": {
+    "status": "listed_non_toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Foeniculum vulgare",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/fennel"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists the stated taxon. Cultivars are not separately listed; living-plant evidence does not cover oils or extracts."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "evidence_supported",
+   "site_zone": "ecological_review_required",
+   "size_evidence": {
+    "status": "planning_estimate",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   },
+   "ecology": {
+    "status": "species_invasive_cultivar_risk_unresolved",
+    "source": "https://www.cal-ipc.org/plants/profile/foeniculum-vulgare-profile/",
+    "note": "Species rated Moderate; culinary variety invasiveness explicitly unclear. Do not call the cultivar sterile."
+   }
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "mature_height_range_m": [
+    0.1,
+    0.61
+   ],
+   "mature_spread_range_m": [
+    0.1,
+    0.61
+   ],
+   "foliage": "#849281",
+   "flower": "#e2ce3d",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "summer",
+   "note": "Low cushion; yellow umbels above basal leaves. Varieties differ substantially.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": true,
+   "cat_safety": {
+    "status": "listed_non_toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Eriogonium umbellatum [ASPCA spelling]",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/sulfur-flower"
+    ],
+    "reviewed_on": "2026-09-08",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists the stated taxon. Cultivars are not separately listed; living-plant evidence does not cover oils or extracts."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "evidence_supported",
+   "site_zone": "dry_slope_candidate",
+   "size_evidence": {
+    "status": "sourced_range",
+    "sources": [
+     "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_erum.pdf",
+     "https://extension.oregonstate.edu/catalog/em-9490-eriogonum-umbellatum-sulphur-flower-buckwheat"
+    ],
+    "note": "Planning example .3 m flowering height × .6 m spread is a low mat-forming species example, variety unspecified. USDA describes broad mats about 1 ft high × 2 ft wide and flower stems 3–16 in; flowering_height_range_m records this stem range, not foliage height plus stems. OSU gives typical clumps 4 in–2 ft in height/spread, exceptionally 4 ft; exceptional maximum and varied subspecies are not represented by the typical range. Verify exact nursery identity and mature dimensions before final selection."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "note": "Connected woody basal rosettes, broad petiolate blades with pale woolly undersides, scapes, fork bracts and yellow six-tepal flowers; original shared cuticle/tepal atlas. Low mat-forming E. umbellatum example, variety unspecified. Not a scan or accepted photorealistic plant."
+   },
+   "flowering_height_range_m": [
+    0.076,
+    0.406
+   ]
+  },
+  {
+   "species": "Festuca idahoensis",
+   "common": "Idaho Fescue",
+   "form": "grass",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.6,
+   "mature_height_range_m": [
+    0.3,
+    0.6
+   ],
+   "mature_spread_range_m": [
+    0.3,
+    0.6
+   ],
+   "foliage": "#748b92",
+   "flower": "#c3b398",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "Fine blue-gray bunchgrass; seed stalks rise above the foliage.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": null,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "size_evidence": {
+    "status": "planning_estimate",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Thymus serpyllum 'Pink Chintz'",
+   "common": "Pink Chintz Creeping Thyme",
+   "form": "mat",
+   "mature_height_m": 0.05,
+   "mature_spread_m": 0.5,
+   "mature_height_range_m": [
+    0.03,
+    0.05
+   ],
+   "mature_spread_range_m": [
+    0.3,
+    0.5
+   ],
+   "foliage": "#778b73",
+   "flower": "#d7acbb",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer",
+   "note": "Very low carpet with terminal pink heads for stone edges.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": null,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://www.rhs.org.uk/plants/90194/thymus-serpyllum-pink-chintz/details"
+    ],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size.",
+    "reviewed_on": "2026-09-05"
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Monardella macrantha",
+   "common": "Red-flowered Monardella",
+   "form": "mat",
+   "mature_height_m": 0.15,
+   "mature_spread_m": 0.45,
+   "mature_height_range_m": [
+    0.05,
+    0.15
+   ],
+   "mature_spread_range_m": [
+    0.3,
+    0.45
+   ],
+   "foliage": "#486749",
+   "flower": "#d63d28",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": true,
+   "bloom": "summer",
+   "note": "Low glossy mat, clusters of long scarlet tubes. Sharp drainage and cool exposure.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": null,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "size_evidence": {
+    "status": "planning_estimate",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Verbena lilacina 'De La Mina'",
+   "common": "De La Mina Cedros Island Verbena",
+   "form": "mound",
+   "mature_height_m": 0.61,
+   "mature_spread_m": 1.22,
+   "mature_height_range_m": [
+    0.305,
+    0.61
+   ],
+   "mature_spread_range_m": [
+    0.61,
+    1.22
+   ],
+   "foliage": "#698064",
+   "flower": "#a184c5",
+   "water": "moderate",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "summer_autumn",
+   "note": "Baja California origin, not California-state native. Divided leaves and lilac flower clusters.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": null,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://www.calfloranursery.com/plants/verbena-lilacina-de-la-mina/"
+    ],
+    "reviewed_on": "2026-09-05",
+    "note": "Nursery describes 1–2 ft by 2–4 ft; moderate to occasional summer water. Baja/Cedros Island origin, not a California-state native."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Epilobium canum",
+   "common": "California Fuchsia",
+   "form": "mat",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 1.2,
+   "mature_height_range_m": [
+    0.25,
+    1.2
+   ],
+   "mature_spread_range_m": [
+    0.61,
+    2.0
+   ],
+   "foliage": "#98a58d",
+   "flower": "#df4b33",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "summer_autumn",
+   "note": "Narrow-leaf E. canum subsp. canum model; exact landscape clone controls habit. May go dormant or die back in winter; seasonal cutback rejuvenates woody stems. Spreads by rhizomes. Dry sunny slope fit with drainage, establishment irrigation and optional occasional summer water to prolong bloom. Exact species cat safety remains unverified.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": null,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "size_evidence": {
+    "status": "sourced_species_range",
+    "reviewed_on": "2026-09-08",
+    "sources": [
+     "https://www.smmflowers.org/mobile/ANF-descriptions/Epilobium_canum_canum_UCLA_SantaMonicas.pdf",
+     "https://www.watershednursery.com/nursery/plant-finder/epilobium-canum/",
+     "https://www.laspilitas.com/nature-of-california/plants/701--zauschneria-californica-mexicana"
+    ],
+    "note": ".60 × 1.20 m narrow-leaf patch example. Botanical description .25–1.20 m height; local grower .46 × .61 m, Las Pilitas straight species 1–2 m spread. Highly variable clones; these are a combined planning envelope, not guaranteed maxima or nursery-pot sizes. 36–48 inch planting spacing is not mature spread. Winter pruning can maintain lower height."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "reference_taxon": "Epilobium canum subsp. canum — narrow-leaf example",
+    "asset_file": "assets/plants/botanical/models/epilobium_canum.glb",
+    "note": "Physically sized folded narrow leaves, rooted pubescence, branched axillary shoots, bulbous tubes, four bifid petals, eight stamens and four-lobed stigma. Habit and surface repetition remain revise; cat safety remains unverified. Not a scan or accepted photorealistic asset."
+   },
+   "reference_links": [
+    "https://www.smmflowers.org/mobile/ANF-descriptions/Epilobium_canum_canum_UCLA_SantaMonicas.pdf",
+    "https://www.watershednursery.com/nursery/plant-finder/epilobium-canum/",
+    "https://www.laspilitas.com/nature-of-california/plants/701--zauschneria-californica-mexicana",
+    "https://www.smmtc.org/plantofthemonth/California_Fuchsia.php"
+   ]
+  },
+  {
+   "species": "Muhlenbergia capillaris",
+   "common": "Pink Muhly Grass",
+   "form": "grass",
+   "mature_height_m": 0.95,
+   "mature_spread_m": 0.95,
+   "foliage": "#7d8a5a",
+   "flower": "#d98cb0",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "autumn",
+   "note": "the plume is the plant: a pink haze held clear above fine green blades, and it reads only backlit — place it where afternoon sun comes through it",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-09",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    0.75,
+    1.2
+   ],
+   "mature_spread_range_m": [
+    0.75,
+    1.2
+   ],
+   "size_evidence": {
+    "status": "planning_estimate",
+    "sources": [],
+    "note": "Planning estimate for a plant the owner already has in hand; measure the actual specimen before it decides spacing."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Westringia fruticosa",
+   "common": "Coast Rosemary",
+   "form": "mound",
+   "mature_height_m": 1.8,
+   "mature_spread_m": 1.8,
+   "foliage": "#6a7d5e",
+   "flower": "#f6f4ef",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "fine grey-green whorls in a dense mound, small white flowers most of the year; the reliable evergreen body between showier things",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-09",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": [
+    1.5,
+    2.0
+   ],
+   "mature_spread_range_m": [
+    1.5,
+    2.0
+   ],
+   "size_evidence": {
+    "status": "sourced",
+    "sources": [
+     "https://www.anbg.gov.au/gnp/gnp1/westringia-fruticosa.html",
+     "https://www.australianplantsonline.com.au/westringia-coast-rosemary.html",
+     "https://www.gardenia.net/plant/westringia-fruticosa-coast-rosemary-grow-care-guide"
+    ],
+    "reviewed_on": "2026-09-15",
+    "note": "Straight species matures at 1.5-2.0 m tall and 1.5-2.0 m wide; unpruned in good garden conditions it can exceed that in spread. The previous 1.4 x 1.5 was a planning estimate with no sources and understated the plant, which made every bed holding one read looser at maturity than it will be. If a smaller plant is wanted the answer is a named dwarf cultivar (Low Horizon ~0.3 x 0.7 m, Mundi ~0.3-0.6 x 1.2-1.8 m), not a smaller number on the species."
+   },
+   "model_quality": {
+    "status": "reference_modelled",
+    "reference": "data/refphotos/westringia_fruticosa.jpg",
+    "reviewed_on": "2026-09-15",
+    "note": "Rendered ALONE at 3 m against the reference photograph (ASSET_FIDELITY rule 2), which is how three defects invisible in a planted view were found: the crown was see-through (leaf area about equal to crown area, i.e. one layer), it stood on a bare bouquet stalk with all foliage in a cap on top, and the foliage tint was a pale grey where the photograph is a dark green with pale undersides. Density, skirt and tint fixed; still generated geometry, not a scan."
+   }
+  },
+  {
+   "species": "Achillea millefolium",
+   "common": "Yarrow",
+   "form": "perennial",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.6,
+   "foliage": "#8fa06a",
+   "flower": "#f0ece0",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "summer",
+   "note": "spreads by rhizome; happy mown as a meadow floor",
+   "cat_safe": false,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "toxic",
+    "evidence_scope": "species",
+    "source_taxon": "Achillea millefolium",
+    "sources": [
+     "https://www.aspca.org/pet-care/aspca-poison-control/toxic-and-non-toxic-plants/yarrow"
+    ],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "ASPCA lists this species as toxic to cats; excluded from new planting."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "excluded_toxic",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia microphylla",
+   "common": "Mountain sage",
+   "form": "mound",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "foliage": "#5a7a4f",
+   "flower": "#c8425e",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring_autumn",
+   "note": "larger and leafier than greggii",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Salvia microphylla 'Hot Lips'",
+   "common": "Hot Lips sage",
+   "form": "mound",
+   "mature_height_m": 1.0,
+   "mature_spread_m": 1.2,
+   "foliage": "#5a7a4f",
+   "flower": "#e0554f",
+   "water": "low",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring_autumn",
+   "note": "flowers flip red/white/bicolour with heat — a talking point",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Carex oshimensis 'Evergold'",
+   "common": "Evergold sedge",
+   "form": "grass",
+   "mature_height_m": 0.305,
+   "mature_spread_m": 0.457,
+   "foliage": "#c6c47a",
+   "flower": "#a89f80",
+   "water": "moderate",
+   "sun": "sun_part",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring",
+   "note": "Cream-yellow central leaf stripes with dark green margins; arching glossy clump. Retain cooler part-shade placement with establishment and supplemental irrigation. Walters lists dry-to-average moisture while NCSU species guidance is moister; neither establishes performance on this unirrigated slope.",
+   "cat_safe": null,
+   "aliases": [
+    "Carex hachijoensis 'Evergold'",
+    "Carex 'Evergold'"
+   ],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "cooler_part_shade_irrigated",
+   "mature_height_range_m": [
+    0.2,
+    0.4
+   ],
+   "mature_spread_range_m": [
+    0.3,
+    0.6
+   ],
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://www.waltersgardens.com/variety.php?ID=CAREV",
+     "https://plantdatabase.kpu.ca/PlantPrint/caos",
+     "https://www.rhs.org.uk/plants/45191/carex-oshimensis-evergold-v/details"
+    ],
+    "reviewed_on": "2026-09-07",
+    "note": "Representative 1 ft by 18 in mature clump from Walters Gardens, within the KPU cultivar 0.2–0.4 m by 0.3–0.6 m range. RHS describes 30 cm foliage. Not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "asset_file": "assets/plants/botanical/models/carex_oshimensis_evergold.glb",
+    "note": "Physical folded/twisted leaves, generated striped epidermis, triangular culms and male/female flower spikes. Width sources differ; fine floral dimensions are estimates. Native and app review required; photorealism not accepted."
+   }
+  },
+  {
+   "species": "Salvia columbariae",
+   "common": "Chia",
+   "form": "meadow",
+   "mature_height_m": 0.4,
+   "mature_spread_m": 0.25,
+   "foliage": "#8a9a68",
+   "flower": "#6f7fc4",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "dry seedheads are the winter interest",
+   "cat_safe": null,
+   "aliases": [],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-05",
+    "cultivar_explicitly_listed": false,
+    "note": "Not known toxic is not evidence of non-toxicity; confirm exact taxon before final selection."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Lupinus spp.",
+   "common": "Lupine",
+   "form": "meadow",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.5,
+   "foliage": "#7f9a70",
+   "flower": "#6a7cc8",
+   "water": "very_low",
+   "sun": "sun",
+   "evergreen": false,
+   "ca_native": true,
+   "bloom": "spring",
+   "note": "fixes nitrogen; sow with the grasses",
+   "cat_safe": false,
+   "aliases": [
+    "Lupin",
+    "Lupine"
+   ],
+   "requested_for_project": false,
+   "establishment_irrigation": true,
+   "cat_safety": {
+    "status": "toxic",
+    "evidence_scope": "genus",
+    "source_taxon": "Lupinus",
+    "sources": [
+     "https://hta.org.uk/resources/get?mediaId=8478",
+     "https://www.petpoisonhelpline.com/poison/lupine/"
+    ],
+    "reviewed_on": "2026-09-07",
+    "cultivar_explicitly_listed": false,
+    "note": "HTA 2022 guide explicitly lists Lupinus as toxic if eaten and includes cats; Pet Poison Helpline also records lupine toxicity, discussing wild lupines and livestock. Exclude this unidentified legacy entry. Do not infer an exact cultivar toxin level."
+   },
+   "identity_status": "needs_identification",
+   "selection_status": "excluded_toxic",
+   "site_zone": "dry_slope_candidate",
+   "mature_height_range_m": null,
+   "mature_spread_range_m": null,
+   "size_evidence": {
+    "status": "legacy_estimate_unverified",
+    "sources": [],
+    "note": "Representative mature planning size; not a guaranteed maximum. Verify local cultivar dimensions, not nursery-pot size."
+   },
+   "model_quality": {
+    "status": "procedural_approximation",
+    "note": "Generated geometry, not a scan or certified photorealistic asset. Exact-cultivar reference and close review required."
+   }
+  },
+  {
+   "species": "Echeveria 'Doris Taylor'",
+   "common": "Doris Taylor Woolly Rose",
+   "form": "rosette",
+   "mature_height_m": 0.2,
+   "mature_spread_m": 0.2,
+   "mature_height_range_m": [
+    0.1,
+    0.2
+   ],
+   "mature_spread_range_m": [
+    0.15,
+    0.25
+   ],
+   "foliage": "#a8bf94",
+   "flower": "#df8c40",
+   "water": "moderate",
+   "sun": "sun",
+   "evergreen": true,
+   "ca_native": false,
+   "bloom": "spring_autumn",
+   "note": "Thick green spoon leaves with dense white hairs and red tips; branching offset rosettes. Moderate irrigation in an exceptionally well-drained sunny/filtered-light succulent pocket; allow soil to dry between watering. California growers describe roughly .05–.13 m foliage, with taller flower stalks; .20 m flowering planning example is not a maximum on offset spread.",
+   "aliases": [],
+   "requested_for_project": true,
+   "establishment_irrigation": true,
+   "cat_safe": null,
+   "cat_safety": {
+    "status": "unverified",
+    "evidence_scope": "none",
+    "source_taxon": null,
+    "sources": [],
+    "reviewed_on": "2026-09-08",
+    "cultivar_explicitly_listed": false,
+    "note": "Mountain Crest nursery labels the exact cultivar pet-safe, but no exact ASPCA/veterinary poison-control confirmation was found. Nursery evidence alone does not meet this project’s stronger safety requirement; retain unknown."
+   },
+   "identity_status": "named_taxon",
+   "selection_status": "needs_cat_review",
+   "site_zone": "irrigated_sunny_accent",
+   "size_evidence": {
+    "status": "source_checked",
+    "sources": [
+     "https://surrealsucculents.co.uk/products/echeveria-doris-taylor",
+     "https://ottershawcacti.com/shop/echeveria-doris-taylor/",
+     "https://devilmountainnursery.com/echeveria-doris-taylor/",
+     "https://mountaincrestgardens.com/echeveria-doris-taylor-woolly-rose/"
+    ],
+    "note": "Surreal gives 20 × 20 cm mature dimensions (description about 15 cm); Ottershaw gives 15–25 cm mature head at five years, distinct from 9 cm sale pot. California growers describe 2–5 or 3–5 inch foliage, 7–8 inch rosette. Retain .20 × .20 m flowering planning example, distinguish lower foliage and indefinite offsets.",
+    "reviewed_on": "2026-09-08"
+   },
+   "model_quality": {
+    "status": "reference_modelled_approximation",
+    "asset": "assets/plants/botanical/models/echeveria_doris_taylor.glb",
+    "reference_taxon": "Echeveria 'Doris Taylor'",
+    "note": "Exact cultivar nursery references guide physical thick leaves, attached dense hairs, branched rosettes and flowers. Original epidermis is generated, not scanned. Native views/test passes are not photorealistic acceptance; app and further natural variation remain."
+   },
+   "reference_links": [
+    {
+     "url": "https://surrealsucculents.co.uk/products/echeveria-doris-taylor",
+     "scope": "exact_cultivar",
+     "usage": "Primary nursery reference only; image redistribution rights not obtained."
+    },
+    {
+     "url": "https://ottershawcacti.com/shop/echeveria-doris-taylor/",
+     "scope": "exact_cultivar",
+     "usage": "Primary nursery reference only; image redistribution rights not obtained."
+    },
+    {
+     "url": "https://devilmountainnursery.com/echeveria-doris-taylor/",
+     "scope": "exact_cultivar",
+     "usage": "Primary nursery reference only; image redistribution rights not obtained."
+    },
+    {
+     "url": "https://mountaincrestgardens.com/echeveria-doris-taylor-woolly-rose/",
+     "scope": "exact_cultivar",
+     "usage": "Primary nursery reference only; image redistribution rights not obtained."
+    }
+   ]
+  }
+ ]
+}

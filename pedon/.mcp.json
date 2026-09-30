@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "yardeye": {
+      "command": "python3",
+      "args": ["tools/view_mcp.py"]
+    }
+  }
+}

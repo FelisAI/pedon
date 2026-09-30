@@ -1,0 +1,126 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Plant routing test</title>
+<style>
+  body { margin:0; padding:1.5rem; background:#12160e; color:#e7ebdf;
+         font:13px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  h1 { font-size:15px; margin:0 0 1rem; letter-spacing:.06em; text-transform:uppercase; color:#869080; }
+  .pass { color:#7fb98a; } .fail { color:#e8705f; } .warn { color:#d98b54; }
+  table { border-collapse:collapse; margin:.5rem 0 1.5rem; }
+  td, th { padding:.15rem 1.1rem .15rem 0; text-align:left; vertical-align:top; }
+  th { color:#869080; font-weight:400; border-bottom:1px solid #2c3427; }
+  #summary { font-size:15px; padding:.7rem 1rem; border:1px solid #2c3427; border-radius:3px;
+             margin-bottom:1.5rem; display:inline-block; }
+</style>
+<h1>Plant routing test</h1>
+<div id="summary">running…</div>
+<div id="out"></div>
+
+<script type="module">
+// Guards the species -> model/form routing, which is pure lookup-table logic and
+// therefore exactly the kind of thing that rots silently: a regex reordered, a
+// height threshold moved, and a 0.9 m groundcover starts rendering as a 5 m tree
+// with nothing throwing. Open /routing-test.html after touching assets.js or plants.js.
+import { loadPlantLibrary, assetName, libraryNames } from "/src/assets.js";
+import { growthForm } from "/src/plants.js";
+
+await loadPlantLibrary();
+const lib = libraryNames();
+const results = [];
+const check = (name, ok, detail) => results.push({ name, ok, detail });
+
+// ── 1. every model in the manifest actually loaded ───────────────────────────
+check("library loaded", lib.length >= 13, `${lib.length} models: ${lib.join(", ")}`);
+
+// ── 2. the size gate: same genus, wildly different cultivar sizes ────────────
+// These are the pairs that make a genus-only match wrong. Each row is
+// [species, height, expected asset (null = must be procedural), expected form].
+const SIZE_CASES = [
+  ["Ceanothus 'Ray Hartman'",                    4.5, "ceanothus", null],
+  ["Ceanothus griseus horizontalis 'Yankee Point'", 0.9, null, "mat"],
+  ["Arctostaphylos 'Dr. Hurd'",                  5.0, "manzanita", null],
+  ["Arctostaphylos densiflora 'Howard McMinn'",  1.8, null, "mound"],
+  ["Arctostaphylos 'Emerald Carpet'",            0.35, null, "mat"],
+  ["Salvia rosmarinus 'Huntington Carpet'",      0.3, null, "mat"],
+  ["Baccharis pilularis 'Pigeon Point'",         0.6, null, "mat"],
+  ["Eriogonum fasciculatum 'Warriner Lytle'",    0.6, null, "mat"],
+  ["Citrus x meyeri (dwarf)",                    1.5, null, "mound"],
+];
+for (const [species, h, wantAsset, wantForm] of SIZE_CASES) {
+  const p = { species, mature_height_m: h, mature_spread_m: h };
+  const a = assetName(p), f = growthForm(p);
+  const ok = a === wantAsset && (wantForm === null || f === wantForm);
+  check(`size gate: ${species} @ ${h} m`, ok,
+        `asset=${a ?? "none"} form=${f}` + (ok ? "" : ` — wanted asset=${wantAsset ?? "none"}${wantForm ? ` form=${wantForm}` : ""}`));
+}
+
+// ── 3. genus routing, including the ones a broader rule would swallow ───────
+const GENUS_CASES = [
+  ["Quercus agrifolia", 10, "oak"],            // must not fall into citrus
+  ["Cercis occidentalis", 4.5, "redbud"],      // must not fall into maple (drooping, backwards)
+  ["Heteromeles arbutifolia", 3.5, "toyon"],   // must not fall into the procedural tree
+  ["Laurus nobilis", 6, "toyon"],
+  ["Pinus pinea", 9, "stone_pine"],            // must beat the generic pine rule
+  ["Pinus thunbergii", 6, "pine"],
+  ["Prunus ilicifolia", 5, "toyon"],           // must beat the generic prunus rule
+  ["Prunus mume", 4, "plum"],
+  ["Ficus carica", 4, "fig"],
+  ["Chilopsis linearis", 4.5, "desert_willow"],
+  ["Olea europaea 'Swan Hill'", 6, "olive"],
+  ["Cupressus sempervirens 'Glauca'", 7, "cypress"],
+  ["Acer palmatum", 4, "maple"],
+  ["Arbutus 'Marina'", 8, "citrus"],
+];
+for (const [species, h, want] of GENUS_CASES) {
+  const got = assetName({ species, mature_height_m: h, mature_spread_m: h * 0.8 });
+  check(`genus: ${species}`, got === want, `-> ${got ?? "none"}${got === want ? "" : ` (wanted ${want})`}`);
+}
+
+// ── 4. no saved design may silently fall through to the weak procedural tree ─
+// Known gaps are listed rather than tolerated silently: these are plants whose
+// growth form nothing in the library captures, so the check is "no NEW
+// fall-throughs" and the standing gaps stay visible as warnings.
+const KNOWN_GAPS = [
+  // Big paddle-leaf and frond-crown tropicals. Sapling models BRANCHING, so it
+  // is the wrong tool for these; they need their own procedural form. Out of
+  // scope while the palette is Mediterranean + California native.
+  /strelitzia|musa|ensete|alocasia|colocasia|philodendron|dicksonia|cyathea/i,
+];
+const known = p => KNOWN_GAPS.some(re => re.test(p.species ?? ""));
+
+const list = await fetch("/api/designs").then(r => r.json()).catch(() => ({ designs: [] }));
+const files = ["/data/design.json", ...(list.designs ?? []).map(n => `/data/designs/${n}.json`)];
+const gaps = [];
+for (const f of files) {
+  let d;
+  try { d = await fetch(f).then(r => r.ok ? r.json() : null); } catch { d = null; }
+  if (!d?.plants?.length) continue;
+  const fell = d.plants.filter(p => !assetName(p) && growthForm(p) === "tree");
+  const bad = fell.filter(p => !known(p));
+  for (const p of fell.filter(known)) gaps.push(`${p.species} (${f.split("/").pop()})`);
+  check(`no procedural trees in ${f.split("/").pop()}`, bad.length === 0,
+        bad.length ? bad.map(p => `${p.species} @ ${p.mature_height_m} m`).join("; ")
+                   : `${d.plants.length} plants ok`);
+}
+if (gaps.length) {
+  const el = document.createElement("p");
+  el.className = "warn";
+  el.textContent = `known gaps (no growth form exists, not a regression): ${[...new Set(gaps)].join(", ")}`;
+  document.getElementById("summary").after(el);
+}
+
+const failed = results.filter(r => !r.ok);
+const sum = document.getElementById("summary");
+sum.textContent = failed.length
+  ? `${failed.length} FAILED of ${results.length}`
+  : `all ${results.length} checks passed`;
+sum.className = failed.length ? "fail" : "pass";
+
+document.getElementById("out").innerHTML =
+  "<table><tr><th>check</th><th>result</th><th>detail</th></tr>" +
+  results.map(r => `<tr><td>${r.name}</td>`
+    + `<td class="${r.ok ? "pass" : "fail"}">${r.ok ? "pass" : "FAIL"}</td>`
+    + `<td>${r.detail}</td></tr>`).join("") + "</table>";
+
+window.__routingTest = { results, failed };
+</script>

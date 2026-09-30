@@ -1,0 +1,1555 @@
+/* PEDON — design tokens.
+ *
+ * pedon, n. the smallest volume that can be called a soil.
+ *
+ * THE CHROME MUST RECEDE. This app is a window onto a real garden: the canvas is
+ * full of greens, tan paving and dark stone, and every pixel of interface is
+ * competing with it. So the surfaces are near-black with a warm bias rather than
+ * neutral grey — a pure grey against warm foliage reads as a screenshot of an
+ * app, and the bias is what makes the chrome sit behind the yard instead of on
+ * top of it.
+ *
+ * THE ACCENT IS DELIBERATELY NOT GREEN. The garden supplies more greens than any
+ * palette could compete with, and an accent that shares their hue disappears the
+ * moment it is over planting. Clay separates from every colour the canvas makes,
+ * and it is the right register for a tool named after a soil horizon.
+ */
+:root {
+  /* ── ground: the surfaces, warm-biased near-blacks ── */
+  --p-soil-900: #0d100e;   /* behind everything */
+  --p-soil-800: #141815;   /* panels, the dock */
+  --p-soil-700: #1b211d;   /* raised: popovers, the inspector */
+  --p-soil-600: #232b25;   /* input wells */
+  --p-line:     #2c352e;   /* hairline */
+  --p-line-lit: #3d473f;   /* hairline on a raised surface */
+
+  /* ── mineral: type ── */
+  --p-ink:   #e3e8e1;      /* body */
+  --p-chalk: #f6f8f4;      /* emphasis, headings */
+  --p-dim:   #8b978d;      /* secondary, units, metadata */
+  --p-faint: #5d675f;      /* disabled, placeholder */
+
+  /* ── clay: the brand accent ── */
+  --p-clay:     #d98e5f;
+  --p-clay-lit: #e8a87c;
+  --p-clay-bg:  #2e2119;   /* a wash behind an active control */
+
+  /* ── semantic. Kept apart from the accent so "active" never reads as
+   *    "warning", which is what a single amber for both would do. ── */
+  --p-ok:     #7fbf8a;
+  --p-warn:   #e4b25c;
+  --p-bad:    #e07a6a;
+  --p-select: #5aa9e6;     /* selection in the 3D scene */
+
+  /* ── type. System faces, which on a Mac are SF Pro and SF Mono: the
+   *    right grotesk/mono pair for the wordmark, with nothing to download. ── */
+  --p-sans: ui-sans-serif, -apple-system, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+  --p-mono: ui-monospace, "SF Mono", Menlo, "JetBrains Mono", monospace;
+
+  --p-t-xs: 10.5px;  --p-t-sm: 11.5px;  --p-t-md: 13px;
+  --p-t-lg: 15px;    --p-t-xl: 19px;
+  --p-lh: 1.45;
+  --p-track-caps: .08em;   /* small caps labels need air */
+
+  /* ── space: a 4px scale, so nothing is eyeballed ── */
+  --p-1: 4px;  --p-2: 8px;  --p-3: 12px;  --p-4: 16px;
+  --p-5: 24px; --p-6: 32px; --p-7: 48px;
+
+  --p-r-sm: 5px;  --p-r-md: 8px;  --p-r-lg: 12px;  --p-r-pill: 999px;
+
+  /* ── elevation. Floating things sit over a 3D scene, so they need a real
+   *    shadow AND a lit edge; a shadow alone disappears over dark planting. ── */
+  --p-shadow-1: 0 1px 2px rgba(0,0,0,.4);
+  --p-shadow-2: 0 4px 16px rgba(0,0,0,.45), 0 0 0 .5px rgba(255,255,255,.06);
+  --p-shadow-3: 0 12px 40px rgba(0,0,0,.55), 0 0 0 .5px rgba(255,255,255,.08);
+  --p-blur: saturate(180%) blur(20px);
+
+  /* ── motion. Short and eased-out: a control that animates for longer than
+   *    this feels like it is thinking about it. ── */
+  --p-fast: 90ms;  --p-base: 160ms;  --p-slow: 260ms;
+  --p-ease: cubic-bezier(.32, .72, 0, 1);
+
+  /* ── compatibility aliases for the panel's markup.
+   *    New rules use the --p-* names; remove each alias when no surface
+   *    uses it. ── */
+  --bg: var(--p-soil-900);
+  --panel: color-mix(in srgb, var(--p-soil-800) 94%, transparent);
+  --line: var(--p-line);
+  --ink: var(--p-ink);
+  --dim: var(--p-dim);
+  --accent: var(--p-ok);          /* green for controls that depend on this accent */
+  --accent-bg: #23402f;
+  --sel: var(--p-select);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --p-fast: 0ms; --p-base: 0ms; --p-slow: 0ms; }
+}
+
+/* ── the wordmark ──────────────────────────────────────────────────────── */
+.pedon-mark {
+  display: inline-flex; align-items: center; gap: var(--p-2);
+  font-family: var(--p-sans);
+  font-size: var(--p-t-md); font-weight: 600;
+  letter-spacing: var(--p-track-caps); text-transform: uppercase;
+  color: var(--p-chalk);
+}
+.pedon-mark::before {
+  content: "◈";
+  color: var(--p-clay);
+  font-size: 1.05em;
+  line-height: 1;
+}
+/* the metric readout that makes the mark an instrument rather than a logo */
+.pedon-mark .meta {
+  font-family: var(--p-mono); font-size: var(--p-t-xs);
+  letter-spacing: 0; text-transform: none; color: var(--p-faint);
+}
+
+/* ── things every surface needs ────────────────────────────────────────── */
+.p-num { font-family: var(--p-mono); font-variant-numeric: tabular-nums; }
+.p-label {
+  font-size: var(--p-t-xs); letter-spacing: var(--p-track-caps);
+  text-transform: uppercase; color: var(--p-dim);
+}
+:where(button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--p-clay);
+  outline-offset: 1px;
+}
+
+/* ── THE SHELL ─────────────────────────────────────────────────────────────
+ * Canvas-first: the yard is already `position: fixed; inset: 0`, so everything
+ * here FLOATS over it. Each surface therefore needs a real elevation — a drop
+ * shadow alone disappears against dark planting, which is why --p-shadow-* carry
+ * a lit edge as well.
+ */
+#pTopBar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  display: flex; align-items: center; gap: var(--p-3);
+  height: 44px; padding: 0 var(--p-3);
+  background: color-mix(in srgb, var(--p-soil-900) 72%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border-bottom: 1px solid color-mix(in srgb, var(--p-line) 60%, transparent);
+  font-family: var(--p-sans); font-size: var(--p-t-sm); color: var(--p-ink);
+}
+#pTopBar .tb-spacer { flex: 1; }
+#pTopBar button {
+  background: none; border: 1px solid transparent; border-radius: var(--p-r-sm);
+  color: var(--p-dim); font: inherit; padding: 4px var(--p-2); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: background var(--p-fast) var(--p-ease), color var(--p-fast) var(--p-ease);
+}
+#pTopBar button:hover { background: var(--p-soil-700); color: var(--p-ink); }
+#pTopBar .tb-design { color: var(--p-ink); }
+/* the site, quieter than the design it contains */
+#pTopBar .tb-site { padding-right: 2px; max-width: 22ch; }
+#pTopBar .tb-site-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#pTopBar .tb-site .tb-sep { color: var(--p-faint); margin-left: 6px; }
+#pTopBar .tb-design .tb-caret { color: var(--p-faint); }
+/* the one state that must never be missed: an agent's file on screen, edits held */
+#pTopBar .tb-design.previewing { color: var(--p-warn); border-color: var(--p-warn); }
+#pTopBar .tb-design.dirty .tb-name::after { content: " •"; color: var(--p-clay); }
+#pTopBar kbd {
+  font-family: var(--p-mono); font-size: var(--p-t-xs);
+  border: 1px solid var(--p-line-lit); border-radius: 4px;
+  padding: 1px 5px; color: var(--p-dim); background: var(--p-soil-800);
+}
+
+#pDock {
+  position: fixed; left: 50%; bottom: var(--p-4); transform: translateX(-50%);
+  z-index: 40; display: flex; gap: var(--p-1); padding: var(--p-1);
+  background: color-mix(in srgb, var(--p-soil-800) 82%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line-lit); border-radius: var(--p-r-lg);
+  box-shadow: var(--p-shadow-2);
+}
+.dock-btn {
+  position: relative; display: grid; place-items: center;
+  width: 40px; height: 40px; padding: 0;
+  background: none; border: 0; border-radius: var(--p-r-md);
+  color: var(--p-dim); cursor: pointer;
+  transition: background var(--p-fast) var(--p-ease), color var(--p-fast) var(--p-ease);
+}
+.dock-btn:hover { background: var(--p-soil-700); color: var(--p-ink); }
+.dock-btn.on { background: var(--p-clay-bg); color: var(--p-clay-lit); }
+.dock-icon { font-size: 17px; line-height: 1; }
+/* the name appears on hover rather than living under every icon: six labels in a
+   row is a menu bar, and this has to stay a dock */
+.dock-label {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  white-space: nowrap; font-family: var(--p-sans); font-size: var(--p-t-xs);
+  background: var(--p-soil-700); color: var(--p-ink);
+  border: 1px solid var(--p-line-lit); border-radius: var(--p-r-sm);
+  padding: 3px 7px; opacity: 0; pointer-events: none;
+  transition: opacity var(--p-fast) var(--p-ease);
+  box-shadow: var(--p-shadow-1);
+}
+.dock-btn:hover .dock-label, .dock-btn:focus-visible .dock-label { opacity: 1; }
+
+#pPalette { position: fixed; inset: 0; z-index: 60; }
+.pal-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.42); }
+.pal-box {
+  position: relative; margin: 14vh auto 0; width: min(560px, 92vw);
+  background: color-mix(in srgb, var(--p-soil-700) 94%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line-lit); border-radius: var(--p-r-lg);
+  box-shadow: var(--p-shadow-3); overflow: hidden;
+  font-family: var(--p-sans);
+}
+.pal-input {
+  width: 100%; box-sizing: border-box; padding: var(--p-4);
+  background: none; border: 0; border-bottom: 1px solid var(--p-line);
+  color: var(--p-chalk); font: inherit; font-size: var(--p-t-lg);
+}
+.pal-input::placeholder { color: var(--p-faint); }
+.pal-input:focus { outline: none; }
+.pal-list { max-height: min(46vh, 380px); overflow-y: auto; padding: var(--p-1) 0; }
+.pal-group { padding: var(--p-2) var(--p-4) var(--p-1); }
+.pal-row {
+  display: flex; align-items: center; gap: var(--p-2);
+  padding: 7px var(--p-4); cursor: pointer; color: var(--p-ink);
+  font-size: var(--p-t-md);
+}
+.pal-row.on { background: var(--p-clay-bg); }
+.pal-row.on .pal-title { color: var(--p-clay-lit); }
+.pal-hint { color: var(--p-faint); font-size: var(--p-t-sm); }
+.pal-row kbd {
+  margin-left: auto; font-family: var(--p-mono); font-size: var(--p-t-xs);
+  border: 1px solid var(--p-line-lit); border-radius: 4px; padding: 1px 5px;
+  color: var(--p-dim);
+}
+.pal-empty { padding: var(--p-4); color: var(--p-faint); font-size: var(--p-t-sm); }
+.pal-foot {
+  display: flex; gap: var(--p-3); padding: var(--p-2) var(--p-4);
+  border-top: 1px solid var(--p-line); color: var(--p-faint);
+  font-size: var(--p-t-xs);
+}
+
+/* The contextual inspector: a card beside the selection, not a slot in a column. */
+#pInspector {
+  position: fixed; z-index: 45; width: 268px; max-height: 62vh;
+  display: flex; flex-direction: column;
+  background: color-mix(in srgb, var(--p-soil-700) 94%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line-lit); border-radius: var(--p-r-lg);
+  box-shadow: var(--p-shadow-2);
+  font-family: var(--p-sans); font-size: var(--p-t-sm); color: var(--p-ink);
+  animation: insp-in var(--p-base) var(--p-ease);
+}
+@keyframes insp-in { from { opacity: 0; transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) { #pInspector { animation: none; } }
+#pInspector > header {
+  display: flex; align-items: center; gap: var(--p-2);
+  padding: var(--p-2) var(--p-2) var(--p-2) var(--p-3);
+  border-bottom: 1px solid var(--p-line);
+}
+.insp-title {
+  flex: 1; font-weight: 600; color: var(--p-chalk);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.insp-x {
+  background: none; border: 0; color: var(--p-faint); cursor: pointer;
+  font-size: var(--p-t-sm); padding: 2px 5px; border-radius: var(--p-r-sm);
+}
+.insp-x:hover { background: var(--p-soil-600); color: var(--p-ink); }
+.insp-body { padding: var(--p-2) var(--p-3) var(--p-3); overflow-y: auto; }
+/* the existing property rows, restyled in place rather than re-authored */
+#pInspector .prow {
+  display: flex; align-items: center; gap: var(--p-2); margin: var(--p-1) 0;
+}
+#pInspector .prow label {
+  flex: 0 0 92px; color: var(--p-dim); font-size: var(--p-t-xs);
+  letter-spacing: var(--p-track-caps); text-transform: uppercase;
+}
+#pInspector .prow input, #pInspector .prow select {
+  flex: 1; min-width: 0; background: var(--p-soil-600); color: var(--p-ink);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 4px 6px; font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+#pInspector .prow input:focus, #pInspector .prow select:focus {
+  border-color: var(--p-clay); outline: none;
+}
+#pInspector .hint { color: var(--p-faint); font-size: var(--p-t-xs); margin-bottom: var(--p-2); }
+#pInspector .plant-size-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+
+/* A readout pinned to the work, rather than in a panel section you cannot see. */
+.p-hud {
+  position: fixed; z-index: 44; min-width: 152px; max-width: 300px;
+  padding: var(--p-2) var(--p-3);
+  background: color-mix(in srgb, var(--p-soil-700) 92%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line-lit); border-radius: var(--p-r-md);
+  box-shadow: var(--p-shadow-2);
+  font-family: var(--p-sans); font-size: var(--p-t-sm); color: var(--p-ink);
+  pointer-events: none;
+}
+.hud-row { display: flex; justify-content: space-between; gap: var(--p-3); line-height: 1.6; }
+.hud-k { color: var(--p-dim); font-size: var(--p-t-xs);
+         letter-spacing: var(--p-track-caps); text-transform: uppercase; }
+.hud-v { color: var(--p-chalk); }
+.hud-note { color: var(--p-faint); font-size: var(--p-t-xs); margin-top: var(--p-1);
+            border-top: 1px solid var(--p-line); padding-top: var(--p-1); }
+
+/* Transient messages. They appear where the eye already is — bottom right, clear
+   of the dock — and leave on their own, except errors, which wait to be seen. */
+#pToasts {
+  position: fixed; right: var(--p-3); bottom: var(--p-3); z-index: 55;
+  display: flex; flex-direction: column; gap: var(--p-2);
+  align-items: flex-end; pointer-events: none;
+  max-width: min(420px, 42vw);
+}
+.toast {
+  display: flex; align-items: flex-start; gap: var(--p-2);
+  padding: var(--p-2) var(--p-3); pointer-events: auto;
+  background: color-mix(in srgb, var(--p-soil-700) 94%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line-lit); border-left: 3px solid var(--p-line-lit);
+  border-radius: var(--p-r-md); box-shadow: var(--p-shadow-2);
+  font-family: var(--p-sans); font-size: var(--p-t-sm); color: var(--p-ink);
+  animation: toast-in var(--p-base) var(--p-ease);
+}
+.toast.ok   { border-left-color: var(--p-ok); }
+.toast.warn { border-left-color: var(--p-warn); }
+.toast.err  { border-left-color: var(--p-bad); color: var(--p-chalk); }
+.toast.going { opacity: 0; transform: translateX(8px);
+               transition: opacity var(--p-fast) var(--p-ease), transform var(--p-fast) var(--p-ease); }
+@keyframes toast-in { from { opacity: 0; transform: translateX(10px); } }
+@media (prefers-reduced-motion: reduce) {
+  .toast { animation: none; } .toast.going { transition: none; }
+}
+.toast-x {
+  background: none; border: 0; color: var(--p-faint); cursor: pointer;
+  padding: 0 2px; font-size: var(--p-t-xs); line-height: 1.6;
+}
+.toast-x:hover { color: var(--p-ink); }
+
+/* Right-click on the world. Above the palette (60): a menu is the most transient
+   surface on screen and the one the pointer is already on, so anything that can
+   cover it is a bug — caught by ui_no_overlap, which is what that suite is for. */
+#pContext {
+  position: fixed; z-index: 62; min-width: 190px; padding: var(--p-1);
+  background: color-mix(in srgb, var(--p-soil-700) 96%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line-lit); border-radius: var(--p-r-md);
+  box-shadow: var(--p-shadow-3); font-family: var(--p-sans);
+}
+.ctx-item {
+  display: flex; align-items: center; gap: var(--p-3); width: 100%;
+  padding: 6px var(--p-2); background: none; border: 0; border-radius: var(--p-r-sm);
+  color: var(--p-ink); font: inherit; font-size: var(--p-t-sm);
+  text-align: left; cursor: pointer;
+}
+.ctx-item:hover { background: var(--p-clay-bg); color: var(--p-clay-lit); }
+.ctx-item.danger:hover { background: color-mix(in srgb, var(--p-bad) 22%, transparent);
+                         color: var(--p-bad); }
+.ctx-hint { margin-left: auto; color: var(--p-faint); font-size: var(--p-t-xs); }
+.ctx-sep { height: 1px; margin: var(--p-1) var(--p-2); background: var(--p-line); }
+
+/* the shortcuts sheet reuses the HUD, wider and centred */
+.hud-sheet { max-width: 380px; min-width: 320px; }
+
+/* ── SEE IT IN THE YARD — the way from the viewer to the user's phone ──── */
+#pArSheet {
+  position: fixed; z-index: 62; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 340px; padding: var(--p-4); border-radius: var(--p-r-lg);
+  background: var(--p-soil-800); border: 1px solid var(--p-line); box-shadow: var(--p-shadow-3);
+  color: var(--p-ink); font-size: var(--p-t-sm);
+}
+#pArSheet header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--p-3); }
+#pArSheet header b { font-size: var(--p-t-md); color: var(--p-chalk); }
+#pArSheet .x { background: none; border: 0; color: var(--p-dim); cursor: pointer; padding: 4px 6px; border-radius: 4px; }
+#pArSheet .x:hover { background: var(--p-soil-600); color: var(--p-chalk); }
+/* WHITE, whatever the theme: a phone camera reads dark modules on a light ground */
+#pArSheet .qr { background: #fff; border-radius: var(--p-r-md); padding: 6px; width: 212px; height: 212px; margin: 0 auto; }
+#pArSheet .qr svg { display: block; width: 100%; height: 100%; }
+#pArSheet .url { text-align: center; color: var(--p-dim); margin: var(--p-2) 0 var(--p-3); font-size: var(--p-t-xs); }
+#pArSheet .file { margin: 0 0 var(--p-2); color: var(--p-dim); }
+#pArSheet .file:not(:empty) { color: var(--p-chalk); }
+#pArSheet .file.stale { color: var(--p-warn); }
+#pArSheet .stand { margin: var(--p-2) 0 0; color: var(--p-chalk); font-size: var(--p-t-xs); }
+#pArSheet .door p, #pArSheet .reach > p { color: var(--p-dim); font-size: var(--p-t-sm); line-height: 1.45; }
+#pArSheet .door-open { display: block; width: 100%; margin-top: var(--p-2); padding: 8px; border: 0; border-radius: 6px;
+  background: var(--p-clay); color: var(--p-soil-900); font: inherit; font-weight: 600; cursor: pointer; }
+#pArSheet .door-open:hover { background: var(--p-clay-lit); }
+#pArSheet .door-open:disabled { opacity: .6; cursor: progress; }
+#pArSheet .door p.door-err { margin: var(--p-2) 0 0; color: var(--p-warn); }
+#pArSheet .door-err:empty { display: none; }
+#pArSheet .app { margin-top: var(--p-2); }
+#pArSheet .app summary { cursor: pointer; color: var(--p-ink); }
+#pArSheet .door-close { margin-top: var(--p-3); background: none; border: 0; padding: 0; color: var(--p-faint);
+  font: inherit; font-size: var(--p-t-xs); text-decoration: underline; cursor: pointer; }
+#pArSheet ol { margin: var(--p-3) 0 0; padding-left: 18px; color: var(--p-dim); font-size: var(--p-t-xs); }
+#pArSheet li { margin-bottom: 5px; }
+
+.hud-sheet .hud-k { text-transform: none; letter-spacing: 0;
+                    font-family: var(--p-mono); color: var(--p-clay-lit); }
+
+/* THE ACTIVITY RAIL AND ITS PANEL.
+ *
+ * Pinned, not summoned. The objects list is something you WORK IN — select from
+ * it, hide things in it, come back to it constantly — and a surface like that has
+ * to still be there when you look up. The rail stays visible even when the panel
+ * is collapsed, so there is always an entry on screen.
+ */
+#pSideWrap {
+  position: fixed; top: 44px; left: 0; bottom: 0; z-index: 42;
+  display: flex; align-items: stretch; pointer-events: none;
+}
+#pRail {
+  pointer-events: auto;
+  display: flex; flex-direction: column; gap: 2px;
+  padding: var(--p-2) var(--p-1);
+  background: color-mix(in srgb, var(--p-soil-900) 76%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border-right: 1px solid var(--p-line);
+}
+.rail-btn {
+  display: grid; justify-items: center; gap: 2px;
+  width: 48px; padding: var(--p-1) 0;
+  background: none; border: 0; border-radius: var(--p-r-md);
+  color: var(--p-dim); cursor: pointer;
+  transition: background var(--p-fast) var(--p-ease), color var(--p-fast) var(--p-ease);
+}
+.rail-btn:hover { background: var(--p-soil-700); color: var(--p-ink); }
+.rail-btn.on { background: var(--p-clay-bg); color: var(--p-clay-lit); }
+/* the active one also gets a bar on the edge it is attached to — colour alone
+   is not enough to say "this panel belongs to this button" */
+.rail-btn.on::before {
+  content: ""; position: absolute; left: 0; width: 2px; height: 34px;
+  margin-top: 2px; background: var(--p-clay); border-radius: 0 2px 2px 0;
+}
+.rail-btn { position: relative; }
+.rail-icon { font-size: 16px; line-height: 1.1; }
+.rail-label { font-size: 9px; letter-spacing: .02em; }
+
+#pSide {
+  pointer-events: auto;
+  width: 296px; display: flex; flex-direction: column;
+  background: color-mix(in srgb, var(--p-soil-800) 92%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border-right: 1px solid var(--p-line-lit);
+  font-family: var(--p-sans); font-size: var(--p-t-sm); color: var(--p-ink);
+}
+#pSide > header {
+  display: flex; align-items: center; gap: var(--p-2);
+  padding: var(--p-2) var(--p-2) var(--p-2) var(--p-3);
+  border-bottom: 1px solid var(--p-line);
+}
+.side-title { flex: 1; font-weight: 600; color: var(--p-chalk);
+              font-size: var(--p-t-xs); letter-spacing: var(--p-track-caps);
+              text-transform: uppercase; }
+.side-x { background: none; border: 0; color: var(--p-faint); cursor: pointer;
+          padding: 2px 7px; border-radius: var(--p-r-sm); font-size: var(--p-t-md); }
+.side-x:hover { background: var(--p-soil-600); color: var(--p-ink); }
+.side-body { flex: 1; overflow-y: auto; padding: var(--p-2) var(--p-3) var(--p-3); }
+
+
+/* the objects tree's sort control and its kind headings */
+.tree-sort { margin-left: auto; background: var(--p-soil-600); color: var(--p-dim);
+             border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+             font: inherit; font-size: var(--p-t-xs); padding: 1px 4px; }
+.tree-heading { margin: var(--p-2) 0 var(--p-1); }
+
+/* what you can DO to the selection, in the card beside it */
+.insp-actions {
+  display: flex; flex-wrap: wrap; gap: var(--p-1);
+  padding: var(--p-2) var(--p-3); border-top: 1px solid var(--p-line);
+}
+.insp-act {
+  flex: 1 1 auto; padding: 5px var(--p-2);
+  background: var(--p-soil-600); color: var(--p-ink);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  font: inherit; font-size: var(--p-t-xs); cursor: pointer; white-space: nowrap;
+  transition: background var(--p-fast) var(--p-ease);
+}
+.insp-act:hover { background: var(--p-clay-bg); border-color: var(--p-clay); color: var(--p-clay-lit); }
+.insp-act.danger:hover { background: color-mix(in srgb, var(--p-bad) 20%, transparent);
+                         border-color: var(--p-bad); color: var(--p-bad); }
+.insp-act:disabled { opacity: .4; cursor: default; }
+
+/* where you are in the edit history, in the bar rather than down a panel */
+#pTopBar .tb-history { display: flex; align-items: center; gap: 2px; }
+#pTopBar .tb-history button { padding: 3px 6px; font-size: 10px; }
+#pTopBar .tb-pos { color: var(--p-faint); font-size: var(--p-t-xs); min-width: 34px;
+                   text-align: center; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * INTERFACE REQUIREMENTS
+ *
+ * The interface must support professional design work: drawn icons instead of
+ * typed glyphs (shell/icons.js), DEPTH so surfaces read as layers rather than
+ * rectangles, a consistently applied type scale, and states — hover, active,
+ * focus, disabled — that respond.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── ONE SCROLL CONTAINER ───────────────────────────────────────────────────
+ * The adopted lists carry `max-height: 150px` from the classic panel, where they
+ * are sections of a 312 px column stacked five deep. Inside a full-height panel
+ * that is just a short box with its own scrollbar inside another scrollbar —
+ * limiting the usable height. The panel body scrolls; nothing inside it does. */
+#pSide #objList, #pSide #designList, #pSide #lmList, #pSide #areaList,
+#pSide #vpList, #pSide #proposals, #pSide .list {
+  max-height: none; overflow: visible; margin: 0;
+}
+
+/* ── SURFACES READ AS LAYERS ────────────────────────────────────────────────
+ * A 1 px border and a drop shadow make a rectangle. What makes a surface look
+ * LIT is a hairline of light along its top edge — the same reason a physical
+ * panel catches the sky. inset box-shadow, not a border, so it does not change
+ * the box.                                                                    */
+#pSide, #pInspector, #pPalette .pal-box, #pContext, .p-hud, #pDock {
+  box-shadow: var(--p-shadow-2), inset 0 1px 0 rgba(255,255,255,.055);
+}
+#pPalette .pal-box { box-shadow: var(--p-shadow-3), inset 0 1px 0 rgba(255,255,255,.07); }
+
+/* ── THE RAIL ───────────────────────────────────────────────────────────────
+ * Icons carry the meaning, so the labels shrink to a whisper and the active
+ * state does the talking: a clay wash, a lit edge, and the marker bar.         */
+#pRail { padding: var(--p-2) 6px; gap: 4px; }
+.rail-btn { width: 52px; padding: 7px 0 5px; gap: 3px; }
+.rail-icon { display: grid; place-items: center; height: 22px; opacity: .92; }
+.rail-label {
+  font-size: 9.5px; font-weight: 500; letter-spacing: .02em;
+  opacity: .82; transition: opacity var(--p-fast) var(--p-ease);
+}
+.rail-btn:hover { background: color-mix(in srgb, var(--p-soil-700) 88%, transparent); }
+.rail-btn:hover .rail-label { opacity: 1; }
+.rail-btn.on {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--p-clay) 20%, transparent),
+    color-mix(in srgb, var(--p-clay) 11%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--p-clay) 34%, transparent);
+}
+.rail-btn.on::before { height: 26px; margin-top: 6px; }
+
+/* ── THE PANEL ──────────────────────────────────────────────────────────────*/
+#pSide > header {
+  padding: 11px var(--p-2) 11px var(--p-4);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--p-soil-700) 55%, transparent), transparent);
+}
+.side-title { font-size: 10.5px; font-weight: 650; letter-spacing: .09em; }
+.side-body { padding: var(--p-2) var(--p-3) var(--p-5); scrollbar-width: thin; }
+.side-body::-webkit-scrollbar { width: 9px; }
+.side-body::-webkit-scrollbar-thumb {
+  background: var(--p-soil-600); border-radius: 9px;
+  border: 3px solid transparent; background-clip: content-box;
+}
+.side-body::-webkit-scrollbar-thumb:hover { background: var(--p-line-lit); background-clip: content-box; }
+
+/* ── ADOPTED ROWS, RESTYLED IN PLACE ────────────────────────────────────────
+ * These come from the classic panel with 11.5px text, 3px padding and a hard
+ * blue selection. They are the most-read rows in the app — hundreds of them — so
+ * they get the typographic care that implies: a settled row height, a kind
+ * label that recedes, a name that does not, and controls that appear on hover
+ * instead of sitting there being noise.                                       */
+#pSide .orow, #pSide .grow, #pSide .drow, #pSide .list .r {
+  display: flex; align-items: center; gap: var(--p-2);
+  min-height: 30px; padding: 3px var(--p-2); margin: 1px 0;
+  border-radius: var(--p-r-sm); font-size: var(--p-t-sm); line-height: 1.35;
+  border: 1px solid transparent;
+  transition: background var(--p-fast) var(--p-ease), border-color var(--p-fast) var(--p-ease);
+}
+#pSide .orow:hover, #pSide .grow:hover, #pSide .drow:hover, #pSide .list .r:hover {
+  background: color-mix(in srgb, var(--p-soil-600) 70%, transparent);
+}
+#pSide .orow.sel, #pSide .grow.sel {
+  background: color-mix(in srgb, var(--p-select) 17%, transparent);
+  border-color: color-mix(in srgb, var(--p-select) 46%, transparent);
+  outline: none;
+}
+#pSide .orow.off, #pSide .grow.off { opacity: .42; }
+#pSide .orow .kind, #pSide .grow .meta {
+  flex: none; width: 34px; font-size: 9.5px; font-weight: 600;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--p-faint);
+}
+#pSide .orow .nm, #pSide .drow .nm { flex: 1; min-width: 0; color: var(--p-ink); }
+/* a name that is a button (a saved view) reads as a name, not as a centred link */
+#pSide .drow button.nm { text-align: left; text-decoration: none; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+#pSide .drow button.nm:hover { text-decoration: underline; opacity: 1; }
+#pSide .orow .meta { color: var(--p-faint); font-size: var(--p-t-xs); }
+
+/* controls that stay out of the way until you go near them — never a row's NAME:
+   a saved view's name is itself a button and must stay visible before hover */
+#pSide .eye, #pSide .orow button:not(.nm), #pSide .grow button:not(.nm), #pSide .drow button:not(.nm) {
+  opacity: 0; color: var(--p-dim); background: none; border: 0;
+  border-radius: 4px; padding: 3px 5px; cursor: pointer;
+  transition: opacity var(--p-fast) var(--p-ease), color var(--p-fast) var(--p-ease),
+              background var(--p-fast) var(--p-ease);
+}
+#pSide .orow:hover .eye, #pSide .grow:hover .eye, #pSide .drow:hover button,
+#pSide .orow:hover button, #pSide .grow:hover button,
+#pSide .eye.on, #pSide button:focus-visible { opacity: 1; }
+#pSide .eye:hover, #pSide .orow button:hover, #pSide .grow button:hover {
+  background: var(--p-soil-600); color: var(--p-chalk);
+}
+#pSide .eye.on { color: var(--p-select); opacity: 1; }
+#pSide .twisty { opacity: .62; width: 18px; text-align: center; }
+#pSide .grow { font-weight: 560; }
+#pSide .gn {
+  flex: 1; min-width: 0; background: none; border: 1px solid transparent;
+  border-radius: 4px; color: var(--p-chalk); font: inherit; font-weight: 560;
+  padding: 2px 5px;
+}
+#pSide .gn:hover { border-color: var(--p-line); }
+#pSide .gn:focus { background: var(--p-soil-600); border-color: var(--p-clay); outline: none; }
+
+/* ── FIELDS, wherever they are adopted ──────────────────────────────────────*/
+#pSide input[type="text"], #pSide input[type="time"], #pSide input[type="number"],
+#pSide select {
+  background: var(--p-soil-600); color: var(--p-ink);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 5px 7px; font: inherit; font-size: var(--p-t-sm);
+  transition: border-color var(--p-fast) var(--p-ease), background var(--p-fast) var(--p-ease);
+}
+#pSide input:hover, #pSide select:hover { border-color: var(--p-line-lit); }
+#pSide input:focus, #pSide select:focus {
+  border-color: var(--p-clay); background: var(--p-soil-700); outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-clay) 15%, transparent);
+}
+#pSide .row { display: flex; align-items: center; gap: var(--p-2); margin: var(--p-2) 0; }
+#pSide .row > button {
+  opacity: 1; background: var(--p-soil-600); border: 1px solid var(--p-line);
+  border-radius: var(--p-r-sm); color: var(--p-ink); padding: 5px 10px;
+  font-size: var(--p-t-sm);
+}
+#pSide .row > button:hover { background: var(--p-soil-700); border-color: var(--p-line-lit); }
+#pSide .subhead {
+  margin: var(--p-4) 0 var(--p-1); padding-top: var(--p-2);
+  border-top: 1px solid var(--p-line);
+  font-size: 9.5px; font-weight: 650; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--p-dim);
+}
+#pSide .subhead:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+#pSide .hint { color: var(--p-faint); font-size: var(--p-t-xs); line-height: 1.5; }
+#pSide label.small { display: inline-flex; align-items: center; gap: 5px;
+                     color: var(--p-dim); font-size: var(--p-t-xs); }
+#pSide label.small:hover { color: var(--p-ink); }
+
+/* ── THE DOCK, with the same care ───────────────────────────────────────────*/
+#pDock { padding: 5px; gap: 3px; border-radius: 14px; }
+.dock-btn { width: 42px; height: 42px; }
+.dock-icon { display: grid; place-items: center; opacity: .92; }
+.dock-btn:hover .dock-icon { opacity: 1; }
+.dock-btn.on {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--p-clay) 22%, transparent),
+    color-mix(in srgb, var(--p-clay) 12%, transparent));
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--p-clay) 36%, transparent);
+}
+.dock-label { font-weight: 500; box-shadow: var(--p-shadow-1); }
+
+/* ── TOP BAR ────────────────────────────────────────────────────────────────*/
+#pTopBar { height: 46px; gap: var(--p-2); padding: 0 var(--p-2) 0 var(--p-3); }
+#pTopBar button { padding: 5px var(--p-2); border-radius: 6px; }
+#pTopBar .tb-k { background: color-mix(in srgb, var(--p-soil-700) 70%, transparent);
+                 border-color: var(--p-line); }
+#pTopBar .tb-k:hover { border-color: var(--p-line-lit); }
+#pTopBar .tb-design { font-weight: 560; padding-inline: 9px; }
+#pTopBar .tb-history button { padding: 4px 5px; }
+#pTopBar .tb-history button svg { display: block; }
+.pedon-mark { gap: 7px; font-weight: 680; letter-spacing: .11em; }
+.pedon-mark::before { font-size: 1em; opacity: .95; }
+
+/* actions that belong to the surface they act on, in its header */
+/* Its own strip under the title, full panel width, wrapping to two lines at
+   worst instead of three columns of two words. `[hidden]` must beat this, so it
+   is written as a not() rather than relying on the attribute — `display: flex`
+   silently beats `hidden` and can make a floating surface unhideable. */
+.side-acts:not([hidden]) {
+  display: flex; flex-wrap: wrap; gap: var(--p-1);
+  padding: var(--p-2) var(--p-3) 0;
+}
+.side-acts .side-act { flex: 1 1 auto; text-align: center; white-space: nowrap; }
+/* ...but ONE action is a button, not a banner. Objects has a single "Show all"
+   and stretching it the width of the panel makes it read as the surface's
+   primary control rather than as the small reset it is. */
+.side-acts .side-act:only-child { flex: 0 1 auto; }
+.side-act {
+  background: var(--p-soil-600); color: var(--p-dim);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 3px 8px; font: inherit; font-size: var(--p-t-xs); cursor: pointer;
+  transition: background var(--p-fast) var(--p-ease), color var(--p-fast) var(--p-ease),
+              border-color var(--p-fast) var(--p-ease);
+}
+.side-act:hover { background: var(--p-clay-bg); border-color: var(--p-clay);
+                  color: var(--p-clay-lit); }
+/* a dock button that opens a menu says so */
+.dock-btn.has-menu::after {
+  content: ""; position: absolute; right: 5px; bottom: 4px;
+  border-left: 3px solid transparent; border-right: 3px solid transparent;
+  border-top: 3.5px solid currentColor; opacity: .5;
+}
+.dock-btn.has-menu:hover::after, .dock-btn.has-menu.on::after { opacity: .9; }
+
+/* ── VISUAL REQUIREMENTS ──────────────────────────────────────────────────
+ * Check these in shell.html: source inspection alone cannot establish how
+ * controls, labels and their hierarchy read together on screen.             */
+
+/* 1. `input[type="text"]` DOES NOT MATCH #designFilter, which has no type
+ *    attribute at all — so it falls through to the browser default and renders a
+ *    bright white box in the middle of a dark panel. Select by what it is NOT. */
+/* `.gn` is EXCLUDED rather than overridden later: each `:not()` carries the
+ * specificity of its argument, so three of them (1,3,1) beat a later
+ * `#pSide input.gn` (1,1,1) and the override silently loses. Saying what the
+ * rule is NOT for is also the clearer statement — it styles form fields, and an
+ * inline renameable label is not one. */
+/* `.nm` joins `.gn` in the exclusion list for the same reason:
+ * a later `#pSide .lrow > input[type="text"]` (1,1,2) loses
+ * to this rule's four `:not()`s (1,4,1), so every landmark renders as a boxed
+ * form field. An inline renameable label is not a form field — say so HERE
+ * rather than trying to out-specify it afterwards. */
+#pSide input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.gn):not(.nm),
+#pInspector input:not([type="checkbox"]) {
+  background: var(--p-soil-600); color: var(--p-ink);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 5px 8px; font: inherit; font-size: var(--p-t-sm);
+}
+#pSide input::placeholder { color: var(--p-faint); }
+
+/* 2. A NATIVE SELECT IGNORES background AND color until `appearance: none`, so
+ *    the sort control stays light grey without it. */
+#pSide select, #pInspector select {
+  appearance: none; -webkit-appearance: none;
+  background-color: var(--p-soil-600); color: var(--p-ink);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 5px 26px 5px 8px; font: inherit; font-size: var(--p-t-sm);
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 12px center, right 7px center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+#pSide select option { background: var(--p-soil-700); color: var(--p-ink); }
+
+/* 3. ROWS NEED HIERARCHY — equal name and date weight and colour make a list
+ *    of four designs read as eight equal words. */
+/*    A DESIGN ROW'S NAME IS `.dn`, NOT `.nm` — so every rule here written for
+ *    `.nm` styles nothing on this surface. */
+#pSide .drow .nm, #pSide .drow .dn { color: var(--p-chalk); font-weight: 500; }
+#pSide .orow .meta {
+  margin-left: auto; color: var(--p-faint); font-size: var(--p-t-xs);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+/* TWO LINES, because the name and the facts compete for one. The counts
+   are `white-space: nowrap` and the name is `min-width: 0`, so on a 296 px panel
+   a single line can show only the plant count and badge, hiding the name of
+   the design the user is EDITING. */
+#pSide .drow { flex-wrap: wrap; row-gap: 1px; }
+#pSide .drow .dn { flex: 1 1 auto; min-width: 5em; }
+#pSide .drow .meta {
+  flex: 1 0 100%; order: 9; margin: 0 0 0 22px;
+  color: var(--p-faint); font-size: var(--p-t-xs);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+
+/* 4. THE INSPECTOR'S LABELS NEED ROOM. "MATURE HEIGHT" breaks over two lines
+ *    against a 92px column at uppercase 10.5px with letter-spacing, making
+ *    fact rows different heights. */
+#pInspector .prow { align-items: baseline; min-height: 24px; }
+#pInspector .prow label {
+  flex: 0 0 104px; white-space: nowrap; letter-spacing: .045em;
+  font-size: 9.5px; font-weight: 600;
+}
+#pInspector .factval { font-size: var(--p-t-sm); }
+
+/* 5. AN ACTION ROW WRAPPING 3 + 2 with stretched buttons reads as an
+ *    accident rather than a layout. A grid gives equal cells at any count. */
+.insp-actions {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;
+  padding: var(--p-2) var(--p-3) var(--p-3);
+}
+.insp-act { flex: none; text-align: center; padding: 6px 4px; }
+
+/* 6. THE DOCK ICONS NEED CONTRAST — thin, grey icons against a dark background
+ *    make the whole dock read as disabled. */
+.dock-icon { opacity: 1; color: var(--p-ink); }
+.dock-btn { color: var(--p-ink); }
+.dock-btn:hover { color: var(--p-chalk); }
+.dock-btn:hover .dock-icon { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--p-clay) 40%, transparent)); }
+.dock-btn.on .dock-icon { color: var(--p-clay-lit); }
+.dock-btn.has-menu::after { opacity: .75; }
+.rail-icon { opacity: 1; color: var(--p-ink); }
+.rail-btn.on .rail-icon { color: var(--p-clay-lit); }
+
+/* ── THE DISPLAY SURFACE ──────────────────────────────────────────────────
+ * Three visual requirements to check on screen:
+ *
+ * 1. Checkboxes use `accent-color` to stay in the palette; stock system BLUE
+ *    introduces an unrelated saturated hue.
+ * 2. Rows must wrap at 296 px so the time field and fifth layer toggle
+ *    ("plant names") stay visible. A clipped control is inaccessible.
+ * 3. Keep "on the ground" together with its checkbox so the phrase cannot
+ *    break between them.                                                     */
+#pSide input[type="checkbox"], #pInspector input[type="checkbox"] {
+  accent-color: var(--p-clay);
+  width: 13px; height: 13px; margin: 0; flex: none; cursor: pointer;
+}
+
+/* adopted rows need to wrap below their 312px single-line width */
+#pSide .row { flex-wrap: wrap; row-gap: var(--p-2); }
+#pSide label.small {
+  flex: 0 0 auto; white-space: nowrap;          /* never break "on the ground" */
+  gap: 6px; padding: 3px 7px; border-radius: var(--p-r-pill);
+  background: color-mix(in srgb, var(--p-soil-600) 60%, transparent);
+  border: 1px solid transparent;
+  transition: background var(--p-fast) var(--p-ease), border-color var(--p-fast) var(--p-ease);
+}
+#pSide label.small:hover { background: var(--p-soil-600); border-color: var(--p-line); }
+#pSide label.small:has(input:checked) { color: var(--p-ink); }
+
+/* a field and its own label stay together, and the field takes the rest */
+#pSide .row > label:not(.small) {
+  flex: none; color: var(--p-dim); font-size: var(--p-t-xs);
+  letter-spacing: .045em; text-transform: uppercase; font-weight: 600;
+}
+#pSide .row > input[type="time"] { flex: 0 0 96px; }
+#pSide .row > select { flex: 1 1 130px; min-width: 0; }
+#pSide .row > input:not([type="checkbox"]):not([type="time"]) { flex: 1 1 120px; min-width: 0; }
+#pSide .row > .hint { flex: 0 0 auto; }
+/* nothing in the panel may overflow it: the panel scrolls vertically only */
+#pSide, .side-body { overflow-x: hidden; }
+
+/* ── `display` BEATS THE `hidden` ATTRIBUTE, and that is a real bug ──────────
+ * `hidden` works by a UA rule of `display: none`, which ANY author rule setting
+ * display overrides. #pSide, #pInspector, #pPalette and #pContext all set a
+ * display, so each needs an explicit hidden rule to avoid leaving empty chrome
+ * and a stale title on screen when collapsed. Verify the rendered result.    */
+[hidden] { display: none !important; }
+
+/* A RENAMEABLE NAME IS NOT A FORM FIELD until you touch it.
+ *
+ * `#pSide input:not(...)` must catch the untyped #designFilter and exclude
+ * `.gn`, the group's name, or every group row gets a permanent box and the
+ * tree reads as a column of text inputs rather than editable labels.
+ * Specificity preserves the intent: invisible until hovered, a real field
+ * once focused.                                                            */
+#pSide input.gn {
+  background: none; border-color: transparent;
+  font-weight: 560; color: var(--p-chalk); padding: 2px 6px;
+}
+#pSide input.gn:hover { background: var(--p-soil-600); border-color: var(--p-line); }
+#pSide input.gn:focus {
+  background: var(--p-soil-700); border-color: var(--p-clay);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-clay) 15%, transparent);
+}
+
+/* ── DENSITY: HUNDREDS OF ROWS IS THE REAL CASE ─────────────────────────────
+ * Twenty short fixture names cannot establish usable density. A real design
+ * can have hundreds of flat rows and ZERO groups, with labels to 18 characters and
+ * landmark names to 27. Keep scrolling manageable without cutting off names.
+ * A list of this size has to be SCANNED, which means a settled row height
+ * near the cap height of the text and no more.                               */
+#pSide .orow, #pSide .drow, #pSide .list .r {
+  min-height: 24px; padding: 2px var(--p-2); margin: 0;
+}
+#pSide .grow { min-height: 26px; }
+#pSide .orow .nm, #pSide .drow .nm {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* the kind is in the section HEADING when sorted by kind, so repeating it on
+   every row spends 34 px of a 296 px panel saying what the heading already said.
+   In the other two orders there are no headings and it is the only thing that
+   says what a row IS, so it comes back rather than being deleted. */
+#pSide #objList[data-order="kind"] .orow .kind { display: none; }
+#pSide #objList .orow .kind {
+  flex: none; color: var(--p-faint); font-size: var(--p-t-xs);
+  text-transform: uppercase; letter-spacing: .04em; min-width: 44px;
+}
+.tree-heading {
+  /* NEGATIVE top, because a sticky element pins to the scrollport's PADDING
+     box: at top:0 it stops 8 px down and the row scrolling past shows in the
+     strip above it, two sets of letters in the same place. The padding is added
+     back to the band so the text does not move. */
+  position: sticky; top: calc(-1 * var(--p-2)); z-index: 1;
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--p-2);
+  margin: var(--p-3) 0 2px; padding: calc(3px + var(--p-2)) var(--p-2) 3px;
+  /* OPAQUE. A gradient fading to transparent over its bottom 30% lets a row
+     scrolling under a sticky heading show through, superimposing two sets of
+     letters whenever the list is long enough to scroll. */
+  background: var(--p-soil-800);
+  box-shadow: 0 1px 0 var(--p-line), 0 6px 8px -7px rgba(0, 0, 0, .6);
+  color: var(--p-dim);
+}
+.tree-heading .hint { font-variant-numeric: tabular-nums; letter-spacing: 0; }
+.tree-heading:first-child { margin-top: 0; }
+
+/* ── PLACES, DESIGNED RATHER THAN ADOPTED ───────────────────────────────────
+ * Landmarks, areas and saved views need section HEADINGS so their long names
+ * form three distinct lists. Leave room for "Mark" beside the field; a field
+ * that takes all the width pushes the button off the right edge.             */
+#pSide #lmNewRow, #pSide .row:has(> #areaName) {
+  display: flex; gap: 0; margin: var(--p-1) 0 var(--p-2);
+}
+#pSide #lmName, #pSide #areaName {
+  flex: 1 1 auto; min-width: 0;
+  border-radius: var(--p-r-sm) 0 0 var(--p-r-sm); border-right: 0;
+}
+#pSide #btnMark {
+  flex: 0 0 auto; border-radius: 0 var(--p-r-sm) var(--p-r-sm) 0;
+  background: var(--p-clay-bg); border: 1px solid var(--p-clay);
+  color: var(--p-clay-lit); padding: 5px 12px; opacity: 1;
+}
+#pSide #btnMark:hover { background: var(--p-clay); color: var(--p-soil-900); }
+/* a place is a NAME and a kind; the kind is the section it is in, so the row
+   only has to hold a long name well */
+#pSide #lmList .nm, #pSide #areaList .nm, #pSide #vpList .nm {
+  color: var(--p-ink); font-size: var(--p-t-sm);
+}
+
+/* viewport controls in the bar: about the VIEW, not about the design */
+#pTopBar .tb-view { display: flex; align-items: center; gap: 2px; }
+#pTopBar .tb-view button { padding: 4px 6px; }
+#pTopBar .tb-cam { display: inline-flex; gap: 2px; }
+#pTopBar .tb-cam .tb-caret { font-size: 9px; opacity: .6; }
+
+/* the shots, browsable in the panel instead of only in a modal */
+#pSide #shotsList { display: grid; grid-template-columns: 1fr 1fr; gap: var(--p-1); }
+/* the stale warning and the empty state are SENTENCES, not thumbnails — in a
+   two-column grid a single-cell sentence pushes the first photograph off its
+   intended row */
+#pSide #shotsList > .hint { grid-column: 1 / -1; margin: 0 0 var(--p-1); line-height: 1.45; }
+.shot {
+  padding: 0; border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  background: var(--p-soil-600); overflow: hidden; cursor: pointer; line-height: 0;
+  transition: border-color var(--p-fast) var(--p-ease), transform var(--p-fast) var(--p-ease);
+}
+.shot img { width: 100%; height: 74px; object-fit: cover; display: block; }
+.shot:hover { border-color: var(--p-clay); transform: translateY(-1px); }
+
+/* ═══ DISPLAY, ACTUALLY DESIGNED ════════════════════════════════════════════
+ * Controls need shapes that explain what they do. They answer four different
+ * questions, and two different KINDS of question:
+ *
+ *   SETTINGS  — the hour, plant maturity, plant detail: pick a value
+ *   TOGGLES   — what is drawn, how editing behaves: on or off
+ *
+ * A setting gets a labelled row with the control on the right, like every
+ * preferences pane ever written. A toggle gets a full-width switch row with the
+ * name on the left and the switch on the right, so a column of them is scannable
+ * down one edge instead of being a wrapped bag of chips.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* a SETTING: label left, control right, one per line */
+#pSide #sunRow, #pSide #growthRow, #pSide #qualityRow {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  gap: var(--p-2); margin: var(--p-1) 0;
+}
+#pSide #sunRow > .hint:first-child, #pSide #growthRow > .hint:first-child,
+#pSide #qualityRow > label {
+  justify-self: start; color: var(--p-dim); font-size: var(--p-t-sm);
+  text-transform: none; letter-spacing: 0; font-weight: 400;
+}
+#pSide #sunRow > input[type="time"] { justify-self: end; }
+#pSide #growthRow > select, #pSide #qualityRow > select { justify-self: end; min-width: 132px; }
+#pSide #sunCapture {
+  grid-column: 1 / -1; justify-self: start; opacity: 1;
+  background: none; border: 0; padding: 0; color: var(--p-dim);
+  font-size: var(--p-t-xs); text-decoration: underline; cursor: pointer;
+}
+#pSide #sunCapture:hover { color: var(--p-clay-lit); background: none; }
+#pSide #sunLabel { grid-column: 1 / -1; }
+
+/* a TOGGLE: a full-width row with a real switch, so a column of them scans */
+#pSide #layerRow, #pSide #editRow, #pSide #sunShadowRow { display: block; margin: var(--p-1) 0; }
+#pSide #layerRow label.small, #pSide #editRow label.small, #pSide #sunShadowRow label.small {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; box-sizing: border-box; gap: var(--p-3);
+  padding: 6px var(--p-2); margin: 0; border-radius: var(--p-r-sm);
+  background: none; border: 0; border-bottom: 1px solid var(--p-line);
+  color: var(--p-ink); font-size: var(--p-t-sm); cursor: pointer;
+}
+#pSide #layerRow label.small:last-child, #pSide #editRow label.small:last-child,
+#pSide #sunShadowRow label.small {
+  border-bottom: 0;
+}
+#pSide #layerRow label.small:hover, #pSide #editRow label.small:hover,
+#pSide #sunShadowRow label.small:hover {
+  background: color-mix(in srgb, var(--p-soil-600) 60%, transparent);
+}
+/* the checkbox becomes the switch, and moves to the trailing edge */
+#pSide #layerRow input[type="checkbox"], #pSide #editRow input[type="checkbox"],
+#pSide #sunShadowRow input[type="checkbox"] {
+  order: 2; appearance: none; -webkit-appearance: none;
+  width: 30px; height: 17px; border-radius: 999px; flex: none;
+  background: var(--p-soil-600); border: 1px solid var(--p-line);
+  position: relative; transition: background var(--p-fast) var(--p-ease),
+                                  border-color var(--p-fast) var(--p-ease);
+}
+#pSide #layerRow input[type="checkbox"]::after,
+#pSide #editRow input[type="checkbox"]::after,
+#pSide #sunShadowRow input[type="checkbox"]::after {
+  content: ""; position: absolute; top: 1px; left: 1px;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--p-dim);
+  transition: transform var(--p-fast) var(--p-ease), background var(--p-fast) var(--p-ease);
+}
+#pSide #layerRow input[type="checkbox"]:checked,
+#pSide #editRow input[type="checkbox"]:checked,
+#pSide #sunShadowRow input[type="checkbox"]:checked {
+  background: var(--p-clay-bg); border-color: var(--p-clay);
+}
+#pSide #layerRow input[type="checkbox"]:checked::after,
+#pSide #editRow input[type="checkbox"]:checked::after,
+#pSide #sunShadowRow input[type="checkbox"]:checked::after {
+  transform: translateX(13px); background: var(--p-clay-lit);
+}
+
+/* ── DESIGNS ────────────────────────────────────────────────────────────────
+ * The row for the design you are EDITING must not look like the others.
+ * Style its `.cur` marker so the active design is visible at a glance.       */
+#pSide #designCur {
+  display: block; margin: 0 0 var(--p-2); padding: 6px var(--p-2);
+  border-radius: var(--p-r-sm); background: var(--p-soil-600);
+  color: var(--p-dim); font-size: var(--p-t-xs);
+}
+#pSide #designCur.dirty { color: var(--p-warn); }
+#pSide .drow.cur {
+  background: color-mix(in srgb, var(--p-clay) 15%, transparent);
+  border-color: color-mix(in srgb, var(--p-clay) 42%, transparent);
+}
+#pSide .drow.cur .nm { color: var(--p-clay-lit); font-weight: 600; }
+#pSide .drow.cur .dn { color: var(--p-clay-lit); font-weight: 600; }
+#pSide .drow.cur::after {
+  content: "editing"; order: 8; margin-left: auto; padding-left: var(--p-2);
+  color: var(--p-clay); font-size: 9px; letter-spacing: .08em; text-transform: uppercase;
+}
+/* the search row: the field leads, the sort is a trailing control rather than an
+   orphaned uppercase word on a line of its own */
+#pSide #designFind { display: flex; align-items: center; gap: var(--p-2); }
+#pSide #designFind > label[for="designSort"] {
+  flex: none; font-size: 0;                    /* the select says what it is */
+}
+#pSide #designFilter { flex: 1 1 auto; min-width: 0; }
+#pSide #designSort { flex: 0 0 auto; }
+#pSide #designCount { flex: none; color: var(--p-faint); font-size: var(--p-t-xs); }
+
+/* ── PLACES ROWS ────────────────────────────────────────────────────────────
+ * `.lrow` (landmarks) and `.r` (areas) are the app's own row shapes for a
+ * 312 px panel section. They need styling here so a dozen landmarks read as
+ * distinct rows rather than a dozen bare words.                             */
+#pSide .lrow, #pSide .r {
+  display: flex; align-items: center; gap: var(--p-1);
+  min-height: 26px; padding: 1px var(--p-1); margin: 0;
+  border-radius: var(--p-r-sm);
+  transition: background var(--p-fast) var(--p-ease);
+}
+#pSide .lrow:hover, #pSide .r:hover {
+  background: color-mix(in srgb, var(--p-soil-600) 70%, transparent);
+}
+/* the name is the row: borderless until you go near it, a field once you do */
+#pSide .lrow > input[type="text"], #pSide .r > input.nm {
+  flex: 1 1 auto; min-width: 0;
+  background: none; border: 1px solid transparent; border-radius: 4px;
+  color: var(--p-ink); font: inherit; font-size: var(--p-t-sm); padding: 3px 5px;
+}
+#pSide .lrow > input:hover, #pSide .r > input.nm:hover { border-color: var(--p-line); }
+#pSide .lrow > input:focus, #pSide .r > input.nm:focus {
+  background: var(--p-soil-700); border-color: var(--p-clay); outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--p-clay) 15%, transparent);
+}
+#pSide .r > .meta { flex: none; margin-left: 0; }
+#pSide .lrow > button, #pSide .r > button {
+  flex: none; opacity: 0; background: none; border: 0; border-radius: 4px;
+  color: var(--p-dim); font-size: var(--p-t-xs); padding: 3px 6px; cursor: pointer;
+  transition: opacity var(--p-fast) var(--p-ease), background var(--p-fast) var(--p-ease);
+}
+#pSide .lrow:hover > button, #pSide .r:hover > button { opacity: 1; }
+/* A landmark row carries THREE actions (show · move · ✕). Invisible at
+   opacity 0 they still take their width, cutting long names short —
+   `fence_corner_southeast`, say — to make room for buttons nobody can see.
+   Out of the layout until the row is the one in hand. */
+#pSide .lrow:not(:hover):not(:focus-within) > button { display: none; }
+#pSide .lrow > button:hover, #pSide .r > button:hover {
+  background: var(--p-soil-600); color: var(--p-chalk);
+}
+
+/* the objects filter: the field leads, the count trails */
+/* THE FILTER AND THE SORT SHARE A LINE — they are the two things that narrow
+   the list, so keep them together. The count is a REPORT, so it sits under them. */
+#pSide #objFind { display: flex; align-items: center; gap: var(--p-2); margin: var(--p-1) 0 0; }
+#pSide #objTally {
+  display: flex; align-items: baseline; gap: var(--p-2);
+  margin: 3px 0 var(--p-2); padding: 0 var(--p-1);
+}
+#pSide #objTally #btnShowAllObjects {
+  margin-left: auto; flex: none;
+  background: none; border: 0; padding: 0;
+  color: var(--p-clay); font: inherit; font-size: var(--p-t-xs);
+  cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+}
+#pSide #objTally #btnShowAllObjects:hover { color: var(--p-clay-lit); }
+#pSide #objFilter { flex: 1 1 auto; min-width: 0; }
+#pSide #objFind .tree-sort { flex: 0 0 auto; }
+#pSide #objShown { flex: none; color: var(--p-faint); font-size: var(--p-t-xs);
+                   font-variant-numeric: tabular-nums; }
+
+/* AVOID A SECOND TITLE and undo/redo arrows that read as page-through.
+   Hide `#objRow`'s "Objects (N)" under the panel header's OBJECTS, along with
+   the timeline position and undo/redo buttons the top bar owns.
+   The buttons stay in the DOM because they ARE the undo state that topbar
+   delegates to — hidden, not deleted, exactly like `#placeWhat`. What is left
+   is the sort control and the floating-object warning, which belong here. */
+#pSide #objRow { gap: var(--p-2); margin: 0 0 var(--p-1); padding: 0 var(--p-2); }
+#pSide #objRow > #tlPos,
+#pSide #objRow > #btnUndo,
+#pSide #objRow > #btnRedo { display: none; }
+#pSide #objRow.bare .objhead:empty,
+#pSide #objRow .objhead > #objCount { display: none; }
+/* auto width, hard right: override the panel's full-width select rule so a
+   quiet view preference does not fill the header and read as its main control */
+/* #objRow carries ONLY the floating-object warning (and the undo/redo the
+   top bar owns, hidden). With no warning it must take no height at all, or the
+   list starts a row lower for nothing. */
+#pSide #objRow { justify-content: flex-end; margin: 0; padding: 0; }
+#pSide #objRow:not(:has(.bad)) { display: none; }
+#pSide #objFind .tree-sort {
+  flex: 0 0 auto; width: auto; margin-left: auto;
+  padding: 3px 24px 3px var(--p-2); font-size: var(--p-t-xs);
+}
+/* NOT `background-position: right 6px center` — the chevron is TWO gradient
+   layers at two positions, and one value applies to both, which folds the two
+   triangles on top of each other into a little black flag. If the padding
+   changes, both positions change together or neither does. */
+
+
+/* ═══ NOT CALIBRATED, AND THE PATH OUT OF IT ════════════════════════════════
+ * An uncalibrated capture makes every design on it wrong in the one way nothing
+ * downstream can detect: the coordinates are all self-consistent and all
+ * rotated. So the shell says so beside the design name rather than in a menu,
+ * and the settings window shows the ORDER, because analyze_site.py has a strict
+ * one and doing it out of order produces a wrong yard in silence.             */
+.tb-warn {
+  margin-left: var(--p-2); padding: 3px var(--p-2);
+  background: var(--p-warn-bg, rgba(228, 178, 92, .14));
+  border: 1px solid rgba(228, 178, 92, .45); border-radius: 999px;
+  color: #e4b25c; font: inherit; font-size: var(--p-t-xs); font-weight: 600;
+  letter-spacing: .01em; cursor: pointer; white-space: nowrap;
+}
+.tb-warn:hover { background: rgba(228, 178, 92, .24); }
+.tb-warn::before { content: "⚠ "; }
+
+#setupPath { margin-bottom: var(--p-3); }
+.setup-step {
+  display: flex; align-items: flex-start; gap: var(--p-2);
+  padding: var(--p-1) var(--p-2); border-radius: var(--p-r-sm);
+  border-left: 2px solid transparent;
+}
+.setup-step + .setup-step { margin-top: 2px; }
+.setup-mark { flex: none; width: 14px; text-align: center; color: var(--p-faint);
+              font-variant-numeric: tabular-nums; line-height: 1.5; }
+.setup-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.setup-text b { font-weight: 600; color: var(--p-dim); }
+.setup-text .hint { line-height: 1.45; }
+.setup-step.done .setup-mark { color: #7fb069; }
+.setup-step.done .setup-text b { color: var(--p-faint); font-weight: 500; }
+.setup-step.done .setup-text .hint { display: none; }   /* a finished step needs no reason */
+.setup-step.next { background: var(--p-clay-bg); border-left-color: var(--p-clay); }
+.setup-step.next .setup-mark, .setup-step.next .setup-text b { color: var(--p-clay-lit); }
+.setup-step.blocking:not(.done) .setup-mark { color: #e4b25c; }
+.setup-go {
+  flex: none; align-self: center;
+  background: var(--p-soil-600); color: var(--p-dim);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 2px 8px; font: inherit; font-size: var(--p-t-xs); cursor: pointer;
+}
+.setup-go:hover { background: var(--p-clay-bg); border-color: var(--p-clay); color: var(--p-clay-lit); }
+
+
+/* ═══ PROJECT SETTINGS, GIVEN THE SAME TREATMENT ════════════════════════════
+ * Keep its title bar and only close button below the 44 px top bar at z-index
+ * 40: placing them at y=13 hides the close button. Constrain the window to the
+ * viewport; an 883 px window in an 868 px viewport puts the last section off
+ * the bottom of the screen.
+ *
+ * It stays a WINDOW rather than a modal, deliberately: Set north, Click span and
+ * Corner pairs are all "press this, then click the ground", so the scene has to
+ * stay live and clickable underneath it.                                      */
+#settings {
+  top: 52px; left: auto; right: var(--p-3); width: 330px;
+  max-height: calc(100vh - 52px - var(--p-3));
+  display: flex; flex-direction: column;     /* so only the BODY scrolls */
+  overflow: hidden;
+  background: color-mix(in srgb, var(--p-soil-700) 95%, transparent);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-lg);
+  box-shadow: var(--p-shadow-lg, 0 18px 48px rgba(0, 0, 0, .5));
+  z-index: 30;                                /* under the top bar, over the canvas */
+}
+#settings h1 {
+  flex: none;
+  padding: var(--p-3) var(--p-3) var(--p-2);
+  font-size: var(--p-t-xs); font-weight: 650; letter-spacing: var(--p-track-caps);
+  color: var(--p-chalk); border-bottom: 1px solid var(--p-line);
+}
+#settings h1 button {
+  background: none; border: 0; color: var(--p-faint);
+  border-radius: var(--p-r-sm); padding: 2px 7px; font-size: var(--p-t-md); cursor: pointer;
+}
+#settings h1 button:hover { background: var(--p-soil-600); color: var(--p-ink); }
+#settings > .body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: var(--p-3) var(--p-3) var(--p-5);
+  scrollbar-width: thin;
+}
+#settings > .body::-webkit-scrollbar { width: 9px; }
+#settings > .body::-webkit-scrollbar-thumb {
+  background: var(--p-soil-600); border-radius: 9px;
+  border: 3px solid transparent; background-clip: content-box;
+}
+/* the section headings read as headings, like everywhere else in the shell */
+#settings .row.subhead {
+  border: 0; margin: var(--p-4) 0 var(--p-1); padding: 0;
+  font-size: var(--p-t-xs); font-weight: 650; letter-spacing: var(--p-track-caps);
+  text-transform: uppercase; color: var(--p-dim);
+}
+#settings .row.subhead:first-child, #settings #setupPath + .row.subhead { margin-top: 0; }
+#settings .row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--p-1); margin: var(--p-1) 0; }
+#settings .row > .hint { flex-basis: 100%; line-height: 1.45; }
+#settings button:not(.setup-go):not(h1 > button) {
+  background: var(--p-soil-600); color: var(--p-dim);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 5px var(--p-2); font: inherit; font-size: var(--p-t-sm); cursor: pointer;
+  transition: background var(--p-fast) var(--p-ease), color var(--p-fast) var(--p-ease),
+              border-color var(--p-fast) var(--p-ease);
+}
+#settings button:not(.setup-go):not(h1 > button):hover {
+  background: var(--p-clay-bg); border-color: var(--p-clay); color: var(--p-clay-lit);
+}
+#settings button.active { background: var(--p-clay-bg); border-color: var(--p-clay); color: var(--p-clay-lit); }
+/* a native select ignores background until appearance:none, so it stays light
+   grey without it */
+#settings select, #settings input[type="number"], #settings input[type="text"] {
+  appearance: none; -webkit-appearance: none;
+  background-color: var(--p-soil-600); color: var(--p-ink);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 5px var(--p-2); font: inherit; font-size: var(--p-t-sm);
+}
+#settings select {
+  flex: 1; min-width: 0; padding-right: 26px;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 12px center, right 7px center;
+  background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
+}
+#settings input[type="number"]::-webkit-outer-spin-button,
+#settings input[type="number"]::-webkit-inner-spin-button { appearance: none; margin: 0; }
+/* the file picker: the native control is a grey OS button in a dark window */
+#settings input[type="file"] { flex: 1; min-width: 0; font-size: var(--p-t-xs); color: var(--p-faint); }
+#settings input[type="file"]::file-selector-button {
+  background: var(--p-soil-600); color: var(--p-dim);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 4px var(--p-2); margin-right: var(--p-2); font: inherit;
+  font-size: var(--p-t-xs); cursor: pointer;
+}
+#settings input[type="file"]::file-selector-button:hover {
+  background: var(--p-clay-bg); border-color: var(--p-clay); color: var(--p-clay-lit);
+}
+#settings label.small { display: flex; align-items: center; gap: 6px; color: var(--p-dim);
+                        font-size: var(--p-t-sm); }
+
+
+/* ═══ THE SUN ON A SLIDER ═══════════════════════════════════════════════════
+ * You cannot see how a garden works at five in the afternoon by typing 17:00.  */
+#pSide #sunRow { display: flex; align-items: center; gap: var(--p-2); }
+#pSide #sunSlider { flex: 1; min-width: 0; }
+#pSide #sunClock { flex: none; font-size: var(--p-t-sm); color: var(--p-ink);
+                   font-variant-numeric: tabular-nums; min-width: 40px; text-align: right; }
+#pSide #sunWhenRow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--p-1); }
+#pSide #sunWhenRow #sunSeason { flex: 1 1 100%; }
+/* THEY MUST WRAP. `.row` is a flex line, so a sentence inside one is a single
+   unshrinkable item that can run off the right edge of a 296 px panel. Keep the
+   full two-suns note visible, including the sentence saying what to do. */
+#pSide #sunLabelRow, #pSide #sunTwoSunsRow { display: block; margin: var(--p-1) 0 0; }
+#pSide #sunLabelRow .hint, #pSide #sunTwoSunsRow .hint {
+  display: block; flex: 1 1 100%; min-width: 0;
+  white-space: normal; overflow-wrap: anywhere; line-height: 1.45;
+}
+/* an empty warning row must take no space, and `display: flex` beats `hidden` */
+#pSide #sunTwoSunsRow.empty { display: none; }
+
+#pSide input[type="range"] {
+  appearance: none; -webkit-appearance: none;
+  height: 18px; background: none; cursor: pointer;
+}
+#pSide input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px; border-radius: 2px;
+  /* the day itself: night, the low warm ends, the high middle */
+  background: linear-gradient(90deg, #2a2f2c 0%, #8a5a35 12%, #d9a35f 30%,
+                              #f0d9a8 50%, #d9a35f 70%, #8a5a35 88%, #2a2f2c 100%);
+}
+#pSide input[type="range"]::-webkit-slider-thumb {
+  appearance: none; -webkit-appearance: none;
+  width: 13px; height: 13px; margin-top: -4.5px; border-radius: 50%;
+  background: var(--p-chalk); border: 2px solid var(--p-soil-800);
+  box-shadow: 0 0 0 1px var(--p-line);
+}
+#pSide input[type="range"]:hover::-webkit-slider-thumb { background: var(--p-clay-lit); }
+#pSide input[type="range"]:focus-visible { outline: 2px solid var(--p-clay); outline-offset: 3px; }
+
+
+/* ═══ COMPARING DESIGNS ═════════════════════════════════════════════════════
+ * A list of saved filenames can include several versions of one border. The 3D
+ * comparison ghosts one behind the working design; this puts their measurements
+ * beside each other. Every figure is a measurement, never a score:
+ * taste is reported, never graded.                                          */
+#pSide #designCompare { margin: var(--p-2) 0 var(--p-3); }
+#pSide #designCompare > .hint { line-height: 1.45; display: block; }
+#pSide table.cmp {
+  width: 100%; border-collapse: collapse; margin-top: var(--p-1);
+  font-size: var(--p-t-xs); font-variant-numeric: tabular-nums;
+  table-layout: fixed;
+}
+#pSide table.cmp th, #pSide table.cmp td {
+  padding: 3px var(--p-1); text-align: right;
+  border-bottom: 1px solid color-mix(in srgb, var(--p-line) 55%, transparent);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#pSide table.cmp tr:first-child th {
+  color: var(--p-chalk); font-weight: 600; text-align: right;
+  border-bottom-color: var(--p-line);
+}
+/* the working design is the column everything else is measured against */
+#pSide table.cmp tr:first-child th:nth-child(2) { color: var(--p-clay-lit); }
+/* the LABEL wraps, the numbers do not. "mature coverage" and "ground per plant"
+   must not truncate to "mature covera…" — the qualifier is the load-bearing
+   half of both: coverage at MATURE size is a different number from coverage as
+   drawn. Shortening the label throws that away to save a line. */
+#pSide table.cmp th.cmp-lab {
+  text-align: left; color: var(--p-faint); font-weight: 400;
+  white-space: normal; overflow: visible; width: 38%; line-height: 1.3;
+}
+#pSide table.cmp td { color: var(--p-ink); }
+#pSide .cmp-diff { color: var(--p-faint); font-size: 10px; }
+
+
+/* ═══ YOUR OWN PHOTOGRAPH OF YOUR OWN PLANT ═════════════════════════════════
+ * Let the owner add photographs of their plants, stones and other assets with
+ * measurements. Their photograph records the actual asset; a library reference
+ * can show the wrong species.                                                */
+/* ☆ mine — the plants the owner has */
+#assetGrid .mine { margin-top: 4px; font: inherit; font-size: var(--p-t-xs); background: none; cursor: pointer;
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm); color: var(--p-dim); padding: 1px 6px; }
+#assetGrid .mine:hover { border-color: var(--p-clay); color: var(--p-ink); }
+#assetGrid .mine.on { color: var(--p-clay-lit); border-color: var(--p-clay); }
+#assetGrid .owner-photo { margin-top: 4px; font-size: var(--p-t-xs); line-height: 1.3; }
+#assetGrid .owner-photo.has { color: var(--p-clay-lit); letter-spacing: .02em; }
+#assetGrid .op-add {
+  background: none; border: 1px dashed var(--p-line); border-radius: var(--p-r-sm);
+  color: var(--p-faint); font: inherit; font-size: var(--p-t-xs);
+  padding: 2px 7px; cursor: pointer; width: 100%;
+  transition: border-color var(--p-fast) var(--p-ease), color var(--p-fast) var(--p-ease);
+}
+#assetGrid .op-add:hover { border-color: var(--p-clay); color: var(--p-clay-lit); }
+
+/* PINNED TO THE BOTTOM of the asset window — it is a flex sibling AFTER the
+   grid, and the grid is the part that scrolls, so the form stays put while the
+   cards move under it. `flex: none` matters: without it the form is the
+   thing that gets squashed when the window runs out of room, and the field the
+   user is typing a measurement into is the last thing that should shrink. */
+#assetGrid { flex: 1 1 auto; min-height: 0; }
+#ownerPhoto:not([hidden]) {
+  flex: none;
+  display: flex; flex-direction: column; gap: var(--p-2);
+  margin: 0; padding: var(--p-3);
+  border-radius: 0 0 var(--p-r-lg) var(--p-r-lg);
+  box-shadow: 0 -12px 24px -12px rgba(0, 0, 0, .6);
+  background: var(--p-soil-700); border-top: 1px solid var(--p-clay);
+  color: var(--p-ink);
+}
+#ownerPhoto .op-head { display: flex; align-items: baseline; gap: var(--p-2); }
+#ownerPhoto .op-head b { color: var(--p-chalk); }
+#ownerPhoto .op-head #opFor { color: var(--p-clay-lit); }
+#ownerPhoto .op-head button {
+  margin-left: auto; background: none; border: 0; color: var(--p-faint);
+  font-size: var(--p-t-md); cursor: pointer; padding: 0 6px; border-radius: var(--p-r-sm);
+}
+#ownerPhoto .op-head button:hover { background: var(--p-soil-600); color: var(--p-ink); }
+#ownerPhoto label { display: flex; flex-direction: column; gap: 3px;
+                    font-size: var(--p-t-xs); color: var(--p-dim); }
+#ownerPhoto .op-row { display: flex; gap: var(--p-2); }
+#ownerPhoto .op-row > label { flex: 1; min-width: 0; }
+#ownerPhoto .op-actions { align-items: center; }
+#ownerPhoto input[type="number"], #ownerPhoto input[type="text"] {
+  appearance: none; -webkit-appearance: none;
+  background: var(--p-soil-600); color: var(--p-ink);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 5px var(--p-2); font: inherit; font-size: var(--p-t-sm); min-width: 0;
+}
+#ownerPhoto input[type="file"] { font-size: var(--p-t-xs); color: var(--p-faint); }
+#ownerPhoto input[type="file"]::file-selector-button {
+  background: var(--p-soil-600); color: var(--p-dim);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  padding: 4px var(--p-2); margin-right: var(--p-2); font: inherit;
+  font-size: var(--p-t-xs); cursor: pointer;
+}
+#ownerPhoto #opSave {
+  background: var(--p-clay-bg); border: 1px solid var(--p-clay); color: var(--p-clay-lit);
+  border-radius: var(--p-r-sm); padding: 5px var(--p-3); font: inherit;
+  font-size: var(--p-t-sm); cursor: pointer;
+}
+#ownerPhoto #opSave:hover { background: color-mix(in srgb, var(--p-clay) 30%, transparent); }
+#ownerPhoto .hint { line-height: 1.45; }
+
+/* what the coverage number MEANS — a measurement explained, never a grade */
+#pSide .cmp-reading { margin-top: var(--p-2); display: flex; flex-direction: column; gap: 3px; }
+#pSide .cmp-reading > div { font-size: var(--p-t-xs); color: var(--p-faint); line-height: 1.45; }
+#pSide .cmp-reading b { color: var(--p-dim); font-weight: 600; }
+
+/* the path-traced frame: shown at panel width, click for the full thing */
+#pSide #prRow { display: flex; gap: var(--p-2); align-items: center; }
+#pSide #prSubject { flex: 1; min-width: 0; }
+#pSide #prMsgRow { display: block; margin: var(--p-1) 0 0; }
+#pSide #prMsgRow .hint { display: block; line-height: 1.45; }
+#pSide #prOut { margin-top: var(--p-2); display: flex; flex-direction: column; gap: var(--p-1); }
+#pSide .pr-img { width: 100%; border-radius: var(--p-r-sm); border: 1px solid var(--p-line);
+                 cursor: zoom-in; display: block; }
+
+
+/* ═══ TOOLTIPS ══════════════════════════════════════════════════════════════
+ * A `title` attribute is a REQUEST for a tooltip and the browser decides — over
+ * a second of delay, OS chrome, and nothing at all if the pointer moved on the
+ * way in. On a row of icon-only buttons that reads as no help existing.        */
+#pTip {
+  position: fixed; z-index: 90; pointer-events: none;
+  max-width: 300px; padding: 6px 9px;
+  background: color-mix(in srgb, var(--p-soil-900) 96%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line); border-radius: var(--p-r-sm);
+  color: var(--p-ink); font-size: var(--p-t-xs); line-height: 1.45;
+  box-shadow: 0 6px 18px -6px rgba(0, 0, 0, .6);
+  animation: p-tip-in var(--p-fast) var(--p-ease);
+}
+@keyframes p-tip-in { from { opacity: 0; transform: translateY(-2px); } }
+@media (prefers-reduced-motion: reduce) { #pTip { animation: none; } }
+
+
+/* ═══ THE PROJECT ═══════════════════════════════════════════════════════════
+ * Make saving and loading understandable. Saving is automatic, so SHOW the
+ * project's parts and where each one lives to make that behaviour clear.    */
+#settings #projNameRow { margin-bottom: 2px; }
+#settings #projName { flex: 1; min-width: 0; }
+#settings #projParts { display: flex; flex-direction: column; gap: 2px; margin: var(--p-2) 0 0; }
+#settings .proj-part {
+  display: grid; grid-template-columns: 1fr auto; column-gap: var(--p-2);
+  padding: 5px var(--p-2); border-radius: var(--p-r-sm);
+  background: color-mix(in srgb, var(--p-soil-600) 45%, transparent);
+}
+#settings .proj-part b { color: var(--p-ink); font-weight: 600; font-size: var(--p-t-sm); }
+#settings .proj-part .meta {
+  color: var(--p-faint); font-size: var(--p-t-xs); text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+#settings .proj-part .hint { grid-column: 1 / -1; line-height: 1.4; margin-top: 1px; }
+#settings .proj-part code {
+  grid-column: 1 / -1; color: var(--p-faint); font-size: 10.5px; opacity: .8;
+}
+/* a part that is not there yet is a step the user has not taken, not an error */
+#settings .proj-part.missing b { color: var(--p-faint); font-weight: 500; }
+#settings .proj-part.missing .meta { color: var(--p-warn, #e4b25c); }
+
+/* SAVED / HISTORY — one surface, two lists. A segmented pair rather than a
+   dropdown, because there are exactly two and which one you are in should be
+   readable without opening anything. */
+#designSource { gap: 0; margin-bottom: var(--p-2); }
+#pSide #designSource button {
+  flex: 1; border-radius: 0; margin: 0;
+  border: 1px solid var(--p-line); background: transparent;
+  color: var(--p-dim); font-size: var(--p-t-xs); padding: 4px 8px;
+}
+#pSide #designSource button:first-child { border-radius: var(--p-r-sm) 0 0 var(--p-r-sm); }
+#pSide #designSource button:last-child  { border-radius: 0 var(--p-r-sm) var(--p-r-sm) 0; border-left: 0; }
+#pSide #designSource button:hover { color: var(--p-ink); background: var(--p-soil-700); }
+#pSide #designSource button.active {
+  background: var(--p-clay-bg); border-color: var(--p-clay); color: var(--p-clay-lit);
+}
+/* a restored version is a different verb from loading a saved one, and the row
+   is narrow — keep it quiet until the row is under the pointer */
+#pSide .drow .meta { white-space: nowrap; }
+
+/* WHERE A DESIGN CAME FROM. Its OWN line, under the counts.
+   The row is FLEX, not grid — `grid-column: 1 / -1` is inert here and leaves
+   lineage inline, wrapping according to name length rather than consistently
+   across rows. `flex: 1 0 100%` with an order after `.meta` is the
+   pattern this row already uses to force a line, and it is the one to copy.
+   Indented to the same 22 px as the counts, so the eye has one left edge. */
+#pSide .drow .from {
+  flex: 1 0 100%; order: 10; margin: 0 0 0 22px;
+  color: var(--p-faint); font-size: var(--p-t-xs);
+  font-style: italic; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+/* Which beds are crowded when grown: its own line under the counts, on
+   the same 22 px edge. The WARNING colour, not the accent — it is a finding about
+   the design, and clay is reserved for "this is the one you are editing". */
+#pSide .drow .crowded {
+  flex: 1 0 100%; order: 11; margin: 0 0 0 22px;
+  color: var(--p-warn); font-size: var(--p-t-xs);
+/* WRAPS, where `.from` truncates: cut short, this line loses the bed's name and
+     its number, which are the whole of what it says */
+  white-space: normal; line-height: 1.35;
+}
+
+/* TWO PROPOSALS FOR ONE CORNER. A named set with its options beside it,
+   above the object list — the choice is about the whole design and the tree can
+   be hundreds of rows deep. Hidden entirely when the design declares none. */
+#pSide #objAlts { display: flex; flex-direction: column; gap: 3px; margin: 0 0 var(--p-2); }
+#pSide .alt-set { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+#pSide .alt-set .alt-name {
+  flex: 1 0 100%; color: var(--p-faint); font-size: var(--p-t-xs);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+#pSide .alt-set button {
+  flex: 1; min-width: 0; padding: 3px 8px; font-size: var(--p-t-xs);
+  border: 1px solid var(--p-line); background: transparent; color: var(--p-dim);
+  border-radius: var(--p-r-sm);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#pSide .alt-set button:hover { color: var(--p-ink); background: var(--p-soil-700); }
+#pSide .alt-set button.active {
+  background: var(--p-clay-bg); border-color: var(--p-clay); color: var(--p-clay-lit);
+}
+
+/* A ROW FOR GEOMETRY THAT IS NOT IN THE YARD. Distinct from `.off`,
+   which means "you hid it": this one means "the other proposal won, so it was
+   never built". Struck through rather than merely faded, because faded already
+   means hidden and two states that look the same are one state. */
+#pSide .orow.unbuilt, #pSide .grow.unbuilt { opacity: .45; }
+#pSide .orow.unbuilt .nm, #pSide .grow.unbuilt .nm { text-decoration: line-through; }
+
+/* The first screen (shell/welcome.js): no site yet — the demo, or your own. */
+#pWelcome { position: fixed; inset: 0; z-index: 70; font-family: var(--p-sans); }
+.wel-scrim { position: absolute; inset: 0; background: rgba(0,0,0,.5); }
+.wel-box {
+  position: relative; margin: 12vh auto 0; width: min(520px, 92vw); box-sizing: border-box;
+  padding: var(--p-5) var(--p-5) var(--p-4);
+  background: color-mix(in srgb, var(--p-soil-700) 96%, transparent);
+  -webkit-backdrop-filter: var(--p-blur); backdrop-filter: var(--p-blur);
+  border: 1px solid var(--p-line-lit); border-radius: var(--p-r-lg); box-shadow: var(--p-shadow-3);
+  color: var(--p-ink);
+}
+.wel-mark { font-size: var(--p-t-lg); }
+.wel-lede { margin: var(--p-2) 0 var(--p-4); color: var(--p-dim); font-size: var(--p-t-md); line-height: 1.5; }
+.wel-choice {
+  display: flex; flex-direction: column; gap: 4px; width: 100%; box-sizing: border-box;
+  margin-bottom: var(--p-3); padding: var(--p-3) var(--p-4); text-align: left;
+  background: var(--p-soil-800); border: 1px solid var(--p-line-lit); border-radius: var(--p-r-md, 8px);
+  color: var(--p-ink); font: inherit;
+}
+button.wel-choice { cursor: pointer; }
+button.wel-choice:hover, button.wel-choice:focus-visible { border-color: var(--p-clay); background: var(--p-clay-bg); }
+.wel-choice-title { color: var(--p-chalk); font-weight: 600; font-size: var(--p-t-md); }
+.wel-choice-hint { color: var(--p-dim); font-size: var(--p-t-sm); line-height: 1.45; }
+.wel-row { display: flex; gap: var(--p-2); margin-top: var(--p-2); }
+.wel-input {
+  flex: 1; min-width: 0; padding: 7px var(--p-3); background: var(--p-soil-600);
+  border: 1px solid var(--p-line-lit); border-radius: 6px; color: var(--p-chalk); font: inherit;
+}
+.wel-input:focus { outline: none; border-color: var(--p-clay); }
+.wel-go {
+  padding: 7px var(--p-4); background: var(--p-clay); border: 0; border-radius: 6px;
+  color: var(--p-soil-900); font: inherit; font-weight: 600; cursor: pointer;
+}
+.wel-go:hover { background: var(--p-clay-lit); }
+.wel-foot { margin: var(--p-2) 0 0; color: var(--p-faint); font-size: var(--p-t-xs); line-height: 1.5; }

@@ -1,0 +1,240 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>reference photo vs rendered asset</title>
+<!--
+  The instrument: every palette species shown as its REFERENCE PHOTOGRAPH beside
+  the asset this project actually draws, at the same size and on the same ground.
+
+  The photographs are NOT lazy-loaded: a row hidden by the filter when the page
+  loads never fires its lazy load, so filtering to a subset would show blank frames
+  next to perfectly good renders — a comparison sheet with the comparison missing.
+
+  It exists because reviewing dozens of species one photograph at a time does not
+  scale, and reviewing them by shelf is too coarse: it catches the systemic faults
+  and misses every per-species one — such as a reference photograph that is not of
+  a plant at all, which no shelf-level look would surface.
+
+  Left is what the plant IS. Right is what we draw. Anything you can see is a bug.
+-->
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #14150f; color: #d8d4c4;
+         font: 13px/1.45 ui-sans-serif, system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: #14150f;
+           padding: 10px 14px; border-bottom: 1px solid #2f3126; display: flex;
+           gap: 12px; align-items: center; flex-wrap: wrap; }
+  input, select { background: #1e2018; color: inherit; border: 1px solid #3a3d2f;
+                  border-radius: 5px; padding: 4px 7px; font: inherit; }
+  .row { display: grid; grid-template-columns: 260px 260px 1fr; gap: 14px;
+         padding: 12px 14px; border-bottom: 1px solid #23251c; align-items: start; }
+  /* `display: grid` beats [hidden]'s user-agent `display: none`, so without this
+     the filter updates the count and hides nothing. Needs to be said explicitly. */
+  .row[hidden] { display: none; }
+  .row img, .row canvas { width: 260px; height: 190px; object-fit: cover;
+                          border-radius: 6px; background: #0e0f0a; display: block; }
+  .meta b { color: #eae6d6; font-size: 15px; }
+  .meta i { color: #8d9078; }
+  .tag { display: inline-block; background: #262a1d; border: 1px solid #3a3d2f;
+         border-radius: 4px; padding: 1px 6px; margin: 3px 4px 0 0; font-size: 12px; }
+  .miss { color: #d98a6a; }
+  a { color: #b2c690; }
+  body.detail .row { grid-template-columns: minmax(220px,1fr) minmax(420px,2fr); }
+  body.detail .row canvas, body.detail .row img { width:100%;height:auto;object-fit:contain; }
+  body.detail .meta { grid-column:1/-1; }
+</style>
+<header>
+  <strong>photo vs asset</strong>
+  <input id="q" placeholder="filter — sage, grass, buckwheat…" size="26">
+  <select id="form"><option value="">any form</option></select>
+  <span id="count" class="meta"></span>
+  <span class="meta"><i>left: the real plant · right: what we draw</i></span>
+</header>
+<div id="list"></div>
+<script type="module">
+import * as THREE from "/node_modules/three/build/three.module.js";
+import {preparePlantTextures} from '/src/plant_textures.js';
+import { buildPlant, fastModelKey } from "/src/plants.js";
+import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "/node_modules/three/examples/jsm/loaders/GLTFLoader.js";
+const single = new URLSearchParams(location.search).get('plant');
+const baked = new URLSearchParams(location.search).get('source')==='baked';
+// ?quality=fast draws what the viewer's Fast preview draws — the same builder reduced, its
+// textures at 256 px — so the two can be put side by side.
+// ?only=a|b|c limits the sheet to those species.
+const quality = new URLSearchParams(location.search).get('quality') === 'fast' ? 'fast' : 'detailed';
+const only = new URLSearchParams(location.search).get('only')?.split('|') ?? null;
+if(single)document.body.classList.add('detail');
+import { prepareSimplifier } from '/src/preview_lod.js';
+await prepareSimplifier();
+await preparePlantTextures(quality);
+// The GLB-backed species must be REAL here. Without this the cache is empty,
+// buildAssetPlant returns null and manzanita/ceanothus/toyon/olive quietly fall
+// back to procedural — so the sheet would be reviewing a plant the garden never
+// draws, which is the exact failure it exists to catch.
+import { ensureAssets, catalogNames, assetsNeededBy } from "/src/assets.js";
+
+const [pal, idx] = await Promise.all([
+  fetch("/data/plant_palette.json").then(r => r.json()),
+  fetch("/data/refphotos/index.json").then(r => r.json()).catch(() => ({})),
+]);
+const shownPlants=single?pal.plants.filter(p=>p.species===single):only?only.map(s=>pal.plants.find(p=>p.species===s)).filter(Boolean):pal.plants;
+await ensureAssets(single?assetsNeededBy({plants:shownPlants}):await catalogNames());
+const bakedFile=single&&baked?shownPlants[0]?.model_quality?.asset_file:null;
+const bakedScene=bakedFile?(await new GLTFLoader().loadAsync('/'+bakedFile)).scene:null;
+// WHICH PHOTOGRAPH TO BELIEVE. `byKey[row.species] = row` over Object.values
+// takes whichever row happens to come last. With one row per species that is
+// arbitrary and harmless; with an owner photograph beside a fetched one
+// it is a coin toss over which picture a plant gets modelled from, and the owner
+// one cannot be of the wrong species. One rule, shared with python.
+import { photoFor, isOwner, provenanceOf } from "/src/shell/refphotos.js";
+const byKey = {};
+for (const row of Object.values(idx)) {
+  const best = photoFor(idx, row.species);
+  if (best) byKey[row.species] = best;
+}
+
+// One renderer, reused: a WebGL context per species is well past what a browser will give.
+const W = single?1200:520, H = single?900:380;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(W, H, false);
+renderer.setClearColor(0x1a1c14, 1);
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0xdfe6ef, 0x4a4632, 1.5));
+const sun = new THREE.DirectionalLight(0xfff2dc, 2.4);
+sun.position.set(2.5, 4, 2); scene.add(sun);
+sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.normalBias=.001;
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(60, 60),
+  new THREE.MeshStandardMaterial({ color: 0x6b6a52, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; scene.add(ground);
+ground.receiveShadow=true;
+const cam = new THREE.PerspectiveCamera(32, W / H, 0.05, 200);
+
+function shoot(plant, canvas) {
+  // THE SAME INDIVIDUAL in both modes: Fast draws a plant as one of its kind's few individuals,
+  // so full detail is built from that individual's seed here — a Fast/full comparison of
+  // two different plants of one species measures their differences, not the reduction's
+  const individual = quality === "fast" ? plant : { ...plant, id: fastModelKey(plant) };
+  const g = bakedScene || buildPlant(individual, { specimen: true, quality });
+  // ...and facing the same way: each Fast plant is turned (half mirrored) about its axis so a drift
+  // is not one plant copied — lined up here, as full detail is built, so the pair can be compared
+  if (!bakedScene && quality === "fast") { g.rotation.y = 0; g.scale.x = Math.abs(g.scale.x); }
+  scene.add(g);
+  // Frame the plant that was BUILT, not the numbers it was asked for. Sizing the
+  // camera from max(height, spread) and putting the eye at 0.75 of the height
+  // looks almost straight down at a groundcover — a 2.5 x 0.6 m mat comes out as a
+  // smear in the middle of an empty frame, and no groundcover can be reviewed.
+  //
+  // Fit the real bounding box to the canvas instead, and keep the eye at a
+  // GARDEN angle rather than a plan one: 25 degrees above the plant's own middle,
+  // which is roughly how a bed is looked at.
+  const box = new THREE.Box3().setFromObject(g);
+  const size = box.getSize(new THREE.Vector3());
+  const mid = box.getCenter(new THREE.Vector3());
+  // Fit to whichever axis is TIGHTER. A mat is wide and flat, so fitting it to
+  // the vertical field of view alone puts it twice as far away as it needs to be
+  // and it fills a third of the frame — a groundcover comes out as a smear.
+  // The horizontal half-angle is atan(tan(vfov/2) * aspect).
+  const vHalf = Math.tan(THREE.MathUtils.degToRad(cam.fov * 0.5));
+  const hHalf = Math.atan(vHalf * cam.aspect);
+  const wide = Math.max(size.x, size.z, 0.2);
+  const tall = Math.max(size.y, 0.2);
+  const dist = Math.max((wide * 0.5) / Math.tan(hHalf), (tall * 0.5) / vHalf) * 1.25;
+  const el = THREE.MathUtils.degToRad(25);
+  cam.position.set(mid.x + dist * Math.cos(el) * 0.45,
+                   mid.y + dist * Math.sin(el),
+                   mid.z + dist * Math.cos(el) * 0.89);
+  cam.lookAt(mid);
+  const extent=Math.max(size.x,size.y,size.z,0.3)*.7;
+  sun.position.copy(mid).add(new THREE.Vector3(2.5,4,2).multiplyScalar(extent));
+  sun.target.position.copy(mid);scene.add(sun.target);
+  Object.assign(sun.shadow.camera,{left:-extent,right:extent,top:extent,bottom:-extent,near:.01,far:extent*12});
+  sun.shadow.camera.updateProjectionMatrix();
+  if(single) {
+    window.__compare = { scene, renderer, cam, plant: g };   // for measuring what is drawn
+    canvas.replaceWith(renderer.domElement);
+    const orbit=new OrbitControls(cam,renderer.domElement);orbit.target.copy(mid);
+    orbit.minDistance=.06;orbit.maxDistance=dist*4;orbit.update();
+    orbit.addEventListener('change',()=>renderer.render(scene,cam));
+    renderer.render(scene,cam);
+    return;
+  }
+  renderer.render(scene, cam);
+  canvas.getContext("2d").drawImage(renderer.domElement, 0, 0, canvas.width, canvas.height);
+  scene.remove(g);
+  g.traverse(o => {
+    if (o.isInstancedMesh) o.dispose();
+    if (o.isMesh) {o.geometry.dispose();for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose();}
+  });
+}
+
+const list = document.getElementById("list");
+const forms = new Set();
+const pending = [];
+const rows = shownPlants.map(p => {
+  forms.add(p.form);
+  const el = document.createElement("div");
+  el.className = "row";
+  el.dataset.hay = `${p.species} ${p.common} ${p.form}`.toLowerCase();
+  el.dataset.form = p.form;
+  const candidate = byKey[p.species];
+  const ref = candidate?.usable_for_modeling === true ? candidate : null;
+  el.innerHTML = `
+    ${ref ? `<img src="/${ref.file}" alt="" decoding="async">`
+          : `<div class="row-miss miss" style="width:260px;height:190px;display:grid;place-items:center;border:1px dashed #4a3a2a;border-radius:6px">no reference photo</div>`}
+    <canvas width="520" height="380"></canvas>
+    <div class="meta">
+      <b>${p.common ?? p.species}</b><br><i>${p.species}</i><br>
+      ${single?'<p>Drag to orbit · scroll to inspect individual leaves · <a href="/compare.html">all plants</a></p>':`<p><a href="/compare.html?plant=${encodeURIComponent(p.species)}">Inspect in 3D</a></p>`}
+      ${single&&p.model_quality?.asset_file?`<p>${bakedScene?'Viewing the exported GLB':'Viewing the live plant builder'} · <a href="/compare.html?plant=${encodeURIComponent(p.species)}${bakedScene?'':'&source=baked'}">${bakedScene?'View live model':'View exported asset'}</a></p>`:''}
+      <span class="tag">${p.mature_height_m} × ${p.mature_spread_m} m</span>
+      <span class="tag">${p.form}</span>
+      <span class="tag">${p.model_quality?.status ?? 'approximation'}</span>
+      <span class="tag">${ref?.reference_scope ?? 'reference needs verification'}</span>
+      ${p.model_quality?.reference_taxon ? `<p>Model example: ${p.model_quality.reference_taxon}${p.identity_status === 'needs_identification' ? '. The intended plant still needs identification.' : ''}</p>` : ''}
+      <span class="tag">${p.cat_safe === false ? 'excluded: toxic to cats' : p.cat_safe === true ? 'ASPCA taxon evidence' : 'cat safety unverified'}</span>
+      <span class="tag">bloom ${p.bloom ?? "—"}</span>
+      <span class="tag" style="background:${p.foliage};color:#111">${p.foliage}</span>
+      <span class="tag" style="background:${p.flower};color:#111">${p.flower}</span>
+      <div style="margin-top:6px;color:#8d9078;font-size:12px">
+        ${isOwner(ref)
+          ? `<b style="color:#d98e5f">your photo</b> — ${provenanceOf(ref).detail || "of this plant, in your garden"}`
+          : (ref ? ref.title.replace(/^File:/, "") : "Exact plant reference required")}
+        ${!isOwner(ref) && ref?.source ? `<br><a href="${ref.source}" target="_blank" rel="noopener">Photo source · ${ref.licence}</a>` : ''}
+        ${(p.reference_links ?? []).map(r=>`<br><a href="${typeof r === 'string' ? r : r.url}" target="_blank" rel="noopener">Cultivar reference at source</a>`).join('')}
+      </div>
+    </div>`;
+  list.append(el);
+  shoot(p, el.querySelector("canvas"));
+  // A screenshot taken while a JPEG is still decoding shows an empty frame beside
+  // a perfectly good render, which reads as "the photo is missing".
+  // `window.__ready` only means the renders are done, so it must wait for these.
+  const img = el.querySelector("img");
+  if (img) pending.push(img.decode().then(() => {
+    // Paint the reference into a canvas as well: the capture surface in this
+    // app omits ordinary img elements. Never review a black reference panel.
+    const c = document.createElement('canvas'); c.width = 520; c.height = 380;
+    const ctx = c.getContext('2d'); const scale = Math.min(c.width / img.naturalWidth, c.height / img.naturalHeight);
+    ctx.drawImage(img, (c.width-img.naturalWidth*scale)/2, (c.height-img.naturalHeight*scale)/2, img.naturalWidth*scale, img.naturalHeight*scale);
+    img.replaceWith(c);
+  }).catch(() => {}));
+  return el;
+});
+const sel = document.getElementById("form");
+for (const f of [...forms].sort()) sel.append(new Option(f, f));
+const apply = () => {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const f = sel.value;
+  let n = 0;
+  for (const el of rows) {
+    const ok = (!q || el.dataset.hay.includes(q)) && (!f || el.dataset.form === f);
+    el.hidden = !ok; if (ok) n++;
+  }
+  document.getElementById("count").textContent = `${n} of ${rows.length}`;
+};
+document.getElementById("q").oninput = apply;
+sel.onchange = apply;
+apply();
+await Promise.all(pending);
+window.__ready = true;
+</script>

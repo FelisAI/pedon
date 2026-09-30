@@ -1,0 +1,27 @@
+{
+  "note": "Where PEDON's files live. Three places: the APP (this checkout: code, tools, skills, schema — no assets); the LIBRARY (the user's assets, shared by every project: plant and object models, the leaves' textures, reference photos, the plant catalogue — `library_dir`, moved by the env var in `library_env`); and PROJECTS (one per site: its scan, ground truth, designs — `projects_dir`, moved by `projects_env`). `data/...` is a VIRTUAL folder: the names in `library` are the library's, every other name — site.json, design.json, designs/, history/, views/, captures/, review/ ... — belongs to the ACTIVE project (the env var in `env`, else the slug in `active_file`). A path under one of `library_roots` (`assets/...`) is the library's too, so a model a design names is found wherever the library is. The library's own PLANT CODE — a builder per species, made along the way like its models — is in `species_dir`, asked in the order its `order.json` gives (viewer/src/species.js). A folder under projects_dir is a site when it holds one of `project_markers`. Read by tools/project.py and viewer/project_paths.js: one rule, two languages.",
+  "library": [
+    "plant_palette.json",
+    "plant_requirements.json",
+    "refphotos",
+    "cache",
+    "refdesigns"
+  ],
+  "library_roots": [
+    "assets"
+  ],
+  "species_dir": "species",
+  "library_dir": "~/PEDON/library",
+  "library_env": "PEDON_LIBRARY",
+  "projects_dir": "~/PEDON",
+  "projects_env": "PEDON_PROJECTS",
+  "project_markers": [
+    "project.json",
+    "site.json",
+    "design.json"
+  ],
+  "active_file": ".active",
+  "phone_door_file": ".phone-door",
+  "env": "PEDON_PROJECT",
+  "test_site_file": ".test_site"
+}

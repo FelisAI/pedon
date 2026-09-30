@@ -1,0 +1,258 @@
+{
+ "ceanothus": {
+  "base_m": 0.0,
+  "file": "assets/plants/ceanothus.glb",
+  "form": "mound",
+  "height_m": 4.0,
+  "kb": 9238.4,
+  "leaf_area_m2": 109.457,
+  "name": "ceanothus",
+  "raw_span_m": 2.9288,
+  "spread_m": 4.356,
+  "tris": 799648
+ },
+ "citrus": {
+  "base_m": 0.0,
+  "file": "assets/plants/citrus.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 2309.0,
+  "name": "citrus",
+  "spread_m": 4.371,
+  "tris": 230060
+ },
+ "cypress": {
+  "base_m": 0.0,
+  "file": "assets/plants/cypress.glb",
+  "form": "column",
+  "height_m": 4.0,
+  "kb": 176.3,
+  "name": "cypress",
+  "spread_m": 0.901,
+  "tris": 15080
+ },
+ "desert_willow": {
+  "base_m": 0.0,
+  "file": "assets/plants/desert_willow.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 500.1,
+  "name": "desert_willow",
+  "spread_m": 5.825,
+  "tris": 65864
+ },
+ "fig": {
+  "base_m": 0.0,
+  "file": "assets/plants/fig.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 189.0,
+  "leaf_area_m2": 44.479,
+  "name": "fig",
+  "raw_span_m": 2.3218,
+  "spread_m": 5.325,
+  "tris": 20220
+ },
+ "grass_fountain": {
+  "base_m": 0.0,
+  "file": "assets/plants/grass_fountain.glb",
+  "form": "grass",
+  "height_m": 1.0,
+  "kb": 88.7,
+  "name": "grass_fountain",
+  "spread_m": 0.305,
+  "tris": 13248
+ },
+ "grass_tuft": {
+  "base_m": 0.0,
+  "file": "assets/plants/grass_tuft.glb",
+  "form": "grass",
+  "height_m": 0.5,
+  "kb": 57.9,
+  "name": "grass_tuft",
+  "spread_m": 0.024,
+  "tris": 7712
+ },
+ "manzanita": {
+  "base_m": 0.0,
+  "file": "assets/plants/manzanita.glb",
+  "form": "mound",
+  "height_m": 4.0,
+  "kb": 12498.7,
+  "leaf_area_m2": 107.569,
+  "name": "manzanita",
+  "raw_span_m": 1.2361,
+  "spread_m": 6.615,
+  "tris": 1053440
+ },
+ "maple": {
+  "base_m": 0.0,
+  "file": "assets/plants/maple.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 812.6,
+  "name": "maple",
+  "spread_m": 4.247,
+  "tris": 97328
+ },
+ "mat_spreading": {
+  "base_m": 0.0,
+  "file": "assets/plants/mat_spreading.glb",
+  "form": "mat",
+  "height_m": 0.6,
+  "kb": 125.1,
+  "name": "mat_spreading",
+  "spread_m": 0.758,
+  "tris": 12292
+ },
+ "meadow_annual": {
+  "base_m": 0.0,
+  "file": "assets/plants/meadow_annual.glb",
+  "form": "mound",
+  "height_m": 0.4,
+  "kb": 45.0,
+  "name": "meadow_annual",
+  "spread_m": 0.27,
+  "tris": 4168
+ },
+ "oak": {
+  "base_m": 0.0,
+  "file": "assets/plants/oak.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 6313.4,
+  "leaf_area_m2": 88.88,
+  "name": "oak",
+  "raw_span_m": 6.0326,
+  "spread_m": 5.033,
+  "tris": 533352
+ },
+ "olive": {
+  "base_m": 0.0,
+  "file": "assets/plants/olive.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 7966.0,
+  "leaf_area_m2": 88.554,
+  "name": "olive",
+  "raw_span_m": 5.5865,
+  "spread_m": 4.801,
+  "tris": 655716
+ },
+ "perennial_clump": {
+  "base_m": 0.0,
+  "file": "assets/plants/perennial_clump.glb",
+  "form": "mound",
+  "height_m": 0.4,
+  "kb": 63.4,
+  "name": "perennial_clump",
+  "spread_m": 0.296,
+  "tris": 6000
+ },
+ "pine": {
+  "base_m": 0.0,
+  "file": "assets/plants/pine.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 525.8,
+  "name": "pine",
+  "spread_m": 2.346,
+  "tris": 51368
+ },
+ "plum": {
+  "base_m": 0.0,
+  "file": "assets/plants/plum.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 1283.8,
+  "leaf_area_m2": 32.323,
+  "name": "plum",
+  "raw_span_m": 3.1085,
+  "spread_m": 5.067,
+  "tris": 120416
+ },
+ "redbud": {
+  "base_m": 0.0,
+  "file": "assets/plants/redbud.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 1397.9,
+  "leaf_area_m2": 79.103,
+  "name": "redbud",
+  "raw_span_m": 2.485,
+  "spread_m": 4.083,
+  "tris": 142504
+ },
+ "rush_upright": {
+  "base_m": 0.0,
+  "file": "assets/plants/rush_upright.glb",
+  "form": "grass",
+  "height_m": 0.6,
+  "kb": 34.6,
+  "name": "rush_upright",
+  "spread_m": 0.036,
+  "tris": 4256
+ },
+ "sage_open": {
+  "base_m": 0.0,
+  "file": "assets/plants/sage_open.glb",
+  "form": "mound",
+  "height_m": 1.0,
+  "kb": 573.5,
+  "name": "sage_open",
+  "spread_m": 1.389,
+  "tris": 68480
+ },
+ "stone_pine": {
+  "base_m": 0.0,
+  "file": "assets/plants/stone_pine.glb",
+  "form": "tree",
+  "height_m": 4.0,
+  "kb": 192.9,
+  "name": "stone_pine",
+  "spread_m": 1.765,
+  "tris": 20180
+ },
+ "strap": {
+  "base_m": 0.0,
+  "file": "assets/plants/strap.glb",
+  "form": "rosette",
+  "height_m": 0.8,
+  "kb": 23.3,
+  "name": "strap",
+  "spread_m": 0.145,
+  "tris": 2848
+ },
+ "subshrub_fine": {
+  "base_m": 0.0,
+  "file": "assets/plants/subshrub_fine.glb",
+  "form": "mound",
+  "height_m": 0.5,
+  "kb": 86.1,
+  "name": "subshrub_fine",
+  "spread_m": 0.649,
+  "tris": 7604
+ },
+ "subshrub_grey": {
+  "base_m": 0.0,
+  "file": "assets/plants/subshrub_grey.glb",
+  "form": "mound",
+  "height_m": 0.8,
+  "kb": 88.5,
+  "name": "subshrub_grey",
+  "spread_m": 0.877,
+  "tris": 8660
+ },
+ "toyon": {
+  "base_m": 0.0,
+  "file": "assets/plants/toyon.glb",
+  "form": "mound",
+  "height_m": 4.0,
+  "kb": 6987.7,
+  "leaf_area_m2": 211.897,
+  "name": "toyon",
+  "raw_span_m": 2.5767,
+  "spread_m": 4.49,
+  "tris": 638196
+ }
+}

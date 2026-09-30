@@ -1,0 +1,35 @@
+# Written by pedon/tools/codex_setup.py from pedon/.mcp.json: change that, then run
+# `python3 pedon/tools/codex_setup.py --write`. Codex reads this file only in a folder you
+# have trusted.
+mcp_servers.yardeye.command="sh"
+mcp_servers.yardeye.args=["-c", "d=$PWD; until [ -f \"$d/pedon/.mcp.json\" ] || [ \"$d\" = / ]; do d=${d%/*}; d=${d:-/}; done; cd \"$d/pedon\" && exec python3 tools/view_mcp.py"]
+mcp_servers.yardeye.tool_timeout_sec=630
+mcp_servers.yardeye.enabled_tools=["area", "areas", "best_bench", "check_ground_contact", "check_pad", "check_route", "compose_planting", "composition", "fetch_asset", "find_asset", "ground", "list_assets", "list_viewpoints", "look", "make_asset", "near", "plan", "preview_design", "profile", "scan_profile", "scene", "sightline", "slope", "sun", "usable_area", "walk_through", "zones"]
+mcp_servers.yardeye.env_vars=["YARDTWIN_CALL_LOG", "YARDTWIN_BUDGET_LEDGER", "YARDTWIN_VIEWER"]
+mcp_servers.yardeye.tools.area.approval_mode="approve"
+mcp_servers.yardeye.tools.areas.approval_mode="approve"
+mcp_servers.yardeye.tools.best_bench.approval_mode="approve"
+mcp_servers.yardeye.tools.check_ground_contact.approval_mode="approve"
+mcp_servers.yardeye.tools.check_pad.approval_mode="approve"
+mcp_servers.yardeye.tools.check_route.approval_mode="approve"
+mcp_servers.yardeye.tools.compose_planting.approval_mode="approve"
+mcp_servers.yardeye.tools.composition.approval_mode="approve"
+mcp_servers.yardeye.tools.fetch_asset.approval_mode="approve"
+mcp_servers.yardeye.tools.find_asset.approval_mode="approve"
+mcp_servers.yardeye.tools.ground.approval_mode="approve"
+mcp_servers.yardeye.tools.list_assets.approval_mode="approve"
+mcp_servers.yardeye.tools.list_viewpoints.approval_mode="approve"
+mcp_servers.yardeye.tools.look.approval_mode="approve"
+mcp_servers.yardeye.tools.make_asset.approval_mode="approve"
+mcp_servers.yardeye.tools.near.approval_mode="approve"
+mcp_servers.yardeye.tools.plan.approval_mode="approve"
+mcp_servers.yardeye.tools.preview_design.approval_mode="approve"
+mcp_servers.yardeye.tools.profile.approval_mode="approve"
+mcp_servers.yardeye.tools.scan_profile.approval_mode="approve"
+mcp_servers.yardeye.tools.scene.approval_mode="approve"
+mcp_servers.yardeye.tools.sightline.approval_mode="approve"
+mcp_servers.yardeye.tools.slope.approval_mode="approve"
+mcp_servers.yardeye.tools.sun.approval_mode="approve"
+mcp_servers.yardeye.tools.usable_area.approval_mode="approve"
+mcp_servers.yardeye.tools.walk_through.approval_mode="approve"
+mcp_servers.yardeye.tools.zones.approval_mode="approve"

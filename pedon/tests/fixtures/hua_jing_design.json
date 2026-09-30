@@ -1,0 +1,2833 @@
+{
+ "units": "meters",
+ "beds": [
+  {
+   "id": "bed_upper_bank",
+   "polygon": [
+    [
+     10.9,
+     3.8
+    ],
+    [
+     11.05,
+     2
+    ],
+    [
+     11.5,
+     0.2
+    ],
+    [
+     11.6,
+     -1.9
+    ],
+    [
+     11.3,
+     -3.9
+    ],
+    [
+     10.85,
+     -5.9
+    ],
+    [
+     10.6,
+     -7.9
+    ],
+    [
+     10.8,
+     -9.5
+    ],
+    [
+     9.7,
+     -9.3
+    ],
+    [
+     9.5,
+     -7
+    ],
+    [
+     9.6,
+     -4.2
+    ],
+    [
+     9.8,
+     -1.4
+    ],
+    [
+     9.7,
+     1.4
+    ],
+    [
+     9.8,
+     3.6
+    ]
+   ],
+   "mulch": "3/4 inch crushed granite"
+  },
+  {
+   "id": "bed_door_bank",
+   "polygon": [
+    [
+     12.7,
+     7.6
+    ],
+    [
+     13.8,
+     8.3
+    ],
+    [
+     15.1,
+     8
+    ],
+    [
+     16.3,
+     7
+    ],
+    [
+     16.7,
+     5.4
+    ],
+    [
+     16.2,
+     4
+    ],
+    [
+     15.2,
+     3.4
+    ],
+    [
+     14.6,
+     4.3
+    ],
+    [
+     13.7,
+     5.2
+    ],
+    [
+     13,
+     6
+    ],
+    [
+     12.6,
+     6.9
+    ]
+   ],
+   "mulch": "3/4 inch crushed granite"
+  },
+  {
+   "id": "bed_terrace_apron",
+   "polygon": [
+    [
+     14.1,
+     -3.4
+    ],
+    [
+     13.3,
+     -4.4
+    ],
+    [
+     13,
+     -6.1
+    ],
+    [
+     13.2,
+     -7.8
+    ],
+    [
+     13.7,
+     -9.2
+    ],
+    [
+     14.6,
+     -10.2
+    ],
+    [
+     15.9,
+     -10.8
+    ],
+    [
+     17,
+     -10.4
+    ],
+    [
+     17.3,
+     -9.3
+    ],
+    [
+     16.4,
+     -9.8
+    ],
+    [
+     15.2,
+     -9.9
+    ],
+    [
+     14.5,
+     -9.2
+    ],
+    [
+     14.05,
+     -7.4
+    ],
+    [
+     13.95,
+     -5.2
+    ]
+   ],
+   "mulch": "3/4 inch crushed granite"
+  },
+  {
+   "id": "bed_north_slope",
+   "polygon": [
+    [
+     10.3,
+     8.8
+    ],
+    [
+     11.4,
+     9.4
+    ],
+    [
+     12.6,
+     9
+    ],
+    [
+     13.8,
+     9.5
+    ],
+    [
+     14.9,
+     10.6
+    ],
+    [
+     15,
+     12.2
+    ],
+    [
+     14,
+     13.6
+    ],
+    [
+     12.5,
+     14.4
+    ],
+    [
+     11,
+     14.2
+    ],
+    [
+     10.2,
+     13
+    ],
+    [
+     10.1,
+     11.3
+    ],
+    [
+     10.2,
+     10
+    ]
+   ],
+   "mulch": "3/4 inch crushed granite"
+  },
+  {
+   "id": "bed_south",
+   "polygon": [
+    [
+     13,
+     -10.9
+    ],
+    [
+     14.3,
+     -11.2
+    ],
+    [
+     15.4,
+     -12
+    ],
+    [
+     15.9,
+     -13.4
+    ],
+    [
+     15,
+     -14.6
+    ],
+    [
+     13.2,
+     -14.9
+    ],
+    [
+     11.3,
+     -14.6
+    ],
+    [
+     10.3,
+     -13.6
+    ],
+    [
+     10.55,
+     -12.5
+    ],
+    [
+     11.6,
+     -12.9
+    ],
+    [
+     12.5,
+     -12.5
+    ],
+    [
+     13.15,
+     -11.8
+    ]
+   ],
+   "mulch": "3/4 inch crushed granite"
+  },
+  {
+   "id": "bed_bank_shelf",
+   "polygon": [
+    [
+     9.95,
+     -1.75
+    ],
+    [
+     10.12,
+     -2.3
+    ],
+    [
+     10.47,
+     -3.05
+    ],
+    [
+     10.87,
+     -3.8
+    ],
+    [
+     11.22,
+     -4.58
+    ],
+    [
+     11.3,
+     -5.12
+    ],
+    [
+     11.24,
+     -5.58
+    ],
+    [
+     10.6,
+     -5.66
+    ],
+    [
+     10.35,
+     -5
+    ],
+    [
+     10.18,
+     -4.35
+    ],
+    [
+     9.98,
+     -3.6
+    ],
+    [
+     9.78,
+     -2.85
+    ],
+    [
+     9.72,
+     -2.2
+    ]
+   ],
+   "mulch": "3/4 inch crushed granite",
+   "level_m": -0.85
+  },
+  {
+   "id": "bed_shoulder",
+   "polygon": [
+    [
+     13,
+     3.3
+    ],
+    [
+     14,
+     1.8
+    ],
+    [
+     13.9,
+     0.4
+    ],
+    [
+     13.7,
+     -0.9
+    ],
+    [
+     13.9,
+     -2.1
+    ],
+    [
+     13.48,
+     -2.72
+    ],
+    [
+     13.6,
+     -1.6
+    ],
+    [
+     13.3,
+     -0.2
+    ],
+    [
+     13.05,
+     1.2
+    ],
+    [
+     12.95,
+     2.4
+    ]
+   ],
+   "mulch": "3/4 inch crushed granite"
+  }
+ ],
+ "paths": [
+  {
+   "id": "contour_walk",
+   "spline": [
+    [
+     11.4,
+     4.5
+    ],
+    [
+     11.7,
+     2.4
+    ],
+    [
+     12.4,
+     0.4
+    ],
+    [
+     12.9,
+     -1.8
+    ],
+    [
+     12.5,
+     -4
+    ],
+    [
+     11.9,
+     -6.3
+    ],
+    [
+     11.6,
+     -8.5
+    ],
+    [
+     11.8,
+     -11.2
+    ]
+   ],
+   "width_m": 1.05,
+   "material": "decomposed_granite"
+  },
+  {
+   "id": "return_stones",
+   "spline": [
+    [
+     15.8,
+     -3.5
+    ],
+    [
+     16,
+     -2.2
+    ],
+    [
+     15.7,
+     -1.4
+    ]
+   ],
+   "width_m": 0.75,
+   "material": "stepping_stones"
+  },
+  {
+   "id": "court_link",
+   "spline": [
+    [
+     14.4,
+     2.4
+    ],
+    [
+     13.8,
+     3.2
+    ],
+    [
+     13.4,
+     4
+    ],
+    [
+     12.6,
+     5
+    ]
+   ],
+   "width_m": 0.8,
+   "material": "stepping_stones"
+  }
+ ],
+ "edges": [
+  {
+   "id": "court_brow_wall",
+   "spline": [
+    [
+     12.1,
+     4.9
+    ],
+    [
+     12.6,
+     6.1
+    ],
+    [
+     12.3,
+     7.5
+    ],
+    [
+     11.5,
+     8.9
+    ],
+    [
+     11.1,
+     10.2
+    ]
+   ],
+   "height_m": 0.5,
+   "material": "dry_stone",
+   "retains": "downhill",
+   "level_m": -1.88
+  },
+  {
+   "id": "lookout_wall",
+   "spline": [
+    [
+     12.85,
+     -11.5
+    ],
+    [
+     12.9,
+     -12.4
+    ],
+    [
+     12.2,
+     -13.05
+    ],
+    [
+     11.2,
+     -13.05
+    ]
+   ],
+   "height_m": 0.35,
+   "material": "dry_stone",
+   "retains": "downhill",
+   "level_m": -0.64
+  },
+  {
+   "id": "terrace_brow_wall",
+   "spline": [
+    [
+     16.2,
+     -9.5
+    ],
+    [
+     17.3,
+     -8.5
+    ],
+    [
+     17.4,
+     -6.6
+    ],
+    [
+     17,
+     -4.8
+    ],
+    [
+     16.2,
+     -3.6
+    ]
+   ],
+   "height_m": 0.35,
+   "material": "dry_stone",
+   "retains": "downhill",
+   "level_m": -1.95
+  },
+  {
+   "id": "court_cut_stones",
+   "spline": [
+    [
+     9.48,
+     6.85
+    ],
+    [
+     9.6,
+     7.6
+    ],
+    [
+     9.5,
+     9.3
+    ]
+   ],
+   "height_m": 0.4,
+   "material": "boulder",
+   "retains": "uphill"
+  },
+  {
+   "id": "bank_steel",
+   "spline": [
+    [
+     9.92,
+     -1.55
+    ],
+    [
+     10.1,
+     -2.25
+    ],
+    [
+     10.45,
+     -3
+    ],
+    [
+     10.85,
+     -3.75
+    ],
+    [
+     11.2,
+     -4.55
+    ],
+    [
+     11.28,
+     -5.1
+    ],
+    [
+     11.22,
+     -5.55
+    ]
+   ],
+   "height_m": 0.2,
+   "material": "corten_steel",
+   "retains": "uphill"
+  },
+  {
+   "id": "tea_court_bank",
+   "spline": [
+    [
+     14.3,
+     -1.1
+    ],
+    [
+     14.2,
+     1
+    ],
+    [
+     15.0,
+     2.0
+    ],
+    [
+     15.45,
+     2.55
+    ],
+    [
+     15.65,
+     3.05
+    ]
+   ],
+   "height_m": 0.35,
+   "material": "dry_stone",
+   "retains": "uphill",
+   "level_m": -2.35
+  }
+ ],
+ "patios": [
+  {
+   "id": "entry_court",
+   "polygon": [
+    [
+     9.5,
+     4.4
+    ],
+    [
+     11,
+     4.35
+    ],
+    [
+     12.1,
+     4.9
+    ],
+    [
+     12.6,
+     6.1
+    ],
+    [
+     12.3,
+     7.5
+    ],
+    [
+     11.5,
+     8.9
+    ],
+    [
+     11.1,
+     10.2
+    ],
+    [
+     10.1,
+     10.5
+    ],
+    [
+     9.5,
+     9.3
+    ],
+    [
+     9.65,
+     7.5
+    ],
+    [
+     9.4,
+     6
+    ]
+   ],
+   "material": "natural stone sett nobedan",
+   "purpose": "standing room at the back door and in front of the planter bed",
+   "level_m": -1.88
+  },
+  {
+   "id": "south_lookout",
+   "polygon": [
+    [
+     10.9,
+     -10.9
+    ],
+    [
+     12,
+     -10.9
+    ],
+    [
+     12.8,
+     -11.5
+    ],
+    [
+     12.9,
+     -12.4
+    ],
+    [
+     12.2,
+     -13
+    ],
+    [
+     11.2,
+     -13
+    ],
+    [
+     10.6,
+     -12.4
+    ],
+    [
+     10.6,
+     -11.5
+    ]
+   ],
+   "material": "decomposed_granite",
+   "purpose": "sitting and looking back over the garden",
+   "level_m": -0.64
+  },
+  {
+   "id": "lower_terrace",
+   "polygon": [
+    [
+     14.7,
+     -9.4
+    ],
+    [
+     16.2,
+     -9.5
+    ],
+    [
+     17.3,
+     -8.5
+    ],
+    [
+     17.4,
+     -6.6
+    ],
+    [
+     17,
+     -4.8
+    ],
+    [
+     16.2,
+     -3.6
+    ],
+    [
+     15,
+     -3.5
+    ],
+    [
+     14.4,
+     -4.8
+    ],
+    [
+     14.3,
+     -6.6
+    ],
+    [
+     14.4,
+     -8.2
+    ]
+   ],
+   "material": "flagstone",
+   "purpose": "dining, sitting and the fire bowl",
+   "level_m": -1.95
+  },
+  {
+   "id": "tea_court",
+   "polygon": [
+    [
+     14.3,
+     -1.1
+    ],
+    [
+     15.4,
+     -1.3
+    ],
+    [
+     16.3,
+     -0.4
+    ],
+    [
+     16.5,
+     1
+    ],
+    [
+     16.1,
+     2.2
+    ],
+    [
+     15.2,
+     2.6
+    ],
+    [
+     14.4,
+     2.3
+    ],
+    [
+     14.1,
+     1
+    ]
+   ],
+   "material": "gravel",
+   "purpose": "a tea court \u2014 one bench, the lantern, the long view back uphill",
+   "level_m": -2.35
+  }
+ ],
+ "plants": [
+  {
+   "species": "Ceanothus spp.",
+   "common": "California lilac",
+   "form": "mound",
+   "foliage": "dark_green",
+   "mature_height_m": 3,
+   "mature_spread_m": 3.5,
+   "position": [
+    15.94,
+    6.39
+   ],
+   "id": "p1"
+  },
+  {
+   "species": "Arctostaphylos spp.",
+   "common": "Manzanita",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 2.5,
+   "mature_spread_m": 2.5,
+   "position": [
+    12.69,
+    7.41
+   ],
+   "id": "p2"
+  },
+  {
+   "species": "Arctostaphylos spp.",
+   "common": "Manzanita",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 2.5,
+   "mature_spread_m": 2.5,
+   "position": [
+    13.46,
+    5.57
+   ],
+   "id": "p3"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    14.61,
+    8.04
+   ],
+   "id": "p4"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    13.89,
+    8.19
+   ],
+   "id": "p5"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    14.35,
+    7.35
+   ],
+   "id": "p6"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    14.75,
+    4.99
+   ],
+   "id": "p7"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    15.44,
+    4.68
+   ],
+   "id": "p8"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    16.18,
+    4.63
+   ],
+   "id": "p9"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    14.72,
+    4.26
+   ],
+   "id": "p10"
+  },
+  {
+   "species": "Arctostaphylos spp.",
+   "common": "Manzanita",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 2.5,
+   "mature_spread_m": 2.5,
+   "position": [
+    11.59,
+    14.28
+   ],
+   "id": "p11"
+  },
+  {
+   "species": "Arctostaphylos spp.",
+   "common": "Manzanita",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 2.5,
+   "mature_spread_m": 2.5,
+   "position": [
+    10.91,
+    12.39
+   ],
+   "id": "p12"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    10.27,
+    9.34
+   ],
+   "id": "p13"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    10.72,
+    10.2
+   ],
+   "id": "p14"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    11.27,
+    9.36
+   ],
+   "id": "p15"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    10.14,
+    10.98
+   ],
+   "id": "p16"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    11.68,
+    10.34
+   ],
+   "id": "p17"
+  },
+  {
+   "species": "Baccharis pilularis 'Pigeon Point'",
+   "common": "Dwarf coyote brush",
+   "form": "mat",
+   "foliage": "bright_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 2.5,
+   "position": [
+    14.87,
+    12.38
+   ],
+   "id": "p18"
+  },
+  {
+   "species": "Baccharis pilularis 'Pigeon Point'",
+   "common": "Dwarf coyote brush",
+   "form": "mat",
+   "foliage": "bright_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 2.5,
+   "position": [
+    12.89,
+    12.69
+   ],
+   "id": "p19"
+  },
+  {
+   "species": "Baccharis pilularis 'Pigeon Point'",
+   "common": "Dwarf coyote brush",
+   "form": "mat",
+   "foliage": "bright_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 2.5,
+   "position": [
+    14.62,
+    10.38
+   ],
+   "id": "p20"
+  },
+  {
+   "species": "Baccharis pilularis 'Pigeon Point'",
+   "common": "Dwarf coyote brush",
+   "form": "mat",
+   "foliage": "bright_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 2.5,
+   "position": [
+    12.86,
+    9.43
+   ],
+   "id": "p21"
+  },
+  {
+   "species": "Ceanothus spp.",
+   "common": "California lilac",
+   "form": "mound",
+   "foliage": "dark_green",
+   "mature_height_m": 3,
+   "mature_spread_m": 3.5,
+   "position": [
+    14.84,
+    -14.63
+   ],
+   "id": "p22"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    10.55,
+    -12.56
+   ],
+   "id": "p23"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    11.66,
+    -13.03
+   ],
+   "id": "p24"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    10.6,
+    -13.76
+   ],
+   "id": "p25"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    11.69,
+    -14.28
+   ],
+   "id": "p26"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    12.68,
+    -12.34
+   ],
+   "id": "p27"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    12.74,
+    -13.59
+   ],
+   "id": "p28"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    13.06,
+    -11.17
+   ],
+   "id": "p29"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    9.75,
+    -2.89
+   ],
+   "id": "p35"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    10.13,
+    -3.77
+   ],
+   "id": "p36"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    10.59,
+    -2.42
+   ],
+   "id": "p37"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    9.79,
+    -1.8
+   ],
+   "id": "p38"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    11.02,
+    -3.35
+   ],
+   "id": "p39"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    9.74,
+    -8.19
+   ],
+   "id": "p40"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    10.36,
+    -7.16
+   ],
+   "id": "p41"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    10.29,
+    -9.28
+   ],
+   "id": "p42"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    9.54,
+    -6.27
+   ],
+   "id": "p43"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    10.82,
+    -6.02
+   ],
+   "id": "p44"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    9.77,
+    2.82
+   ],
+   "id": "p45"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    9.83,
+    1.86
+   ],
+   "id": "p46"
+  },
+  {
+   "species": "Muhlenbergia rigens",
+   "common": "Deer grass",
+   "form": "grass",
+   "foliage": "grey_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    10.36,
+    3.59
+   ],
+   "id": "p47"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    10.78,
+    -1.4
+   ],
+   "id": "p55"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.04,
+    -1.1
+   ],
+   "id": "p56"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    10.38,
+    -1.31
+   ],
+   "id": "p57"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    10.91,
+    -1.78
+   ],
+   "id": "p58"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.21,
+    -1.5
+   ],
+   "id": "p59"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    10.65,
+    -0.93
+   ],
+   "id": "p60"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.44,
+    -1.17
+   ],
+   "id": "p61"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    11.04,
+    -4.71
+   ],
+   "id": "p62"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    10.52,
+    -4.92
+   ],
+   "id": "p63"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    11.02,
+    -4.14
+   ],
+   "id": "p64"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    10.03,
+    -4.57
+   ],
+   "id": "p65"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    10.19,
+    -5.38
+   ],
+   "id": "p66"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.38,
+    2.05
+   ],
+   "id": "p67"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.63,
+    1.55
+   ],
+   "id": "p68"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.51,
+    2.6
+   ],
+   "id": "p69"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    12.94,
+    2.4
+   ],
+   "id": "p70"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    12.98,
+    1.64
+   ],
+   "id": "p71"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    13.73,
+    -0.72
+   ],
+   "id": "p72"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    13.78,
+    -1.44
+   ],
+   "id": "p73"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    13.56,
+    -0.02
+   ],
+   "id": "p74"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    13.09,
+    -1.08
+   ],
+   "id": "p75"
+  },
+  {
+   "species": "Festuca californica",
+   "common": "California fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.75,
+   "mature_spread_m": 0.9,
+   "position": [
+    13.15,
+    -1.82
+   ],
+   "id": "p76"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.79,
+    -2.17
+   ],
+   "id": "p77"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.55,
+    -2.51
+   ],
+   "id": "p78"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.19,
+    -0.52
+   ],
+   "id": "p79"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.13,
+    0.36
+   ],
+   "id": "p80"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.88,
+    0.48
+   ],
+   "id": "p81"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    17.22,
+    -9.36
+   ],
+   "id": "p82"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    16.72,
+    -10.45
+   ],
+   "id": "p83"
+  },
+  {
+   "species": "Eriogonum fasciculatum",
+   "common": "California buckwheat",
+   "form": "mound",
+   "foliage": "grey_green",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 1.5,
+   "position": [
+    15.65,
+    -9.88
+   ],
+   "id": "p84"
+  },
+  {
+   "species": "Salvia rosmarinus",
+   "common": "Rosemary",
+   "form": "mound",
+   "foliage": "dark_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    13.96,
+    -5.57
+   ],
+   "id": "p85"
+  },
+  {
+   "species": "Salvia rosmarinus",
+   "common": "Rosemary",
+   "form": "mound",
+   "foliage": "dark_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    13.83,
+    -4.62
+   ],
+   "id": "p86"
+  },
+  {
+   "species": "Salvia rosmarinus",
+   "common": "Rosemary",
+   "form": "mound",
+   "foliage": "dark_green",
+   "mature_height_m": 1.2,
+   "mature_spread_m": 1.2,
+   "position": [
+    13.68,
+    -6.49
+   ],
+   "id": "p87"
+  },
+  {
+   "species": "Lomandra",
+   "common": "Mat rush",
+   "form": "grass",
+   "foliage": "dark_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.58,
+    -8.84
+   ],
+   "id": "p88"
+  },
+  {
+   "species": "Lomandra",
+   "common": "Mat rush",
+   "form": "grass",
+   "foliage": "dark_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.56,
+    -8.28
+   ],
+   "id": "p89"
+  },
+  {
+   "species": "Lomandra",
+   "common": "Mat rush",
+   "form": "grass",
+   "foliage": "dark_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.7,
+   "position": [
+    14.14,
+    -8.92
+   ],
+   "id": "p90"
+  },
+  {
+   "species": "Lomandra",
+   "common": "Mat rush",
+   "form": "grass",
+   "foliage": "dark_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.95,
+    -9.48
+   ],
+   "id": "p91"
+  },
+  {
+   "species": "Lomandra",
+   "common": "Mat rush",
+   "form": "grass",
+   "foliage": "dark_green",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 0.7,
+   "position": [
+    14.14,
+    -8.34
+   ],
+   "id": "p92"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.15,
+    -7.35
+   ],
+   "id": "p93"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.72,
+    -7.33
+   ],
+   "id": "p94"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.02,
+    -6.1
+   ],
+   "id": "p95"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    13.14,
+    -5.55
+   ],
+   "id": "p96"
+  },
+  {
+   "species": "Salvia officinalis 'Berggarten'",
+   "common": "Berggarten sage",
+   "form": "mound",
+   "foliage": "silver",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.7,
+   "position": [
+    14.56,
+    -9.32
+   ],
+   "id": "p97"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.3,
+    -7.85
+   ],
+   "id": "p98"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.73,
+    -7.82
+   ],
+   "id": "p99"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    14.32,
+    -9.83
+   ],
+   "id": "p100"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    14.74,
+    -9.77
+   ],
+   "id": "p101"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    14.61,
+    -10.16
+   ],
+   "id": "p102"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    13.33,
+    -5.1
+   ],
+   "id": "p103"
+  },
+  {
+   "species": "Festuca 'Siskiyou Blue'",
+   "common": "Siskiyou blue fescue",
+   "form": "grass",
+   "foliage": "blue_green",
+   "mature_height_m": 0.45,
+   "mature_spread_m": 0.5,
+   "position": [
+    14.99,
+    -10.33
+   ],
+   "id": "p104"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    10.82,
+    3
+   ],
+   "id": "p105"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    10.85,
+    2.62
+   ],
+   "id": "p106"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    10.88,
+    2.25
+   ],
+   "id": "p107"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    10.93,
+    1.88
+   ],
+   "id": "p108"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    11.02,
+    1.5
+   ],
+   "id": "p109"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    11.12,
+    1.12
+   ],
+   "id": "p110"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    10.92,
+    0.75
+   ],
+   "id": "p111"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    11.45,
+    -1.9
+   ],
+   "id": "p112"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    11.39,
+    -2.27
+   ],
+   "id": "p113"
+  },
+  {
+   "species": "Erigeron glaucus",
+   "common": "Seaside daisy",
+   "form": "perennial",
+   "foliage": "#7f9280",
+   "mature_height_m": 0.25,
+   "mature_spread_m": 0.6,
+   "position": [
+    11.34,
+    -2.65
+   ],
+   "id": "p114"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.32,
+    -11.28
+   ],
+   "id": "p30"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.34,
+    -11.6
+   ],
+   "id": "p31"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    13.98,
+    -11.18
+   ],
+   "id": "p32"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.02,
+    -11.56
+   ],
+   "id": "p33"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.69,
+    -11.52
+   ],
+   "id": "p34"
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "foliage": "#7f9a5f",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.5,
+    0
+   ],
+   "id": "p48"
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "foliage": "#7f9a5f",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.27,
+    0.23
+   ],
+   "id": "p49"
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "foliage": "#7f9a5f",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.42,
+    -0.32
+   ],
+   "id": "p50"
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "foliage": "#7f9a5f",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.15,
+    -0.09
+   ],
+   "id": "p51"
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "foliage": "#7f9a5f",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.08,
+    -0.43
+   ],
+   "id": "p52"
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "foliage": "#7f9a5f",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.28,
+    0.56
+   ],
+   "id": "p53"
+  },
+  {
+   "species": "Coreopsis",
+   "common": "Tickseed",
+   "form": "perennial",
+   "foliage": "#7f9a5f",
+   "mature_height_m": 0.5,
+   "mature_spread_m": 0.5,
+   "position": [
+    11.46,
+    -0.64
+   ],
+   "id": "p54"
+  },
+  {
+   "species": "Monardella macrantha",
+   "common": "Red-flowered Monardella",
+   "form": "mat",
+   "foliage": "#486749",
+   "mature_height_m": 0.15,
+   "mature_spread_m": 0.45,
+   "position": [
+    13.68,
+    -10.52
+   ],
+   "id": "p115"
+  },
+  {
+   "species": "Monardella macrantha",
+   "common": "Red-flowered Monardella",
+   "form": "mat",
+   "foliage": "#486749",
+   "mature_height_m": 0.15,
+   "mature_spread_m": 0.45,
+   "position": [
+    14.12,
+    -10.52
+   ],
+   "id": "p116"
+  },
+  {
+   "species": "Monardella macrantha",
+   "common": "Red-flowered Monardella",
+   "form": "mat",
+   "foliage": "#486749",
+   "mature_height_m": 0.15,
+   "mature_spread_m": 0.45,
+   "position": [
+    14.46,
+    -10.51
+   ],
+   "id": "p117"
+  },
+  {
+   "species": "Monardella macrantha",
+   "common": "Red-flowered Monardella",
+   "form": "mat",
+   "foliage": "#486749",
+   "mature_height_m": 0.15,
+   "mature_spread_m": 0.45,
+   "position": [
+    12.9,
+    -10.1
+   ],
+   "id": "p118"
+  },
+  {
+   "species": "Monardella macrantha",
+   "common": "Red-flowered Monardella",
+   "form": "mat",
+   "foliage": "#486749",
+   "mature_height_m": 0.15,
+   "mature_spread_m": 0.45,
+   "position": [
+    13.39,
+    -10.11
+   ],
+   "id": "p119"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.67,
+    -11.11
+   ],
+   "id": "p120"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    13.22,
+    -9.62
+   ],
+   "id": "p121"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.95,
+    -8.85
+   ],
+   "id": "p122"
+  },
+  {
+   "species": "Eriogonum umbellatum",
+   "common": "Sulfur Flower / Wild Buckwheat",
+   "form": "mat",
+   "foliage": "#849281",
+   "mature_height_m": 0.3,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.98,
+    -8.32
+   ],
+   "id": "p123"
+  },
+  {
+   "species": "Epilobium canum",
+   "common": "California Fuchsia",
+   "form": "mat",
+   "foliage": "#98a58d",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 1.2,
+   "position": [
+    15.41,
+    -11.05
+   ],
+   "id": "p124"
+  },
+  {
+   "species": "Epilobium canum",
+   "common": "California Fuchsia",
+   "form": "mat",
+   "foliage": "#98a58d",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 1.2,
+   "position": [
+    15.7,
+    -8.73
+   ],
+   "id": "p125"
+  },
+  {
+   "species": "Epilobium canum",
+   "common": "California Fuchsia",
+   "form": "mat",
+   "foliage": "#98a58d",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 1.2,
+   "position": [
+    16.18,
+    -8.87
+   ],
+   "id": "p126"
+  },
+  {
+   "species": "Epilobium canum",
+   "common": "California Fuchsia",
+   "form": "mat",
+   "foliage": "#98a58d",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 1.2,
+   "position": [
+    16.21,
+    -8.29
+   ],
+   "id": "p127"
+  },
+  {
+   "species": "Epilobium canum",
+   "common": "California Fuchsia",
+   "form": "mat",
+   "foliage": "#98a58d",
+   "mature_height_m": 0.6,
+   "mature_spread_m": 1.2,
+   "position": [
+    15.55,
+    -7.84
+   ],
+   "id": "p128"
+  },
+  {
+   "species": "Penstemon spp.",
+   "common": "Penstemon",
+   "form": "perennial",
+   "foliage": "#6f8a5f",
+   "mature_height_m": 0.8,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.58,
+    -8.0
+   ],
+   "id": "p129"
+  },
+  {
+   "species": "Penstemon spp.",
+   "common": "Penstemon",
+   "form": "perennial",
+   "foliage": "#6f8a5f",
+   "mature_height_m": 0.8,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.59,
+    -7.44
+   ],
+   "id": "p130"
+  },
+  {
+   "species": "Penstemon spp.",
+   "common": "Penstemon",
+   "form": "perennial",
+   "foliage": "#6f8a5f",
+   "mature_height_m": 0.8,
+   "mature_spread_m": 0.6,
+   "position": [
+    14.65,
+    -6.94
+   ],
+   "id": "p131"
+  },
+  {
+   "species": "Penstemon spp.",
+   "common": "Penstemon",
+   "form": "perennial",
+   "foliage": "#6f8a5f",
+   "mature_height_m": 0.8,
+   "mature_spread_m": 0.6,
+   "position": [
+    15.35,
+    -6.9
+   ],
+   "id": "p132"
+  },
+  {
+   "species": "Salvia greggii",
+   "common": "Autumn sage",
+   "form": "mound",
+   "foliage": "#5f7a52",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 0.9,
+   "position": [
+    16.66,
+    -7.46
+   ],
+   "id": "p133"
+  },
+  {
+   "species": "Salvia greggii",
+   "common": "Autumn sage",
+   "form": "mound",
+   "foliage": "#5f7a52",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 0.9,
+   "position": [
+    16.17,
+    -6.96
+   ],
+   "id": "p134"
+  },
+  {
+   "species": "Salvia greggii",
+   "common": "Autumn sage",
+   "form": "mound",
+   "foliage": "#5f7a52",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 0.9,
+   "position": [
+    16.64,
+    -6.96
+   ],
+   "id": "p135"
+  },
+  {
+   "species": "Salvia greggii",
+   "common": "Autumn sage",
+   "form": "mound",
+   "foliage": "#5f7a52",
+   "mature_height_m": 0.9,
+   "mature_spread_m": 0.9,
+   "position": [
+    16.22,
+    -6.59
+   ],
+   "id": "p136"
+  },
+  {
+   "species": "Foeniculum vulgare 'Purpureum'",
+   "common": "Bronze Fennel",
+   "form": "perennial",
+   "foliage": "#776150",
+   "mature_height_m": 2.1,
+   "mature_spread_m": 1.2,
+   "position": [
+    17.69,
+    -11.12
+   ],
+   "id": "p137"
+  },
+  {
+   "species": "Foeniculum vulgare 'Purpureum'",
+   "common": "Bronze Fennel",
+   "form": "perennial",
+   "foliage": "#776150",
+   "mature_height_m": 2.1,
+   "mature_spread_m": 1.2,
+   "position": [
+    17.54,
+    -8.32
+   ],
+   "id": "p138"
+  },
+  {
+   "species": "Foeniculum vulgare 'Purpureum'",
+   "common": "Bronze Fennel",
+   "form": "perennial",
+   "foliage": "#776150",
+   "mature_height_m": 2.1,
+   "mature_spread_m": 1.2,
+   "position": [
+    17.62,
+    -7.82
+   ],
+   "id": "p139"
+  }
+ ],
+ "version": 1,
+ "steps": [
+  {
+   "id": "terrace_steps",
+   "spline": [
+    [
+     12.4,
+     -10.5
+    ],
+    [
+     14.7,
+     -9.45
+    ]
+   ],
+   "width_m": 1.2,
+   "riser_m": 0.15,
+   "going_m": 0.4,
+   "material": "natural stone slab"
+  }
+ ],
+ "objects": [
+  {
+   "id": "basin",
+   "kind": "water basin",
+   "position": [
+    12.15,
+    6.5
+   ],
+   "height_m": 0.5,
+   "width_m": 0.7
+  },
+  {
+   "id": "boulder_a",
+   "kind": "boulder",
+   "position": [
+    13.5,
+    1.8
+   ],
+   "height_m": 0.9,
+   "width_m": 1.2
+  },
+  {
+   "id": "boulder_b",
+   "kind": "boulder",
+   "position": [
+    14,
+    1
+   ],
+   "height_m": 0.55,
+   "width_m": 0.9
+  },
+  {
+   "id": "boulder_c",
+   "kind": "boulder",
+   "position": [
+    13.3,
+    0.4
+   ],
+   "height_m": 0.7,
+   "width_m": 0.8
+  },
+  {
+   "id": "tea_bench",
+   "kind": "bench",
+   "position": [
+    15.6,
+    0.4
+   ],
+   "height_m": 0.45,
+   "width_m": 1.5
+  },
+  {
+   "id": "fire_bowl",
+   "kind": "firepit",
+   "position": [
+    16,
+    -6.3
+   ],
+   "height_m": 0.4,
+   "width_m": 0.9
+  },
+  {
+   "id": "terrace_bench",
+   "kind": "bench",
+   "position": [
+    15,
+    -4.6
+   ],
+   "height_m": 0.45,
+   "width_m": 1.8
+  },
+  {
+   "id": "moon_gate",
+   "kind": "moon gate",
+   "position": [
+    13.5,
+    -10.1
+   ],
+   "height_m": 2.2,
+   "width_m": 1.6
+  },
+  {
+   "id": "court_screen",
+   "kind": "screen",
+   "position": [
+    12,
+    11
+   ],
+   "height_m": 1.8,
+   "width_m": 2.2,
+   "rotation_deg": -59,
+   "note": "turned onto the contour and set back into the north bed so the court's north end is a way out, not a dead end; from the back door it still closes the view up the court"
+  },
+  {
+   "id": "lookout_boulder",
+   "kind": "boulder",
+   "position": [
+    11.7,
+    -12.85
+   ],
+   "height_m": 0.6,
+   "width_m": 1,
+   "note": "moved off the 1.1 m gap between the house corner and the lookout; now the set stone at the back of the lookout, behind you as you look up the garden"
+  },
+  {
+   "id": "terrace_toe_main",
+   "kind": "boulder",
+   "position": [
+    14.24,
+    -8.25
+   ],
+   "height_m": 0.75,
+   "width_m": 0.95,
+   "rotation_deg": 15,
+   "note": "Main stone of the terrace toe, set about a third into ground measured at -1.65 m, where the terrace bench is cut 0.30 m below grade. Stands 1.05 m over the paving and is the first thing you meet stepping off terrace_steps."
+  },
+  {
+   "id": "terrace_toe_low",
+   "kind": "boulder",
+   "position": [
+    13.95,
+    -8.72
+   ],
+   "height_m": 0.22,
+   "width_m": 0.4,
+   "rotation_deg": 70,
+   "note": "Attendant stone leaning on the main stone's uphill foot; ground -1.57 m, the deepest cut on the run (0.38 m). Deliberately under 0.25 m: it sits inside the owner's \"need a path\" lasso and must not read as a barrier."
+  },
+  {
+   "id": "terrace_toe_second",
+   "kind": "boulder",
+   "position": [
+    14.2,
+    -6.95
+   ],
+   "height_m": 0.48,
+   "width_m": 0.66,
+   "rotation_deg": 40,
+   "note": "Head of the second group, north of the break; ground -1.72 m, cut 0.23 m. Seen across the terrace from the fire bowl."
+  },
+  {
+   "id": "terrace_toe_third",
+   "kind": "boulder",
+   "position": [
+    14.06,
+    -6.35
+   ],
+   "height_m": 0.28,
+   "width_m": 0.46,
+   "rotation_deg": 105,
+   "note": "Set back uphill of terrace_toe_second and nearly touching it; ground -1.72 m, cut 0.23 m."
+  },
+  {
+   "id": "terrace_toe_last",
+   "kind": "boulder",
+   "position": [
+    14.28,
+    -5.3
+   ],
+   "height_m": 0.16,
+   "width_m": 0.32,
+   "rotation_deg": 55,
+   "note": "Smallest and last stone, where the cut has fallen to 0.16 m (ground -1.79 m). North of here the bank meets the paving in planting and there is no stone at all."
+  },
+  {
+   "id": "lantern",
+   "kind": "lantern",
+   "position": [
+    14.65,
+    1.66
+   ],
+   "height_m": 1.2,
+   "width_m": 0.45
+  }
+ ],
+ "style": "",
+ "notes": ""
+}
