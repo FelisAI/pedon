@@ -1,0 +1,13 @@
+{
+  "name": "PEDON: Planting Guide",
+  "subtitle": "Landscape designs on your site",
+  "promotional_text": "Bring your PEDON landscape design onto the real site. See planting centers, compare mature plant sizes, and keep your aligned design available offline.",
+  "description": "Turn your PEDON landscape design into a guide you can use on site.\n\nPEDON for iPhone is a companion to the free, open-source PEDON desktop editor. It requires a Mac running PEDON, a calibrated textured mesh scan of your site, and a design prepared in the desktop editor. The iPhone app does not create site scans or designs.\n\nALIGN WITH THE REAL SITE\nChoose two recognizable features on your original scan, then match them on the real ground. Use the translucent Original scan overlay to compare fixed features with the camera and fine-tune the alignment.\n\nSEE WHERE EACH PLANT GOES\nSwitch to Planting guide for small targets at the design's planting centers. Select a target to preview that plant at half opacity and its planned mature size. Show or hide individual plants and read the plant details included in your design.\n\nKEEP THE VIEW CLEAR\nCollapse the controls while you work. Switch between the planting guide and the full 3D design, and adjust which layers are visible.\n\nRETURN TO YOUR WORK\nSave the design and alignment on your iPhone. Reopening loads your offline copy and tries to recognize the saved location. Refresh over the same local network to get an updated design from your Mac.\n\nPRIVATE BY DESIGN\nNo PEDON account, ads, or tracking. Camera references and saved spatial maps stay on your iPhone.\n\nRequires an ARKit-capable iPhone with iOS 18 or later. LiDAR is optional. AR accuracy depends on your scan, reference points, lighting and device tracking; check fixed references and measured distances before planting or digging. Plant dimensions are design values, not guarantees of growth.",
+  "keywords": "landscape,garden,planting,augmented reality,site,design,plants,layout,AR",
+  "support_url": "https://github.com/FelisAI/pedon/blob/main/pedon/ios/support.md",
+  "privacy_policy_url": "https://github.com/FelisAI/pedon/blob/main/pedon/ios/privacy.md",
+  "marketing_url": "https://github.com/FelisAI/pedon",
+  "copyright": "2026 Felis AI LLC",
+  "primary_category": "PRODUCTIVITY",
+  "price": "Free"
+}

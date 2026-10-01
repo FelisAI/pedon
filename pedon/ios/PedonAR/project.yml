@@ -11,15 +11,20 @@ targets:
   PedonAR:
     type: application
     platform: iOS
-    sources: [PedonAR]
+    sources:
+      - PedonAR
+      - path: ../privacy.md
+        buildPhase: resources
     settings:
       base:
         PRODUCT_NAME: PedonAR
         PRODUCT_BUNDLE_IDENTIFIER: com.felisai.pedon.ar
-        TARGETED_DEVICE_FAMILY: "1,2"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SWIFT_VERSION: "5.0"
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
     info:
       path: PedonAR/Info.plist
       properties:
@@ -29,6 +34,8 @@ targets:
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSCameraUsageDescription: The camera shows the design standing on the real site.
         NSLocalNetworkUsageDescription: To get the design from PEDON on your Mac.
+        # Only Apple's system cryptography (HTTPS and CryptoKit SHA-256), no custom encryption.
+        ITSAppUsesNonExemptEncryption: false
         # the Mac serves over plain HTTP on the LAN (viewer/ar_server.js); nothing else is allowed
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true

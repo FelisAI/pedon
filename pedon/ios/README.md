@@ -7,7 +7,8 @@ controls can be collapsed while you work.
 
 This is the native companion to the [PEDON desktop design editor](../../README.md), under
 the same [AGPL-3.0-only license](../../LICENSE). On-site visualization uses this app.
-There is no Safari AR viewer or App Store download; build and install from source below.
+There is no Safari AR viewer. An App Store release is [being prepared](appstore/README.md);
+until it is approved and released, build and install from source below.
 
 ## Requirements
 
@@ -77,6 +78,14 @@ The app has been used on a real site. Simulator tests check geometry and control
 measure outdoor tracking drift. Reference choice, scan calibration and AR tracking affect where
 any target appears. Plant sizes are design values, not guarantees of growth.
 
+**Original scan** overlays the captured site at adjustable opacity after alignment. Compare
+fixed features with the camera, then use **Adjust alignment** to move or turn the scan and
+design together. The scan is off by default, loads only when requested, and has a shortcut
+in compact controls. Real-world occlusion is temporarily disabled while comparing the scan.
+The overlay does not replace the initial two-point match or saved-location recognition.
+Settings also includes an offline [privacy policy](privacy.md), [support](support.md), and
+the app version.
+
 ## Tests
 
 From the repository root, the alignment math can run on the Mac without a site or phone:
@@ -120,8 +129,11 @@ are required: the USD import can carry its own axis correction.
 - `ContentView` owns the connection/alignment flow and compact controls.
 - `OriginalScan` / `PlanPicker` load and pick the original capture; `Alignment` fits it to AR.
 - `ARGarden` / `DesignScene` load the design into RealityKit.
+- `ScanOverlay` loads the original capture in the design's frame as an optional translucent reference.
 - `PlantingGuide` / `PlantDisplay` own planting targets and model visibility/opacity.
 - `DesignSource` reads the desktop's `current.json`, USDZ files and catalogue metadata.
+- `PrivacyPolicyView` reads the same privacy document published alongside this README.
+- `appstore/README.md` tracks release requirements, metadata and archive inspection.
 
 The exported scan, designs, caches and settings belong to each user, outside this repository.
 

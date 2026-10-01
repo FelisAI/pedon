@@ -50,7 +50,8 @@ capture (`scan.file` in `yard.json`, a `*.scan.usdz`). The user rotates and zoom
 picks two existing ground features, then matches the same points on site. Proposed plants and
 new bed edges are not alignment references. Surface hits retain measured height; the scan
 keeps all triangles and calibration, in the same frame as the design, including nonzero north.
-It is never carved to fit proposed terraces or drawn over the AR planting.
+It is never carved to fit proposed terraces. In the aligned view it stays hidden unless
+the user switches on **Original scan** for comparison.
 
 The app's Settings stores the user's Mac address shown by this sheet; no connection address
 is built into the app. A fresh installation opens those settings. Builds can be shared without
@@ -66,8 +67,10 @@ plant is three crossed cards of that picture at its mature size, plus a card acr
 top for low spreading plants. A garden of ~160 plants is a few thousand triangles, where its
 real foliage runs to gigabytes and even Fast preview to millions of triangles.
 
-**The AR overlay omits the scan.** In RealityKit (the native app’s renderer) the scan draws as a grey shell
-over the whole site with the design underneath. The site's LANDMARKS go instead: an orange
+**The AR overlay omits the scan by default.** An opaque scan can cover the real site and
+planting. The optional **Original scan** control loads the separately exported, textured
+capture as a translucent alignment reference; it shares the design's transform and has an
+opacity slider. The site's LANDMARKS go with the design: an orange
 post and its name at each, so after lining up you can see whether the other posts stand on
 their real spots. The file's origin is the landmark nearest the planting (a red post, "start
 here") and `yard.json` carries every landmark's place in the file's frame — checked in
@@ -106,6 +109,13 @@ Each picker owns its scene nodes (shared geometry/textures), so old cameras and 
 alter the next picker's bounds. The export keeps one named node per plant while sharing the
 species pictures, plus `plant_items` mapping IDs/names/nodes to exact, Y-up planting positions.
 
+**Original scan** can be switched on/off in the aligned view or with the compact bar's scan
+button. Its opacity starts at 35%; use **Adjust alignment** while comparing fixed features
+with the camera. Scan and design move together, and the overlay does not intercept plant
+selection taps. It loads only when needed. Real-world occlusion is disabled while the scan
+reference is visible, then returns to the user's setting. This is a check after two-point
+alignment or saved-location recognition, not an automatic registration algorithm.
+
 Selecting a visible target in **Planting guide** shows that individual at **50% opacity**, at
 its exported mature dimensions, while the other plant models stay hidden. Deselecting or hiding
 it removes the preview; returning to 3D view restores ordinary opacity and visibility. The
@@ -122,3 +132,7 @@ asks the camera to recognize the same location. Plants stay hidden until normal 
 and the saved anchor agree. **Align again** recovers when the site cannot be recognized;
 **↻** fetches design changes. A different scan or coordinate frame cannot reuse the old
 alignment. See `ios/README.md` for the saved-map workflow and tests.
+
+**App Store preparation:** `ios/appstore/README.md` records the first iPhone release's store
+copy, privacy disclosures, compiled-archive checks and remaining account/review requirements.
+An App Store listing is not live until Apple approves it and the publisher releases it.

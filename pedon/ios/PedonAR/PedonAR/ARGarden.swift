@@ -31,6 +31,14 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     private let imageContext = CIContext()
 
     private var design: Entity?
+    @Published private(set) var scanLoading = false
+    @Published private(set) var scanError: String?
+    private var scanSource: URL?
+    private var scanOverlay: Entity?
+    private var scanTask: Task<Void, Never>?
+    private var scanGeneration = 0
+    private var scanVisible = false
+    private var scanOpacity: Float = 0.35
     private var holder: AnchorEntity?
     private var anchor: ARAnchor?
     private var pins: [AnchorEntity] = []
@@ -177,6 +185,39 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
         let guide = PlantingGuide(plants: plants)
         e.addChild(guide.root)
         plantingGuide = guide
+    }
+
+    func setScanSource(_ url: URL) {
+        scanGeneration += 1
+        scanTask?.cancel(); scanTask = nil
+        scanOverlay?.removeFromParent(); scanOverlay = nil
+        scanSource = url; scanLoading = false; scanError = nil
+    }
+
+    func showOriginalScan(_ visible: Bool, opacity: Float) {
+        scanVisible = visible; scanOpacity = opacity
+        if let scanOverlay {
+            ScanOverlay.update(scanOverlay, visible: visible, opacity: opacity)
+            return
+        }
+        guard visible, scanTask == nil, let source = scanSource, let parent = design else { return }
+        let generation = scanGeneration
+        scanLoading = true; scanError = nil
+        scanTask = Task { [weak self] in
+            do {
+                let overlay = try await ScanOverlay.load(source)
+                try Task.checkCancellation()
+                guard let self, self.scanGeneration == generation else { return }
+                parent.addChild(overlay)
+                self.scanOverlay = overlay
+                ScanOverlay.update(overlay, visible: self.scanVisible, opacity: self.scanOpacity)
+            } catch {
+                guard let self, self.scanGeneration == generation, !Task.isCancelled else { return }
+                self.scanError = "The scan overlay could not load. Turn it off and on to try again."
+            }
+            guard let self, self.scanGeneration == generation else { return }
+            self.scanLoading = false; self.scanTask = nil
+        }
     }
 
     /// Stand the design in the world where the two marks say it goes.

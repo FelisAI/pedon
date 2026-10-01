@@ -23,7 +23,8 @@ final class SessionStoreTests: XCTestCase {
             firstPhoto: Data([4]), secondPhoto: nil, surroundings: Data([5]), savedAt: Date())
         try store.save(saved)
         try store.save(SavedPlantView(frame: design.frame, hidden: ["p2"], selected: "p1", guide: true,
-                                    plants: true, beds: false, landmarks: false, occlusion: true))
+                                    plants: true, beds: false, landmarks: false, occlusion: true,
+                                    originalScan: true, scanOpacity: 0.55))
         // Downloads can disappear. A newly constructed store still has everything it needs.
         try FileManager.default.removeItem(at: original)
         try FileManager.default.removeItem(at: scan)
@@ -43,6 +44,8 @@ final class SessionStoreTests: XCTestCase {
         XCTAssertLessThan(simd_distance(fit.apply([8,0.5,4]), expected.apply([8,0.5,4])), 0.00001)
         XCTAssertEqual(reopened.plantView(for: copy.frame)?.hidden, ["p2"])
         XCTAssertEqual(reopened.plantView(for: copy.frame)?.guide, true)
+        XCTAssertEqual(reopened.plantView(for: copy.frame)?.originalScan, true)
+        XCTAssertEqual(reopened.plantView(for: copy.frame)?.scanOpacity, 0.55)
         XCTAssertNil(reopened.placement(for: "different scan frame"))
         XCTAssertNil(reopened.plantView(for: "different scan frame"))
         XCTAssertNil(SessionStore(server: "http://another-mac.local:5179", root: root).cachedDesign())

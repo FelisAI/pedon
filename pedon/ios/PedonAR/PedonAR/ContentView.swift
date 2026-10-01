@@ -44,6 +44,8 @@ final class Flow: ObservableObject {
     @Published var showBeds = true { didSet { applyToggles() } }
     @Published var showLandmarks = true { didSet { applyToggles() } }
     @Published var hideBehindReal = true { didSet { applyToggles() } }
+    @Published var showOriginalScan = false { didSet { applyToggles() } }
+    @Published var scanOpacity: Float = 0.35 { didSet { applyToggles() } }
     @Published var savedDesignLoaded = false
     @Published var saveStatus: String?
     @Published var resumePhoto: UIImage?
@@ -125,6 +127,7 @@ final class Flow: ObservableObject {
             let scanFile = storage.scanURL(record)
             scan = try OriginalScan.load(scanFile)
             scanURL = scanFile
+            garden.setScanSource(scanFile)
             current = record.current
             savedDesignLoaded = usingSaved
             let frame = storage.folder.lastPathComponent + ":" + record.frame
@@ -135,6 +138,7 @@ final class Flow: ObservableObject {
                 cancelSave()
                 garden.unplace(); garden.clearPins()
                 hiddenPlants = []; selectedPlantID = nil
+                showOriginalScan = false; scanOpacity = 0.35
                 first = nil; second = nil; firstPhoto = nil; secondPhoto = nil
                 tapA = nil; tapB = nil; fit = nil; clearFixes(); pickedIn = frame
             }
@@ -143,6 +147,7 @@ final class Flow: ObservableObject {
                 hiddenPlants = view.hidden; selectedPlantID = view.selected
                 plantingGuide = view.guide; showPlants = view.plants; showBeds = view.beds
                 showLandmarks = view.landmarks; hideBehindReal = view.occlusion
+                showOriginalScan = view.originalScan ?? false; scanOpacity = view.scanOpacity ?? 0.35
             }
             hiddenPlants.formIntersection(Set(plants.map(\.id)))
             if !plants.contains(where: { $0.id == selectedPlantID }) { selectedPlantID = nil }
@@ -228,7 +233,8 @@ final class Flow: ObservableObject {
     private func persistView() {
         guard !restoringState, let store, let cached else { return }
         try? store.save(SavedPlantView(frame: cached.frame, hidden: hiddenPlants, selected: selectedPlantID,
-            guide: plantingGuide, plants: showPlants, beds: showBeds, landmarks: showLandmarks, occlusion: hideBehindReal))
+            guide: plantingGuide, plants: showPlants, beds: showBeds, landmarks: showLandmarks, occlusion: hideBehindReal,
+            originalScan: showOriginalScan, scanOpacity: scanOpacity))
     }
 
     func markFirst() {
@@ -323,6 +329,7 @@ final class Flow: ObservableObject {
     func previewPlaced(keepView: Bool = false) async {
         if !keepView {
             plantingGuide = false; hiddenPlants = []; selectedPlantID = nil
+            showOriginalScan = false; scanOpacity = 0.35
             showPlants = true; showBeds = true; showLandmarks = true
         }
         first = PickPoint(x: 0, z: 0, label: "Reference 1", y: 0)
@@ -355,7 +362,8 @@ final class Flow: ObservableObject {
         garden.show("ar_landmark", showLandmarks && !plantingGuide)
         garden.showGuide(plantingGuide, hidden: hiddenPlants, selected: selectedPlantID)
         // A soil depth estimate must not swallow the centimetre-thin targets.
-        garden.setOcclusion(hideBehindReal && !plantingGuide)
+        garden.setOcclusion(hideBehindReal && !plantingGuide && !showOriginalScan)
+        garden.showOriginalScan(showOriginalScan, opacity: scanOpacity)
         persistView()
     }
 
@@ -388,8 +396,10 @@ struct ContentView: View {
     @State private var plantList = false
     @State private var detailPlant: PlantItem?
     @State private var scanRevision = 0
+    @State private var panelHeight: CGFloat = 320
 
     var body: some View {
+        GeometryReader { geometry in
         ZStack {
             ARGardenView(garden: flow.garden).ignoresSafeArea()
             if flow.step == .first || flow.step == .second || flow.step == .remark { AimDot() }
@@ -413,16 +423,28 @@ struct ContentView: View {
                         selectedPlantBar
                         HStack(spacing: 8) {
                             Button("Controls", systemImage: "slider.horizontal.3") { controlsCollapsed = false }
-                            Button(flow.plantingGuide ? "3D view" : "Planting guide", systemImage: "scope") {
+                            Button(flow.plantingGuide ? "3D view" : "Guide", systemImage: "scope") {
                                 flow.plantingGuide.toggle()
                             }.disabled(!flow.guideAvailable)
+                                .accessibilityLabel(flow.plantingGuide ? "3D view" : "Planting guide")
+                            Button { flow.showOriginalScan.toggle() } label: {
+                                Image(systemName: "square.3.layers.3d")
+                                    .foregroundStyle(flow.showOriginalScan ? .orange : .white)
+                            }.accessibilityLabel(flow.showOriginalScan ? "Hide original scan" : "Show original scan")
                             Button { plantList = true } label: { Image(systemName: "leaf") }
                                 .accessibilityLabel("Individual plants")
                         }.buttonStyle(Quiet())
                     }.padding(10).background(.black.opacity(0.7), in: RoundedRectangle(cornerRadius: 18))
                         .padding(.horizontal, 10)
+                } else if flow.step == .placed {
+                    ScrollView {
+                        panel.onGeometryChange(for: CGFloat.self) { $0.size.height } action: { panelHeight = $0 }
+                    }
+                        .scrollBounceBehavior(.basedOnSize)
+                        .frame(height: min(panelHeight, geometry.size.height * 0.58))
                 } else { panel }
             }
+        }
         }
         .onAppear {
             guard !started else { return }; started = true
@@ -613,6 +635,23 @@ struct ContentView: View {
                 if !flow.guideAvailable {
                     Text("Make a fresh export on the Mac, then reload to see planting centers.").font(.footnote)
                 }
+                Toggle("Original scan", isOn: $flow.showOriginalScan)
+                if flow.showOriginalScan {
+                    HStack {
+                        Text("Scan opacity").font(.caption)
+                        Slider(value: $flow.scanOpacity, in: 0.15...0.8)
+                            .accessibilityLabel("Scan opacity")
+                        Text("\(Int(flow.scanOpacity * 100))%").font(.caption.monospacedDigit())
+                    }
+                    if flow.garden.scanLoading {
+                        HStack { ProgressView().tint(.white); Text("Loading original scan…") }.font(.caption)
+                    } else if let error = flow.garden.scanError {
+                        Text(error).font(.caption).foregroundStyle(.yellow)
+                    } else {
+                        Text("Compare fixed features with the camera view. Use Adjust alignment to move the scan and design together.")
+                            .font(.caption).foregroundStyle(.white.opacity(0.8))
+                    }
+                }
                 if flow.plantingGuide {
                     Text("Cross = planting center. Tap a target or choose a plant from the list. Check alignment against a fixed feature before planting.")
                         .font(.footnote).foregroundStyle(.white.opacity(0.85))
@@ -696,6 +735,15 @@ struct SettingsView: View {
                     if let error { Text(error).foregroundStyle(.red) }
                     Text("Enter the address shown in the Mac’s ··· → See it on site sheet.")
                         .font(.footnote).foregroundStyle(.secondary)
+                }
+                Section("About PEDON") {
+                    NavigationLink("Privacy", destination: PrivacyPolicyView())
+                    Link("Help and support", destination: URL(string: "https://github.com/FelisAI/pedon/blob/main/pedon/ios/support.md")!)
+                    Link("Open-source code", destination: URL(string: "https://github.com/FelisAI/pedon/tree/main/pedon/ios")!)
+                    if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+                       let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String {
+                        LabeledContent("Version", value: "\(version) (\(build))")
+                    }
                 }
             }
             .navigationTitle("Settings")

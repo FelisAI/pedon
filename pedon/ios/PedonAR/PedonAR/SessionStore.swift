@@ -42,6 +42,8 @@ struct SavedPlantView: Codable {
     let beds: Bool
     let landmarks: Bool
     let occlusion: Bool
+    var originalScan: Bool? = nil
+    var scanOpacity: Float? = nil
 }
 
 /// Never show a saved placement in a new session's unrelated coordinate system.

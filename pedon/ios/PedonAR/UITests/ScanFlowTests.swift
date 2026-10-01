@@ -10,6 +10,21 @@ import Foundation
         return value
     }
 
+    func testPrivacyIsReadableBeforeConnecting() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-resetConnection"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Privacy"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.links["Help and support"].exists || app.buttons["Help and support"].exists)
+        attach(app, "Connection settings and privacy")
+        app.buttons["Privacy"].tap()
+        XCTAssertTrue(app.staticTexts["Your site stays with you"].waitForExistence(timeout: 5))
+        attach(app, "Offline privacy policy")
+        app.navigationBars.buttons["Settings"].tap()
+        XCTAssertTrue(app.textFields.firstMatch.exists)
+        XCTAssertTrue(app.buttons["Done"].exists)
+    }
+
     func testRealScanPickingAndConnectionSettings() throws {
         let connection = try server()
         continueAfterFailure = false
@@ -159,6 +174,34 @@ import Foundation
         app.buttons["Change points"].tap()
         XCTAssertTrue(app.staticTexts["Original 3D scan"].waitForExistence(timeout: 5))
         attach(app, "Offline alignment recovery")
+    }
+
+    func testOriginalScanOverlayControls() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-previewPlaced", "-server", try server()]
+        app.launch()
+        XCTAssertTrue(app.switches["Original scan"].waitForExistence(timeout: 60))
+        app.switches["Original scan"].tap()
+        XCTAssertEqual(app.switches["Original scan"].value as? String, "1")
+        XCTAssertTrue(app.sliders["Scan opacity"].waitForExistence(timeout: 10))
+        let ready = app.staticTexts["Compare fixed features with the camera view. Use Adjust alignment to move the scan and design together."]
+        XCTAssertTrue(ready.waitForExistence(timeout: 45))
+        attach(app, "Original scan over the aligned design")
+        app.sliders["Scan opacity"].adjust(toNormalizedSliderPosition: 0.65)
+        app.buttons["Hide controls"].tap()
+        XCTAssertTrue(app.buttons["Hide original scan"].waitForExistence(timeout: 5))
+        attach(app, "Compact original scan overlay")
+        app.buttons["Hide original scan"].tap()
+        XCTAssertTrue(app.buttons["Show original scan"].exists)
+        app.buttons["Show original scan"].tap()
+        app.buttons["Controls"].tap()
+        XCTAssertEqual(app.switches["Original scan"].value as? String, "1")
+        app.buttons["Adjust alignment"].tap()
+        XCTAssertTrue(app.buttons["Save position"].exists)
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.85))
+            .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55)))
+        attach(app, "Scan visible with alignment controls")
     }
 
     private func attach(_ app: XCUIApplication, _ name: String) {
