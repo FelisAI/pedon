@@ -9,6 +9,12 @@ before coordinates. Rendered and validated does not mean owner-approved.
 
 ## Core rules
 
+- **A file URL is not the identity of a saved asset.** On iPhone, a path constructed under
+  `/var/mobile` can be enumerated back under `/private/var/mobile`. Comparing those URLs as
+  strings made the native cache delete its newest design and scan before RealityKit could
+  load them. Compare the persisted asset UUID when pruning old versions. Test through a
+  symbolic directory alias: ordinary Simulator paths hid this device failure.
+
 - **ENU and world are different frames, and they are IDENTICAL at yaw 0.**
   Everything looks correct until someone presses "Set north" and the two frames
   separate by the yaw. Storing world coordinates as ENU breaks three paths:

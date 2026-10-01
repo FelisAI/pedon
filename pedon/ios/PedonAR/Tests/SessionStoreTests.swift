@@ -3,6 +3,41 @@ import simd
 @testable import PedonAR
 
 final class SessionStoreTests: XCTestCase {
+    func testRefreshThroughDirectoryAliasKeepsTheCurrentModels() throws {
+        let fm = FileManager.default
+        let root = fm.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        defer { try? fm.removeItem(at: root) }
+        let physical = root.appendingPathComponent("physical", isDirectory: true)
+        let alias = root.appendingPathComponent("alias", isDirectory: true)
+        try fm.createDirectory(at: physical, withIntermediateDirectories: true)
+        try fm.createSymbolicLink(at: alias, withDestinationURL: physical)
+        let original = root.appendingPathComponent("download.usdz"), scan = root.appendingPathComponent("scan.usdz")
+        try Data("first design".utf8).write(to: original)
+        try Data("same scan".utf8).write(to: scan)
+        let current = try JSONDecoder().decode(Current.self, from: Data(#"{"name":"yard.usdz","info":{"scan":{"file":"yard.scan.usdz"}}}"#.utf8))
+        // On iPhone the app uses /var/mobile; enumeration can return /private/var/mobile.
+        // A symbolic alias reproduces that difference on Simulator and macOS too.
+        let store = SessionStore(server: "http://example.local:5179", root: alias)
+        let first = try store.cache(current, design: original, scan: scan)
+        XCTAssertEqual(try Data(contentsOf: store.designURL(first)), Data("first design".utf8))
+        XCTAssertEqual(try Data(contentsOf: store.scanURL(first)), Data("same scan".utf8))
+        XCTAssertNotNil(store.cachedDesign())
+        let note = store.folder.appendingPathComponent("keep.txt")
+        try Data("session note".utf8).write(to: note)
+        try Data("changed design".utf8).write(to: original)
+        let refreshed = try store.cache(current, design: original, scan: scan)
+        XCTAssertNotEqual(first.assets, refreshed.assets)
+        XCTAssertEqual(first.frame, refreshed.frame)
+        XCTAssertFalse(fm.fileExists(atPath: store.designURL(first).path))
+        XCTAssertFalse(fm.fileExists(atPath: store.scanURL(first).path))
+        let reopened = SessionStore(server: "http://example.local:5179", root: alias)
+        let saved = try XCTUnwrap(reopened.cachedDesign())
+        XCTAssertEqual(saved.assets, refreshed.assets)
+        XCTAssertEqual(try Data(contentsOf: reopened.designURL(saved)), Data("changed design".utf8))
+        XCTAssertEqual(try Data(contentsOf: reopened.scanURL(saved)), Data("same scan".utf8))
+        XCTAssertEqual(try Data(contentsOf: note), Data("session note".utf8))
+    }
+
     func testDurableDesignAndPlacementRoundTripWithoutServer() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: root) }

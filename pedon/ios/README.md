@@ -159,7 +159,10 @@ AR tracking a surveying instrument. This follows [Apple's saved-world-map workfl
 The saved scan, map and reference pictures stay in the app's local Application Support
 folder, excluded from device backups. The exporter identifies scan contents without ZIP timestamps, so rebuilding an unchanged
 scan keeps its alignment. `SessionStore.swift` writes metadata atomically and
-keeps the previous export if a new copy fails. `ResumeGate` requires normal tracking and
+keeps the previous export if a new copy fails. Cleanup compares saved asset IDs, since iPhone
+file enumeration may resolve `/var/mobile` to `/private/var/mobile`; those paths can name the
+same folder. A directory-alias regression checks download, refresh and offline reopening.
+`ResumeGate` requires normal tracking and
 the specific saved anchor in a new camera frame before revealing the design. Simulator tests
 check durable caching, offline reopen and recovery controls; physical relocalization requires
 an iPhone at the saved site.

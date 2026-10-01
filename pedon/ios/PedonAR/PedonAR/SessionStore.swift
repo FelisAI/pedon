@@ -106,8 +106,13 @@ final class SessionStore {
             throw error
         }
         // Keep the new record's pair only; a failed write above leaves the previous pair intact.
-        for old in (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
-            where UUID(uuidString: old.lastPathComponent) != nil && old != destination { try? fm.removeItem(at: old) }
+        // Enumeration resolves /var/mobile to /private/var/mobile on iPhone. URL inequality
+        // would mistake the new pair for an old one and delete it before RealityKit opens it.
+        for old in (try? fm.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? [] {
+            if let id = UUID(uuidString: old.lastPathComponent), id != record.assets {
+                try? fm.removeItem(at: old)
+            }
+        }
         return record
     }
 
