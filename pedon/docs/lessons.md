@@ -283,3 +283,14 @@ A pattern that strips citations like `(P3)` from comments also turns `t3.map(P3)
 tool or a pattern edits PROSE in code files at scale, prove the code did not move: parse the file
 before and after, ignore comments, blank every string's contents, and require the two trees to be
 identical. A syntax check cannot see this class; a structural comparison cannot miss it.
+
+## An app that quits without a crash report ran out of memory: measure it on the phone
+
+iOS ends an app over its memory limit (3.3 GB on an iPhone 17 Pro) without a crash report, so
+"it crashed" with no `PedonAR-….ips` in `devicectl … systemCrashLogs` means memory. The Simulator
+cannot see the culprit: its footprint leaves out GPU memory (a 256 MB texture does not show), and
+the growth that ended the app was all graphics — ARKit's automatic lighting probes, about 2.5 MB a
+second while the camera ran. A Mac process's footprint does count GPU memory, so RealityKit code
+can be measured there; ARKit can only be measured on the phone. The app's memory log
+(`ios/README.md`) records the footprint split into graphics, camera media and its own memory;
+switching one feature off at a time against that split found the cause in seven two-minute runs.
