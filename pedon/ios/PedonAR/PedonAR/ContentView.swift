@@ -415,9 +415,13 @@ final class Flow: ObservableObject {
 
     /// `-probeGuide`: what looking through many planting targets costs (CA1). Turns the guide
     /// on and selects every plant in turn, as tapping one target after another does on site.
-    func probeGuide(rounds: Int, every seconds: Double) async {
+    func probeGuide(rounds: Int, every seconds: Double, hold: Double = 0) async {
         plantingGuide = true
         MemoryLog.shared.note("probe start")
+        if hold > 0 {   // the guide on with nothing selected, every target where the camera can see it
+            try? await Task.sleep(for: .seconds(hold))
+            MemoryLog.shared.note("probe held \(Int(hold)) s")
+        }
         for round in 1...max(rounds, 1) {
             for plant in plants {
                 selectedPlantID = plant.id
@@ -429,15 +433,18 @@ final class Flow: ObservableObject {
         MemoryLog.shared.note("probe done")
     }
 
-    /// `-probePlaceHere`: stand the design where the phone started, without marks, so a probe
-    /// runs with ARKit tracking, the reconstructed mesh and map saving, as on site.
+    /// `-probePlaceHere`: stand the planting in front of where the phone started, 1.2 m below it,
+    /// without marks, so a probe runs with ARKit tracking, mesh and map saving as on site, and
+    /// with many planting targets in view at once (CA1).
     func probePlaceHere() {
         cancelSave(); store?.forgetPlacement()
         garden.resetTracking()
-        first = PickPoint(x: 0, z: 0, label: "Reference 1", y: 0)
-        second = PickPoint(x: 6, z: 14, label: "Reference 2", y: 0)
-        let a = first!.point(on: ground), b = second!.point(on: ground)
-        tapA = SIMD3(a.x, -1.2, a.z); tapB = SIMD3(b.x, -1.2, b.z)
+        let centres = plants.compactMap(\.point)
+        let centre = centres.reduce(SIMD3<Float>(0, 0, 0), +) / Float(max(centres.count, 1))
+        first = PickPoint(x: centre.x, z: centre.z, label: "Reference 1", y: centre.y)
+        second = PickPoint(x: centre.x, z: centre.z + 6, label: "Reference 2", y: centre.y)
+        // the planting's centre 4 m ahead of the camera's start, running away from it
+        tapA = SIMD3(0, -1.2, -4); tapB = SIMD3(0, -1.2, -10)
         clearFixes()
         placeFrom(tapA!, tapB!)
         MemoryLog.shared.note("probe placed")
@@ -556,6 +563,7 @@ struct ContentView: View {
             let arguments = ProcessInfo.processInfo.arguments
             let rounds = max(UserDefaults.standard.integer(forKey: "probeRounds"), 1)
             let every = UserDefaults.standard.double(forKey: "probeEvery") > 0 ? UserDefaults.standard.double(forKey: "probeEvery") : 1
+            let hold = UserDefaults.standard.double(forKey: "probeHold")
             if arguments.contains("-probePlaceHere") {
                 flow.garden.start()
                 Task {
@@ -563,7 +571,7 @@ struct ContentView: View {
                     guard flow.step != .failed else { return }
                     try? await Task.sleep(for: .seconds(8)) // tracking finds its feet first
                     flow.probePlaceHere()
-                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every) }
+                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every, hold: hold) }
                 }
                 return
             }
@@ -576,7 +584,7 @@ struct ContentView: View {
                     guard flow.step != .failed else { return }
                     await flow.previewPlaced(keepView: saved)
                     if ProcessInfo.processInfo.arguments.contains("-previewRestoring") { flow.previewResumePrompt() }
-                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every) }
+                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every, hold: hold) }
                 }
                 return
             }

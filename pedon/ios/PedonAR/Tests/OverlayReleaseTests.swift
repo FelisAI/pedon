@@ -5,6 +5,11 @@ import SceneKit
 /// The original-scan overlay holds about 240 MB on a real site and a load peaks far higher
 /// (CA1). Switched off and on to compare, it stays loaded; left off, it is freed.
 @MainActor final class OverlayReleaseTests: XCTestCase {
+    func testNoAutomaticLightingProbes() {
+        // On an iPhone 17 Pro they grew graphics memory 2.5 MB a second until iOS ended the app.
+        XCTAssertEqual(ARGarden().configuration().environmentTexturing, .none)
+    }
+
     func testAHiddenOverlayIsFreedOnlyOnceItStaysHidden() async throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).usdz")
         let capture = SCNScene()

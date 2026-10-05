@@ -119,7 +119,8 @@ collapse controls and open details. Screenshots stay in the local `.xcresult`; d
 real-site test artifacts without the site owner's permission.
 
 To measure memory on a device, a Debug build launched with `-probePlaceHere -probeGuide`
-stands the design where the phone starts and selects every plant in turn (`-probeRounds N`,
+stands the planting 4 m in front of where the phone starts, so many targets are in view, and
+selects every plant in turn (`-probeHold SECONDS` first holds with the guide on, `-probeRounds N`,
 `-probeEvery SECONDS`); with `-previewPlaced -probeGuide` it does the same without ARKit. Each
 step lands in the memory log described under *When the app quits by itself*.
 
@@ -173,8 +174,9 @@ iOS ends an app that goes over its memory limit and writes no crash report for i
 keeps a small log of its own memory, `Library/Application Support/PEDON Diagnostics/memory.csv`
 (the older half moves to `memory-previous.csv` at 2 MB): a line every 5 seconds and at each
 selection, guide or original-scan switch, loading stage and map save, with PEDON's footprint
-(the figure iOS compares with its limit), what is left before that limit, and what ARKit holds
-(reconstructed mesh, lighting probes, planes). It stays on the iPhone. Read it from the Mac:
+(the figure iOS compares with its limit), what is left before that limit, the part that is
+graphics, camera media and the app's own memory, and what ARKit holds (reconstructed mesh,
+lighting probes, planes). It stays on the iPhone. Read it from the Mac:
 
 ```bash
 xcrun devicectl device copy from --device "YOUR_IPHONE" --domain-type appDataContainer \
@@ -185,7 +187,10 @@ xcrun devicectl device info files --device "YOUR_IPHONE" --domain-type systemCra
 
 A crash leaves a `PedonAR-….ips` report in the second listing; a memory exit leaves none,
 at most a `JetsamEvent-….ips` naming the largest process. The log's last lines show what was
-happening. What PEDON holds is kept down on purpose, measured with a real site: the point
+happening. The limit on an iPhone 17 Pro measured 3.3 GB. ARKit's automatic lighting probes
+(`environmentTexturing = .automatic`) grew graphics memory about 2.5 MB a second for as long as
+the camera ran, which ended the app within minutes of planting-guide use; they are off. What
+PEDON holds is kept down on purpose, measured with a real site: the point
 picker's copy of the original scan (about 300 MB with its 8192² texture) is held only while
 picking; the original-scan overlay (about 240 MB loaded, far more while loading) is freed
 after 20 seconds switched off; and the saved AR map (about 60 MB for a whole site) refreshes

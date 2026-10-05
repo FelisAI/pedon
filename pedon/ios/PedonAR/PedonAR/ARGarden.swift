@@ -51,10 +51,14 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     var selectedPlant: ((String) -> Void)?
     private var items: [PlantItem] = []
 
-    private func configuration(map: ARWorldMap? = nil) -> ARWorldTrackingConfiguration {
+    func configuration(map: ARWorldMap? = nil) -> ARWorldTrackingConfiguration {
         let c = ARWorldTrackingConfiguration()
         c.planeDetection = [.horizontal]
-        c.environmentTexturing = .automatic
+        // No lighting probes (CA1). With `.automatic`, graphics memory grew about 2.5 MB a second
+        // for as long as the camera ran, measured on an iPhone 17 Pro, until iOS ended the app at
+        // its 3.3 GB limit; with probes off it stayed flat. They only add reflections, which the
+        // design's matte plant pictures barely show.
+        c.environmentTexturing = .none
         if hasLiDAR { c.sceneReconstruction = .mesh }
         c.initialWorldMap = map
         return c
