@@ -8,7 +8,24 @@ import SceneKit
 @MainActor
 final class Flow: ObservableObject {
     enum Step { case loading, pick, first, second, placed, remark, resuming, failed }
+    enum LoadingStage: String {
+        case saved = "Opening saved design…"
+        case checkingMac = "Checking your Mac…"
+        case downloadingDesign = "Downloading design from your Mac…"
+        case downloadingScan = "Downloading original scan from your Mac…"
+        case models = "Preparing 3D models…"
+
+        var detail: String {
+            switch self {
+            case .saved: return "Using the copy saved on this iPhone."
+            case .checkingMac: return "Looking for the latest design."
+            case .downloadingDesign, .downloadingScan: return "Keep PEDON running on your Mac."
+            case .models: return "Files are on this iPhone. Opening them for viewing."
+            }
+        }
+    }
     @Published var step: Step = .loading
+    @Published private(set) var loadingStage: LoadingStage?
     @Published var problem: String?
     @Published var current: Current?
     @Published var scan: SCNScene?
@@ -107,6 +124,8 @@ final class Flow: ObservableObject {
         let wasPlaced = step == .placed
         step = wasPlaced ? .placed : .loading
         problem = nil
+        loadingStage = .saved
+        defer { loadingStage = nil }
         do {
             guard let connection = source.candidates.first else { throw SourceError.noServer }
             let storage = SessionStore(server: connection)
@@ -115,14 +134,21 @@ final class Flow: ObservableObject {
             if preferSaved, let existing = storage.cachedDesign() {
                 record = existing; usingSaved = true
             } else {
+                loadingStage = .checkingMac
                 let (base, cur) = try await source.current()
                 guard cur.name != nil else { throw SourceError.nothingMade }
                 guard cur.info?.scan != nil else { throw SourceError.noScan }
-                let file = try await source.file(for: cur, from: base)
-                let scanFile = try await source.file(for: cur, from: base, scan: true)
+                let file = try await source.file(for: cur, from: base) { [weak self] in
+                    self?.loadingStage = .downloadingDesign
+                }
+                let scanFile = try await source.file(for: cur, from: base, scan: true) { [weak self] in
+                    self?.loadingStage = .downloadingScan
+                }
+                loadingStage = .models
                 record = try storage.cache(cur, design: file, scan: scanFile)
                 usingSaved = false
             }
+            loadingStage = .models
             try await garden.load(storage.designURL(record), plants: record.current.info?.plant_items ?? [])
             let scanFile = storage.scanURL(record)
             scan = try OriginalScan.load(scanFile)
@@ -404,7 +430,7 @@ struct ContentView: View {
             ARGardenView(garden: flow.garden).ignoresSafeArea()
             if flow.step == .first || flow.step == .second || flow.step == .remark { AimDot() }
             VStack(spacing: 0) {
-                if !controlsCollapsed || flow.step != .placed { header }
+                if !controlsCollapsed || flow.step != .placed || flow.loadingStage != nil { header }
                 if flow.step == .pick {
                     if let scan = flow.scan {
                         ScanPicker(scene: scan, first: flow.first, second: flow.second, picked: flow.choose)
@@ -516,10 +542,12 @@ struct ContentView: View {
                         Text("Saved on this iPhone · refresh for changes").font(.caption).foregroundStyle(.white.opacity(0.75))
                     }
                 }
+                if flow.step != .loading, flow.loadingStage != nil { loadingIndicator.padding(.top, 6) }
             }
             Spacer()
             Button { Task { await flow.load() } } label: { Image(systemName: "arrow.clockwise") }
                 .accessibilityLabel("Get the latest version from the Mac")
+                .disabled(flow.loadingStage != nil)
             Button { settings = true } label: { Image(systemName: "gearshape") }.padding(.leading, 14)
         }
         .foregroundStyle(.white)
@@ -567,11 +595,23 @@ struct ContentView: View {
         }.padding(.top, 8)
     }
 
+    private var loadingIndicator: some View {
+        HStack(alignment: .top, spacing: 12) {
+            ProgressView().tint(.white).padding(.top, 3)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(flow.loadingStage?.rawValue ?? "Opening PEDON…").font(.subheadline.weight(.semibold))
+                if let stage = flow.loadingStage {
+                    Text(stage.detail).font(.caption).foregroundStyle(.white.opacity(0.8))
+                }
+            }
+        }.accessibilityIdentifier("design-loading-status")
+    }
+
     @ViewBuilder private var panel: some View {
         VStack(alignment: .leading, spacing: 12) {
             switch flow.step {
             case .loading:
-                HStack { ProgressView().tint(.white); Text("Loading the design…") }
+                loadingIndicator
             case .failed:
                 Text(flow.problem ?? "Something went wrong.")
                 Button("Connection settings") { settings = true }.buttonStyle(Quiet())

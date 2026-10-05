@@ -100,7 +100,8 @@ swiftc -O pedon/ios/PedonAR/PedonAR/Alignment.swift \
 
 After generating the Xcode project, choose an iPhone Simulator and **Product → Test**.
 The default suite checks planting target transforms at nonzero yaw, individual visibility,
-50% opacity, normal-view restoration and optional plant details without a server. Integration
+50% opacity, normal-view restoration and optional plant details without a server, and that
+only an actual transfer from the Mac is announced as a download. Integration
 checks skip unless you explicitly supply your own export server.
 
 To check a real export, open the desktop phone connection and use a design with at least two
@@ -155,6 +156,11 @@ Use **↻** to fetch design changes from the Mac. A changed scan or export coord
 invalidates the old alignment. Changing lighting, vegetation or surroundings can prevent
 relocalization; in that case align again. A saved map improves reopening, but does not make
 AR tracking a surveying instrument. This follows [Apple's saved-world-map workflow](https://developer.apple.com/documentation/arkit/saving-and-loading-world-data).
+
+The loading indicator distinguishes **Checking your Mac**, **Downloading design / original
+scan from your Mac**, and **Preparing 3D models**. Preparation uses files already on the
+iPhone; a saved copy does not show a download stage. Refresh progress also appears above
+an already aligned view.
 
 The saved scan, map and reference pictures stay in the app's local Application Support
 folder, excluded from device backups. The exporter identifies scan contents without ZIP timestamps, so rebuilding an unchanged

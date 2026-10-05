@@ -128,11 +128,14 @@ final class DesignSource {
     }
 
     /// The .usdz for `current`, downloaded once per version and kept in Caches.
-    func file(for current: Current, from base: URL, scan: Bool = false) async throws -> URL {
+    func file(for current: Current, from base: URL, scan: Bool = false,
+              onDownload: (@MainActor () -> Void)? = nil) async throws -> URL {
         guard let name = scan ? current.info?.scan?.file : current.name, let url = URL(string: name, relativeTo: base) else { throw SourceError.nothingMade }
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         let local = caches.appendingPathComponent("\(Int(current.mtime_ms ?? 0))-\(name)")
         if FileManager.default.fileExists(atPath: local.path) { return local }
+        // A cached file is local work, so only announce a download when one actually starts.
+        await onDownload?()
         let (tmp, reply) = try await URLSession.shared.download(from: url)
         guard (reply as? HTTPURLResponse)?.statusCode == 200 else { throw SourceError.unreachable([base.absoluteString]) }
         // Keep both halves of this version: the design and its original scan.
