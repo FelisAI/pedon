@@ -60,6 +60,8 @@ import Foundation
             XCTAssertTrue(app.buttons["Mark it"].waitForExistence(timeout: 5))
             app.buttons["Change points"].tap()
             XCTAssertTrue(app.staticTexts["Original 3D scan"].waitForExistence(timeout: 5))
+            // The picker's copy of the scan is held only while picking, so it opens again here.
+            XCTAssertTrue(scan.waitForExistence(timeout: 20))
         }
     }
 

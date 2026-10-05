@@ -118,6 +118,11 @@ bounds against planting targets, repeatedly choose scan markers, toggle individu
 collapse controls and open details. Screenshots stay in the local `.xcresult`; do not publish
 real-site test artifacts without the site owner's permission.
 
+To measure memory on a device, a Debug build launched with `-probePlaceHere -probeGuide`
+stands the design where the phone starts and selects every plant in turn (`-probeRounds N`,
+`-probeEvery SECONDS`); with `-previewPlaced -probeGuide` it does the same without ARKit. Each
+step lands in the memory log described under *When the app quits by itself*.
+
 The scan frame and picker lifecycle also have standalone checks in `PedonAR/AlignmentTests`.
 Compile `OriginalScan.swift` with `scan_frame.swift` or `scan_lifecycle.swift`, then pass the
 path to your exported `yard.json`. The frame check compares native bounds against the viewer's
@@ -161,6 +166,30 @@ The loading indicator distinguishes **Checking your Mac**, **Downloading design 
 scan from your Mac**, and **Preparing 3D models**. Preparation uses files already on the
 iPhone; a saved copy does not show a download stage. Refresh progress also appears above
 an already aligned view.
+
+### When the app quits by itself
+
+iOS ends an app that goes over its memory limit and writes no crash report for it. So PEDON
+keeps a small log of its own memory, `Library/Application Support/PEDON Diagnostics/memory.csv`
+(the older half moves to `memory-previous.csv` at 2 MB): a line every 5 seconds and at each
+selection, guide or original-scan switch, loading stage and map save, with PEDON's footprint
+(the figure iOS compares with its limit), what is left before that limit, and what ARKit holds
+(reconstructed mesh, lighting probes, planes). It stays on the iPhone. Read it from the Mac:
+
+```bash
+xcrun devicectl device copy from --device "YOUR_IPHONE" --domain-type appDataContainer \
+  --domain-identifier com.felisai.pedon.ar \
+  --source "Library/Application Support/PEDON Diagnostics/memory.csv" --destination memory.csv
+xcrun devicectl device info files --device "YOUR_IPHONE" --domain-type systemCrashLogs
+```
+
+A crash leaves a `PedonAR-….ips` report in the second listing; a memory exit leaves none,
+at most a `JetsamEvent-….ips` naming the largest process. The log's last lines show what was
+happening. What PEDON holds is kept down on purpose, measured with a real site: the point
+picker's copy of the original scan (about 300 MB with its 8192² texture) is held only while
+picking; the original-scan overlay (about 240 MB loaded, far more while loading) is freed
+after 20 seconds switched off; and the saved AR map (about 60 MB for a whole site) refreshes
+at most every five minutes while the alignment is unchanged.
 
 The saved scan, map and reference pictures stay in the app's local Application Support
 folder, excluded from device backups. The exporter identifies scan contents without ZIP timestamps, so rebuilding an unchanged

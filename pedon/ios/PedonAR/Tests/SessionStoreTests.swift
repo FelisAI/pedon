@@ -3,6 +3,21 @@ import simd
 @testable import PedonAR
 
 final class SessionStoreTests: XCTestCase {
+    func testMapRefreshesAtMostEveryFiveMinutesUntilTheAlignmentChanges() {
+        var schedule = MapSaveSchedule()
+        let start = Date(timeIntervalSince1970: 1_000)
+        XCTAssertTrue(schedule.wants(periodic: true, now: start), "The first ready map is saved")
+        schedule.saved(at: start)
+        XCTAssertFalse(schedule.wants(periodic: true, now: start.addingTimeInterval(30)), "Not again 30 s later")
+        XCTAssertFalse(schedule.wants(periodic: true, now: start.addingTimeInterval(299)))
+        XCTAssertTrue(schedule.wants(periodic: true, now: start.addingTimeInterval(301)), "Refreshed after five minutes")
+        XCTAssertTrue(schedule.wants(periodic: false, now: start.addingTimeInterval(60)), "A new alignment saves at once")
+        XCTAssertTrue(schedule.wants(periodic: true, now: start.addingTimeInterval(61)),
+                      "Until the new alignment is saved, the next ready map saves it")
+        schedule.saved(at: start.addingTimeInterval(62))
+        XCTAssertFalse(schedule.wants(periodic: true, now: start.addingTimeInterval(90)))
+    }
+
     func testRefreshThroughDirectoryAliasKeepsTheCurrentModels() throws {
         let fm = FileManager.default
         let root = fm.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)

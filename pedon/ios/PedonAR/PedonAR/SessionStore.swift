@@ -46,6 +46,21 @@ struct SavedPlantView: Codable {
     var scanOpacity: Float? = nil
 }
 
+/// When the AR map is saved again. A site's map runs to about 60 MB and a save copies it twice
+/// in memory (CA1); saving at every tracking recovery and every 30 s came several times a
+/// minute. While the saved copy matches this alignment, it refreshes at most every five
+/// minutes; a new alignment, Save position and leaving the app save as soon as tracking allows.
+struct MapSaveSchedule {
+    static let refresh: TimeInterval = 300
+    private(set) var current = false
+    private(set) var last = Date.distantPast
+    mutating func wants(periodic: Bool, now: Date = Date()) -> Bool {
+        guard periodic else { current = false; return true }
+        return !current || now.timeIntervalSince(last) > Self.refresh
+    }
+    mutating func saved(at now: Date = Date()) { current = true; last = now }
+}
+
 /// Never show a saved placement in a new session's unrelated coordinate system.
 struct ResumeGate {
     private(set) var anchorID: UUID?

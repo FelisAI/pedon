@@ -1,6 +1,6 @@
 # PEDON for iPhone — Privacy
 
-Effective September 30, 2026. This policy covers the native PEDON iPhone app. The desktop editor and websites you choose to open have their own data handling.
+Effective October 5, 2026. This policy covers the native PEDON iPhone app. The desktop editor and websites you choose to open have their own data handling.
 
 ## Your site stays with you
 
@@ -16,7 +16,7 @@ You enter the address of your PEDON desktop viewer. The app requests design meta
 
 ## What is saved and for how long
 
-The app keeps your downloaded design and scan, alignment points and reference pictures, saved AR map, connection address, and display preferences so you can reopen your work. Refresh replaces the downloaded design; choosing new alignment points replaces the saved alignment. The saved design, scan, AR map and pictures are excluded from device backups. Connection and interface preferences may be included in an iOS device backup. Temporary downloads can be removed by iOS.
+The app keeps your downloaded design and scan, alignment points and reference pictures, saved AR map, connection address, and display preferences so you can reopen your work. It also keeps a small log of its own memory use and what it was doing at the time, such as which plant was selected, so that an unexpected exit can be diagnosed. The log contains no pictures, locations or scan data, stays on your iPhone and is excluded from backups. Refresh replaces the downloaded design; choosing new alignment points replaces the saved alignment. The saved design, scan, AR map and pictures are excluded from device backups. Connection and interface preferences may be included in an iOS device backup. Temporary downloads can be removed by iOS.
 
 To remove all app-local information, delete PEDON using iOS's Delete App action. Offloading the app keeps its documents and data. The separate files on your Mac are unaffected. You can revoke camera or local-network access in iPhone Settings; features that need that access will then be unavailable.
 

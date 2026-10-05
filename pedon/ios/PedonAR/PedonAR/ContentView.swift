@@ -24,8 +24,10 @@ final class Flow: ObservableObject {
             }
         }
     }
-    @Published var step: Step = .loading
-    @Published private(set) var loadingStage: LoadingStage?
+    @Published var step: Step = .loading { didSet { holdPickerScan(step == .pick) } }
+    @Published private(set) var loadingStage: LoadingStage? {
+        didSet { if let stage = loadingStage { MemoryLog.shared.note("loading: \(stage)") } }
+    }
     @Published var problem: String?
     @Published var current: Current?
     @Published var scan: SCNScene?
@@ -39,13 +41,14 @@ final class Flow: ObservableObject {
     }
     @Published var selectedPlantID: String? {
         didSet {
+            MemoryLog.shared.note("select \(selectedPlantID ?? "none")")
             applyToggles()
             #if DEBUG
             if let point = selectedPlant?.point { garden.previewFocus(point) }
             #endif
         }
     }
-    @Published var plantingGuide = false { didSet { applyToggles() } }
+    @Published var plantingGuide = false { didSet { MemoryLog.shared.note("guide \(plantingGuide)"); applyToggles() } }
     var selectedPlant: PlantItem? { plants.first { $0.id == selectedPlantID } }
     var guideAvailable: Bool { !plants.isEmpty && plants.allSatisfy { $0.point != nil } }
     var plants: [PlantItem] { (current?.info?.plant_items ?? []).sorted { ($0.name, $0.id) < ($1.name, $1.id) } }
@@ -61,7 +64,7 @@ final class Flow: ObservableObject {
     @Published var showBeds = true { didSet { applyToggles() } }
     @Published var showLandmarks = true { didSet { applyToggles() } }
     @Published var hideBehindReal = true { didSet { applyToggles() } }
-    @Published var showOriginalScan = false { didSet { applyToggles() } }
+    @Published var showOriginalScan = false { didSet { MemoryLog.shared.note("original scan \(showOriginalScan)"); applyToggles() } }
     @Published var scanOpacity: Float = 0.35 { didSet { applyToggles() } }
     @Published var savedDesignLoaded = false
     @Published var saveStatus: String?
@@ -76,10 +79,12 @@ final class Flow: ObservableObject {
     private var tapB: SIMD3<Float>?
     private var relay: AnyCancellable?
     private var scanURL: URL?
+    private var scanLoad: Task<Void, Never>?
     private var store: SessionStore?
     private var cached: CachedDesign?
     private var restoringState = false
     private var saveTask: Task<Void, Never>?
+    private var mapSaves = MapSaveSchedule()
     private var saveRevision = 0
     private var pickedIn: String?          // which file's frame the picks are in
     // HAND CORRECTIONS on top of the two marks, kept across a reload of the same design so a
@@ -91,16 +96,22 @@ final class Flow: ObservableObject {
         // the camera's tracking note lives on the garden; the screen watches this
         garden.selectedPlant = { [weak self] id in self?.selectedPlantID = id }
         garden.mapBecameReady = { [weak self] in
-            guard let self, self.step == .placed else { return }; self.scheduleSave()
+            guard let self, self.step == .placed else { return }; self.scheduleSave(periodic: true)
         }
         garden.resumed = { [weak self] in
             guard let self, self.step == .resuming else { return }
             self.step = .placed
             self.note = nil
+            self.mapSaves.saved()
             self.saveStatus = "Position saved on this iPhone"
             self.applyToggles()
         }
         relay = garden.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        MemoryLog.shared.context = { [weak self] in
+            guard let self else { return "" }
+            return "step=\(self.step);guide=\(self.plantingGuide);selected=\(self.selectedPlantID ?? "-");"
+                + "scan=\(self.showOriginalScan);\(self.garden.arSummary())"
+        }
     }
 
     var landmarks: [Landmark] { (current?.info?.landmarks ?? []).sorted { $0.name < $1.name } }
@@ -150,9 +161,9 @@ final class Flow: ObservableObject {
             }
             loadingStage = .models
             try await garden.load(storage.designURL(record), plants: record.current.info?.plant_items ?? [])
+            MemoryLog.shared.note("design loaded")
             let scanFile = storage.scanURL(record)
-            scan = try OriginalScan.load(scanFile)
-            scanURL = scanFile
+            useScan(scanFile)
             garden.setScanSource(scanFile)
             current = record.current
             savedDesignLoaded = usingSaved
@@ -212,12 +223,39 @@ final class Flow: ObservableObject {
         }
     }
 
+    /// The original scan this design was exported with; the point picker opens it on demand.
+    func useScan(_ url: URL) {
+        if scanURL != url { holdPickerScan(false) }
+        scanURL = url
+    }
+
+    /// The picker's SceneKit copy of the original scan holds about 300 MB with its texture,
+    /// measured; only the point picker draws it, so it is kept only while picking (CA1).
+    private func holdPickerScan(_ wanted: Bool) {
+        guard wanted else {
+            scanLoad?.cancel(); scanLoad = nil
+            if scan != nil { scan = nil; MemoryLog.shared.note("picker scan released") }
+            return
+        }
+        guard scan == nil, scanLoad == nil, let url = scanURL else { return }
+        scanLoad = Task { [weak self] in
+            let opened = await Task.detached(priority: .userInitiated) { Result { try OriginalScan.load(url) } }.value
+            guard let self, !Task.isCancelled, self.scanURL == url else { return }
+            self.scanLoad = nil
+            guard self.step == .pick else { return }
+            switch opened {
+            case .success(let loaded): self.scan = loaded; MemoryLog.shared.note("picker scan loaded")
+            case .failure(let error): self.problem = error.localizedDescription; self.step = .failed
+            }
+        }
+    }
+
     private func cancelSave() {
         saveRevision += 1; saveTask?.cancel(); saveTask = nil
     }
 
-    private func scheduleSave(immediate: Bool = false) {
-        guard step == .placed, tapA != nil, tapB != nil else { return }
+    private func scheduleSave(immediate: Bool = false, periodic: Bool = false) {
+        guard step == .placed, tapA != nil, tapB != nil, mapSaves.wants(periodic: periodic) else { return }
         saveRevision += 1
         let revision = saveRevision
         saveTask?.cancel()
@@ -229,6 +267,7 @@ final class Flow: ObservableObject {
                   let store = self.store, let cached = self.cached, let first = self.first,
                   let second = self.second, let a = self.tapA, let b = self.tapB else { return }
             do {
+                MemoryLog.shared.note("map save")
                 let snapshot = try await self.garden.snapshot()
                 guard !Task.isCancelled, revision == self.saveRevision, self.step == .placed else { return }
                 let saved = SavedPlacement(frame: cached.frame, first: first, second: second,
@@ -238,6 +277,8 @@ final class Flow: ObservableObject {
                     secondPhoto: self.secondPhoto?.jpegData(compressionQuality: 0.7),
                     surroundings: snapshot.photo, savedAt: Date())
                 try store.save(saved)
+                self.mapSaves.saved()
+                MemoryLog.shared.note("map saved \(snapshot.data.count) bytes")
                 self.saveStatus = "Position saved on this iPhone"
             } catch {
                 guard revision == self.saveRevision else { return }
@@ -371,6 +412,36 @@ final class Flow: ObservableObject {
         garden.hidePreviewDesign()
         step = .resuming
     }
+
+    /// `-probeGuide`: what looking through many planting targets costs (CA1). Turns the guide
+    /// on and selects every plant in turn, as tapping one target after another does on site.
+    func probeGuide(rounds: Int, every seconds: Double) async {
+        plantingGuide = true
+        MemoryLog.shared.note("probe start")
+        for round in 1...max(rounds, 1) {
+            for plant in plants {
+                selectedPlantID = plant.id
+                try? await Task.sleep(for: .seconds(seconds))
+            }
+            MemoryLog.shared.note("probe round \(round)")
+        }
+        selectedPlantID = nil
+        MemoryLog.shared.note("probe done")
+    }
+
+    /// `-probePlaceHere`: stand the design where the phone started, without marks, so a probe
+    /// runs with ARKit tracking, the reconstructed mesh and map saving, as on site.
+    func probePlaceHere() {
+        cancelSave(); store?.forgetPlacement()
+        garden.resetTracking()
+        first = PickPoint(x: 0, z: 0, label: "Reference 1", y: 0)
+        second = PickPoint(x: 6, z: 14, label: "Reference 2", y: 0)
+        let a = first!.point(on: ground), b = second!.point(on: ground)
+        tapA = SIMD3(a.x, -1.2, a.z); tapB = SIMD3(b.x, -1.2, b.z)
+        clearFixes()
+        placeFrom(tapA!, tapB!)
+        MemoryLog.shared.note("probe placed")
+    }
     #endif
 
     func startOver() {
@@ -438,6 +509,11 @@ struct ContentView: View {
                             .overlay(alignment: .topTrailing) {
                                 Button("Show whole scan") { scanRevision += 1 }.buttonStyle(Quiet()).padding(8)
                             }
+                    } else {
+                        VStack(spacing: 10) {
+                            ProgressView().tint(.white)
+                            Text("Opening the original scan…").font(.subheadline).foregroundStyle(.white)
+                        }.frame(maxWidth: .infinity, maxHeight: .infinity).background(Color(white: 0.08))
                     }
                 } else {
                     Spacer()
@@ -475,7 +551,22 @@ struct ContentView: View {
         .onAppear {
             guard !started else { return }; started = true
             UIApplication.shared.isIdleTimerDisabled = true
+            MemoryLog.shared.start()
             #if DEBUG
+            let arguments = ProcessInfo.processInfo.arguments
+            let rounds = max(UserDefaults.standard.integer(forKey: "probeRounds"), 1)
+            let every = UserDefaults.standard.double(forKey: "probeEvery") > 0 ? UserDefaults.standard.double(forKey: "probeEvery") : 1
+            if arguments.contains("-probePlaceHere") {
+                flow.garden.start()
+                Task {
+                    await flow.load(preferSaved: true)
+                    guard flow.step != .failed else { return }
+                    try? await Task.sleep(for: .seconds(8)) // tracking finds its feet first
+                    flow.probePlaceHere()
+                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every) }
+                }
+                return
+            }
             if ProcessInfo.processInfo.arguments.contains("-resetConnection") { UserDefaults.standard.removeObject(forKey: DesignSource.serverKey) }
             if ProcessInfo.processInfo.arguments.contains("-previewPlaced") {
                 let saved = ProcessInfo.processInfo.arguments.contains("-useSavedDesign")
@@ -485,6 +576,7 @@ struct ContentView: View {
                     guard flow.step != .failed else { return }
                     await flow.previewPlaced(keepView: saved)
                     if ProcessInfo.processInfo.arguments.contains("-previewRestoring") { flow.previewResumePrompt() }
+                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every) }
                 }
                 return
             }
@@ -493,6 +585,7 @@ struct ContentView: View {
             flow.begin()
         }
         .onChange(of: scenePhase) { _, phase in
+            MemoryLog.shared.note("phase \(phase)")
             if phase != .active { flow.savePosition(immediate: true) }
         }
         .sheet(item: $detailPlant) { PlantDetailsView(plant: $0) }

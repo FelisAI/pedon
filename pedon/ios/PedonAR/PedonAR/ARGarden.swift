@@ -36,6 +36,10 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     private var scanSource: URL?
     private var scanOverlay: Entity?
     private var scanTask: Task<Void, Never>?
+    private var scanRelease: Task<Void, Never>?
+    /// How long the original scan stays loaded after it is switched off.
+    static var overlayRelease: Duration = .seconds(20)
+    var overlayLoaded: Bool { scanOverlay != nil }
     private var scanGeneration = 0
     private var scanVisible = false
     private var scanOpacity: Float = 0.35
@@ -189,6 +193,7 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
 
     func setScanSource(_ url: URL) {
         scanGeneration += 1
+        scanRelease?.cancel(); scanRelease = nil
         scanTask?.cancel(); scanTask = nil
         scanOverlay?.removeFromParent(); scanOverlay = nil
         scanSource = url; scanLoading = false; scanError = nil
@@ -196,11 +201,30 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
 
     func showOriginalScan(_ visible: Bool, opacity: Float) {
         scanVisible = visible; scanOpacity = opacity
+        guard visible else {
+            if let scanOverlay { ScanOverlay.update(scanOverlay, visible: false, opacity: opacity) }
+            // Hidden, it still holds its texture and mesh (about 240 MB, and a load peaks far
+            // higher; measured, CA1). Free it once it has stayed hidden, so switching it off
+            // and on to compare does not load it again each time.
+            guard scanOverlay != nil || scanTask != nil, scanRelease == nil else { return }
+            scanRelease = Task { [weak self] in
+                try? await Task.sleep(for: Self.overlayRelease)
+                guard let self, !Task.isCancelled, !self.scanVisible else { return }
+                self.scanRelease = nil
+                self.scanGeneration += 1
+                self.scanTask?.cancel(); self.scanTask = nil
+                self.scanOverlay?.removeFromParent(); self.scanOverlay = nil
+                self.scanLoading = false
+                MemoryLog.shared.note("original scan overlay released")
+            }
+            return
+        }
+        scanRelease?.cancel(); scanRelease = nil
         if let scanOverlay {
             ScanOverlay.update(scanOverlay, visible: visible, opacity: opacity)
             return
         }
-        guard visible, scanTask == nil, let source = scanSource, let parent = design else { return }
+        guard scanTask == nil, let source = scanSource, let parent = design else { return }
         let generation = scanGeneration
         scanLoading = true; scanError = nil
         scanTask = Task { [weak self] in
@@ -256,6 +280,18 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     func showGuide(_ on: Bool, hidden: Set<String>, selected: String?) {
         plantingGuide?.update(on: on, hidden: hidden, selected: selected)
         pins.forEach { $0.isEnabled = !on }
+    }
+
+    /// What ARKit holds, for the memory log: reconstructed mesh, lighting probes, planes.
+    func arSummary() -> String {
+        guard let frame = view.session.currentFrame else { return "ar=none" }
+        var meshes = 0, vertices = 0, probes = 0, planes = 0
+        for anchor in frame.anchors {
+            if let mesh = anchor as? ARMeshAnchor { meshes += 1; vertices += mesh.geometry.vertices.count }
+            else if anchor is AREnvironmentProbeAnchor { probes += 1 }
+            else if anchor is ARPlaneAnchor { planes += 1 }
+        }
+        return "meshes=\(meshes);vertices=\(vertices);probes=\(probes);planes=\(planes);mapping=\(frame.worldMappingStatus.rawValue)"
     }
 
     @objc private func selectPlant(_ gesture: UITapGestureRecognizer) {
