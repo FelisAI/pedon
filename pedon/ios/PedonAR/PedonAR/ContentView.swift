@@ -107,6 +107,7 @@ final class Flow: ObservableObject {
             self.applyToggles()
         }
         relay = garden.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        MemoryLog.shared.pressure = { [weak self] in self?.garden.relieveMemory() }
         MemoryLog.shared.context = { [weak self] in
             guard let self else { return "" }
             return "step=\(self.step);guide=\(self.plantingGuide);selected=\(self.selectedPlantID ?? "-");"
@@ -415,8 +416,11 @@ final class Flow: ObservableObject {
 
     /// `-probeGuide`: what looking through many planting targets costs (CA1). Turns the guide
     /// on and selects every plant in turn, as tapping one target after another does on site.
-    func probeGuide(rounds: Int, every seconds: Double, hold: Double = 0) async {
-        plantingGuide = true
+    /// With `models`, the 3D view instead of the guide; with `scan`, the original scan shown too.
+    func probeGuide(rounds: Int, every seconds: Double, hold: Double = 0, models: Bool = false, scan: Bool = false) async {
+        plantingGuide = !models
+        if models { showPlants = true; showBeds = true; showLandmarks = true }
+        showOriginalScan = scan
         MemoryLog.shared.note("probe start")
         if hold > 0 {   // the guide on with nothing selected, every target where the camera can see it
             try? await Task.sleep(for: .seconds(hold))
@@ -433,21 +437,54 @@ final class Flow: ObservableObject {
         MemoryLog.shared.note("probe done")
     }
 
+    /// `-probeToggle N`: the 3D view with every model drawn and occlusion on, then the planting
+    /// guide switched on and off N times as its button does, memory sampled every 20 ms (CA1).
+    func probeToggle(times: Int) async {
+        plantingGuide = false; showPlants = true; showBeds = true; showLandmarks = true; hideBehindReal = true
+        MemoryLog.shared.note("probe toggle: 3D view, every model")
+        try? await Task.sleep(for: .seconds(20))
+        for i in 1...max(times, 1) {
+            for on in [true, false] {
+                plantingGuide = on
+                try? await Task.sleep(for: .seconds(4))
+                MemoryLog.shared.note("probe guide \(on ? "on" : "off") \(i)")
+                try? await Task.sleep(for: .seconds(4))
+            }
+        }
+        MemoryLog.shared.note("probe toggle done")
+    }
+
     /// `-probePlaceHere`: stand the planting in front of where the phone started, 1.2 m below it,
     /// without marks, so a probe runs with ARKit tracking, mesh and map saving as on site, and
     /// with many planting targets in view at once (CA1).
     func probePlaceHere() {
         cancelSave(); store?.forgetPlacement()
-        garden.resetTracking()
         let centres = plants.compactMap(\.point)
         let centre = centres.reduce(SIMD3<Float>(0, 0, 0), +) / Float(max(centres.count, 1))
         first = PickPoint(x: centre.x, z: centre.z, label: "Reference 1", y: centre.y)
         second = PickPoint(x: centre.x, z: centre.z + 6, label: "Reference 2", y: centre.y)
-        // the planting's centre 4 m ahead of the camera's start, running away from it
-        tapA = SIMD3(0, -1.2, -4); tapB = SIMD3(0, -1.2, -10)
+        // the planting's centre 4 m along the camera's line of sight, whichever way the phone
+        // lies, so the design is on screen (the first probes placed it where nothing looked)
+        let m = garden.view.cameraTransform.matrix
+        let eye = SIMD3<Float>(m.columns.3.x, m.columns.3.y, m.columns.3.z)
+        let look = simd_normalize(-SIMD3<Float>(m.columns.2.x, m.columns.2.y, m.columns.2.z))
+        var flat = SIMD3<Float>(look.x, 0, look.z)
+        if simd_length(flat) < 0.2 { flat = SIMD3<Float>(m.columns.1.x, 0, m.columns.1.z) }
+        if simd_length(flat) < 0.2 { flat = SIMD3<Float>(0, 0, -1) }
+        tapA = eye + look * 4; tapB = tapA! + simd_normalize(flat) * 6
         clearFixes()
         placeFrom(tapA!, tapB!)
-        MemoryLog.shared.note("probe placed")
+        MemoryLog.shared.note(String(format: "probe placed; looking %.2f %.2f %.2f", look.x, look.y, look.z))
+    }
+
+    /// What the screen shows, saved where `devicectl` can copy it (Documents/probe-NAME.png).
+    func probeSnapshot(_ name: String) {
+        garden.view.snapshot(saveToHDR: false) { image in
+            guard let data = image?.pngData() else { return }
+            let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            try? data.write(to: docs.appendingPathComponent("probe-\(name).png"))
+            MemoryLog.shared.note("probe snapshot \(name)")
+        }
     }
     #endif
 
@@ -564,14 +601,20 @@ struct ContentView: View {
             let rounds = max(UserDefaults.standard.integer(forKey: "probeRounds"), 1)
             let every = UserDefaults.standard.double(forKey: "probeEvery") > 0 ? UserDefaults.standard.double(forKey: "probeEvery") : 1
             let hold = UserDefaults.standard.double(forKey: "probeHold")
+            let models = arguments.contains("-probeModels"), scan = arguments.contains("-probeScan")
             if arguments.contains("-probePlaceHere") {
                 flow.garden.start()
                 Task {
                     await flow.load(preferSaved: true)
                     guard flow.step != .failed else { return }
+                    flow.garden.resetTracking()     // a fresh session, not a saved map
                     try? await Task.sleep(for: .seconds(8)) // tracking finds its feet first
                     flow.probePlaceHere()
-                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every, hold: hold) }
+                    let label = UserDefaults.standard.string(forKey: "probeLabel") ?? "run"
+                    Task { try? await Task.sleep(for: .seconds(6)); flow.probeSnapshot(label + "-placed") }
+                    let toggles = UserDefaults.standard.integer(forKey: "probeToggle")
+                    if toggles > 0 { await flow.probeToggle(times: toggles); return }
+                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every, hold: hold, models: models, scan: scan) }
                 }
                 return
             }
@@ -584,7 +627,7 @@ struct ContentView: View {
                     guard flow.step != .failed else { return }
                     await flow.previewPlaced(keepView: saved)
                     if ProcessInfo.processInfo.arguments.contains("-previewRestoring") { flow.previewResumePrompt() }
-                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every, hold: hold) }
+                    if arguments.contains("-probeGuide") { await flow.probeGuide(rounds: rounds, every: every, hold: hold, models: models, scan: scan) }
                 }
                 return
             }

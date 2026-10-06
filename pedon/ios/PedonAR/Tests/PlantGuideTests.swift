@@ -40,10 +40,31 @@ import RealityKit
         try checkGuide(design: design, items: items)
     }
 
+    /// CA1: a 154-plant bed was 616 entities and 308 meshes of their own; looking across it in AR
+    /// ran the phone out of memory. The guide must draw with a fixed handful whatever its size.
+    func testGuideDrawsAFixedNumberOfObjectsWhateverTheBed() throws {
+        let items = try JSONDecoder().decode([PlantItem].self, from: Data(("[" + (0..<154).map { i in
+            #"{"id":"p\#(i)","name":"Plant \#(i)","node":"plant_\#(i)","at":[\#(Float(i % 14) * 0.7),0.1,\#(Float(i / 14) * 0.9)]}"#
+        }.joined(separator: ",") + "]").utf8))
+        let guide = PlantingGuide(plants: items)
+        guide.update(on: true, hidden: [], selected: nil)
+        guide.face(camera: matrix_identity_float4x4)
+        XCTAssertEqual(guide.drawnEntities, 3)
+        XCTAssertEqual(guide.drawnCrosses, 154)
+        XCTAssertEqual(guide.drawnLabels, 154)
+        guide.update(on: true, hidden: Set((0..<10).map { "p\($0)" }), selected: "p20")
+        guide.face(camera: simd_float4x4(simd_quatf(angle: 0.3, axis: [0, 1, 0])))
+        XCTAssertEqual(guide.drawnEntities, 3)
+        XCTAssertEqual(guide.drawnCrosses, 143)
+        XCTAssertEqual(guide.drawnLabels, 144)
+        XCTAssertEqual(guide.highlighted, guide.points["p20"])
+    }
+
     private func checkGuide(design: Entity, items: [PlantItem]) throws {
         let guide = PlantingGuide(plants: items)
         design.addChild(guide.root)
-        XCTAssertEqual(guide.targets.count, items.count)
+        XCTAssertEqual(guide.points.count, items.count)
+        XCTAssertEqual(guide.drawnEntities, 3, "Crosses, labels and the selected target, whatever the number of plants")
         // Aligning/turning the design must carry its guide in exactly the same frame.
         let parent = Entity()
         parent.orientation = simd_quatf(angle: 25 * .pi / 180, axis: [0,1,0])
@@ -54,11 +75,11 @@ import RealityKit
             let entity = try XCTUnwrap(design.findEntity(named: plant.node))
             XCTAssertTrue(entities.insert(ObjectIdentifier(entity)).inserted)
             let point = try XCTUnwrap(plant.point)
-            let target = try XCTUnwrap(guide.targets[plant.id])
+            let target = try XCTUnwrap(guide.points[plant.id])
             let center = entity.visualBounds(relativeTo: design).center
             XCTAssertEqual(center.x, point.x, accuracy: 0.002, plant.id)
             XCTAssertEqual(center.z, point.z, accuracy: 0.002, plant.id)
-            XCTAssertLessThan(simd_distance(target.position(relativeTo: nil), design.convert(position: point, to: nil)), 0.00001)
+            XCTAssertLessThan(simd_distance(guide.root.convert(position: target, to: nil), design.convert(position: point, to: nil)), 0.00001)
             entity.isEnabled = false
             XCTAssertFalse(entity.isEnabled)
             entity.isEnabled = true
@@ -91,11 +112,17 @@ import RealityKit
         let hidden = items[0].id, selected = items[1].id
         guide.update(on: true, hidden: [hidden], selected: selected)
         XCTAssertTrue(guide.root.isEnabled)
-        XCTAssertFalse(guide.targets[hidden]!.isEnabled)
-        XCTAssertTrue(guide.targets[selected]!.isEnabled)
-        XCTAssertEqual(guide.targets.values.filter(\.isEnabled).count, items.count-1)
+        XCTAssertFalse(guide.isTargetShown(hidden))
+        XCTAssertTrue(guide.isTargetShown(selected))
+        XCTAssertEqual(items.filter { guide.isTargetShown($0.id) }.count, items.count-1)
+        XCTAssertEqual(guide.drawnCrosses, items.count-2, "Hidden and selected are not in the shared crosses")
+        XCTAssertEqual(guide.highlighted, guide.points[selected])
+        guide.face(camera: matrix_identity_float4x4)
+        XCTAssertEqual(guide.drawnLabels, items.count-1)
         guide.update(on: false, hidden: [], selected: nil)
         XCTAssertFalse(guide.root.isEnabled)
-        XCTAssertTrue(guide.targets[hidden]!.isEnabled)
+        XCTAssertTrue(guide.isTargetShown(hidden))
+        XCTAssertNil(guide.highlighted)
+        XCTAssertEqual(guide.drawnEntities, 3)
     }
 }

@@ -8,6 +8,7 @@ import ARKit
 import RealityKit
 import SwiftUI
 import CoreImage
+import Combine
 
 @MainActor
 final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
@@ -47,6 +48,7 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     private var anchor: ARAnchor?
     private var pins: [AnchorEntity] = []
     private var plantingGuide: PlantingGuide?
+    private var frameUpdates: Cancellable?
     private var plantDisplay: PlantDisplay?
     var selectedPlant: ((String) -> Void)?
     private var items: [PlantItem] = []
@@ -66,6 +68,7 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
 
     func start() {
         guard !started else { return }; started = true
+        applyRenderBudget()
         view.session.delegate = self
         view.session.run(configuration())
         let coach = ARCoachingOverlayView()
@@ -193,6 +196,13 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
         let guide = PlantingGuide(plants: plants)
         e.addChild(guide.root)
         plantingGuide = guide
+        // the guide's labels face the camera: one buffer write a frame, not an entity each
+        if frameUpdates == nil {
+            frameUpdates = view.scene.subscribe(to: SceneEvents.Update.self) { [weak self] _ in
+                guard let self else { return }
+                self.plantingGuide?.face(camera: self.view.cameraTransform.matrix)
+            }
+        }
     }
 
     func setScanSource(_ url: URL) {
@@ -246,6 +256,24 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
             guard let self, self.scanGeneration == generation else { return }
             self.scanLoading = false; self.scanTask = nil
         }
+    }
+
+    /// A measuring tool, not a film (CA1): no motion blur, depth of field, film grain or grounding
+    /// shadows. Each is extra drawing over the whole screen every frame, and none helps put a
+    /// plant where the cross is.
+    func applyRenderBudget() {
+        view.renderOptions.formUnion([.disableMotionBlur, .disableDepthOfField, .disableCameraGrain, .disableGroundingShadows])
+    }
+
+    /// iOS is short of memory: free what is loaded but not on screen, now (CA1).
+    func relieveMemory() {
+        guard !scanVisible, scanOverlay != nil || scanTask != nil else { return }
+        scanRelease?.cancel(); scanRelease = nil
+        scanGeneration += 1
+        scanTask?.cancel(); scanTask = nil
+        scanOverlay?.removeFromParent(); scanOverlay = nil
+        scanLoading = false
+        MemoryLog.shared.note("original scan overlay released for memory")
     }
 
     /// Stand the design in the world where the two marks say it goes.
@@ -302,8 +330,7 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
         guard let design, let holder, holder.isActive else { return }
         let tapped = gesture.location(in: view)
         let candidates = items.compactMap { plant -> (String, CGFloat)? in
-            guard let target = plantingGuide?.targets[plant.id], target.isEnabled,
-                  let point = plant.point else { return nil }
+            guard plantingGuide?.isTargetShown(plant.id) == true, let point = plant.point else { return nil }
             if plantingGuide?.root.isEnabled != true {
                 guard design.findEntity(named: "planting")?.isEnabled == true,
                       design.findEntity(named: plant.node)?.isEnabled == true else { return nil }

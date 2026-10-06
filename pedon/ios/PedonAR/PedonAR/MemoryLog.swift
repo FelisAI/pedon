@@ -32,15 +32,18 @@ final class MemoryLog {
     let url: URL
     /// A short description of what the app is doing, filled in by the screen.
     var context: (() -> String)?
+    /// What to free when iOS warns that memory is short.
+    var pressure: (() -> Void)?
     private var handle: FileHandle?
     private var written: UInt64 = 0
     private var timer: Timer?
     private var warnings: NSObjectProtocol?
+    private let peak = MemoryPeak()
     private let clock: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter(); f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]; return f
     }()
     private static let limit: UInt64 = 2_000_000
-    private static let header = "time,footprint_mb,available_mb,graphics_mb,media_mb,own_mb,event,context\n"
+    private static let header = "time,footprint_mb,available_mb,graphics_mb,media_mb,own_mb,peak_mb,peak_graphics_mb,event,context\n"
 
     private init() {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -51,22 +54,26 @@ final class MemoryLog {
     func start() {
         guard timer == nil else { return }
         open()
+        peak.start()
         note("launch")
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
             Task { @MainActor in MemoryLog.shared.note("sample") }
         }
         warnings = NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification,
                                                           object: nil, queue: .main) { _ in
-            Task { @MainActor in MemoryLog.shared.note("memory warning") }
+            Task { @MainActor in
+                MemoryLog.shared.note("memory warning")
+                MemoryLog.shared.pressure?()
+            }
         }
     }
 
     func note(_ event: String) {
         guard let handle else { return }
         let mb = { (bytes: UInt64) in String(format: "%.1f", Double(bytes) / 1_048_576) }
-        let use = Self.use()
+        let use = Self.use(), top = peak.take()
         let line = "\(clock.string(from: Date())),\(mb(use.footprint)),\(mb(Self.available())),\(mb(use.graphics)),"
-            + "\(mb(use.media)),\(mb(use.own)),\(event),\(context?() ?? "")\n"
+            + "\(mb(use.media)),\(mb(use.own)),\(mb(top.footprint)),\(mb(top.graphics)),\(event),\(context?() ?? "")\n"
         let data = Data(line.utf8)
         // Written straight to the file, so the lines before iOS ends the app are still there.
         do { try handle.write(contentsOf: data) } catch { return }
@@ -96,5 +103,31 @@ final class MemoryLog {
         }
         handle = try? FileHandle(forWritingTo: url)
         written = (try? handle?.seekToEnd()) ?? 0
+    }
+}
+
+/// The highest footprint since it was last read, sampled every 50 ms off the main thread. A
+/// spike that ends the app can be far shorter than the gap between log lines (CA1).
+final class MemoryPeak: @unchecked Sendable {
+    private let lock = NSLock()
+    private var peak = MemoryLog.Use()
+    private var timer: DispatchSourceTimer?
+    func start(every interval: DispatchTimeInterval = .milliseconds(50)) {
+        guard timer == nil else { return }
+        let t = DispatchSource.makeTimerSource(queue: DispatchQueue(label: "pedon.memory-peak", qos: .utility))
+        t.schedule(deadline: .now(), repeating: interval)
+        t.setEventHandler { [weak self] in self?.sample() }
+        t.resume(); timer = t
+    }
+    func stop() { timer?.cancel(); timer = nil }
+    private func sample() {
+        let use = MemoryLog.use()
+        lock.lock(); if use.footprint > peak.footprint { peak = use }; lock.unlock()
+    }
+    /// The highest sample since the last call; counting starts again from now.
+    func take() -> MemoryLog.Use {
+        sample()
+        lock.lock(); defer { peak = MemoryLog.Use(); lock.unlock() }
+        return peak
     }
 }

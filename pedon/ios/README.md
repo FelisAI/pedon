@@ -119,10 +119,15 @@ collapse controls and open details. Screenshots stay in the local `.xcresult`; d
 real-site test artifacts without the site owner's permission.
 
 To measure memory on a device, a Debug build launched with `-probePlaceHere -probeGuide`
-stands the planting 4 m in front of where the phone starts, so many targets are in view, and
-selects every plant in turn (`-probeHold SECONDS` first holds with the guide on, `-probeRounds N`,
-`-probeEvery SECONDS`); with `-previewPlaced -probeGuide` it does the same without ARKit. Each
-step lands in the memory log described under *When the app quits by itself*.
+stands the planting 4 m along the camera's line of sight, whichever way the phone lies, saves
+what the screen shows as `Documents/probe-LABEL-placed.png` (`-probeLabel LABEL`) so the run can
+prove the design was drawn, and selects every plant in turn (`-probeHold SECONDS` first holds with
+the guide on, `-probeRounds N`, `-probeEvery SECONDS`, `-probeModels` for the 3D view instead,
+`-probeScan` with the original scan shown). `-probeToggle N` switches the guide on and off from
+the 3D view. With `-previewPlaced -probeGuide` it runs without ARKit. Pass the app's options
+after `--` to `devicectl device process launch`, or devicectl reads them as its own. Each step
+lands in the memory log described under *When the app quits by itself*. A probe whose camera
+sees nothing measures nothing: check the screenshot and the log's mesh and plane counts.
 
 The scan frame and picker lifecycle also have standalone checks in `PedonAR/AlignmentTests`.
 Compile `OriginalScan.swift` with `scan_frame.swift` or `scan_lifecycle.swift`, then pass the
@@ -187,9 +192,14 @@ xcrun devicectl device info files --device "YOUR_IPHONE" --domain-type systemCra
 
 A crash leaves a `PedonAR-….ips` report in the second listing; a memory exit leaves none,
 at most a `JetsamEvent-….ips` naming the largest process. The log's last lines show what was
-happening. The limit on an iPhone 17 Pro measured 3.3 GB. ARKit's automatic lighting probes
+happening, and each line carries the peak since the one before, sampled every 50 ms. The limit
+on an iPhone 17 Pro measured 3.3 GB. ARKit's automatic lighting probes
 (`environmentTexturing = .automatic`) grew graphics memory about 2.5 MB a second for as long as
-the camera ran, which ended the app within minutes of planting-guide use; they are off. What
+the camera ran; they are off. On site, drawing the planting guide with many targets on screen
+burst graphics memory by 1-2 GB in under a second: the guide was four objects per plant, so it
+now draws as three objects for any bed (`PlantingGuide.swift`), and the AR view skips motion
+blur, depth of field, film grain and grounding shadows. A memory warning frees a hidden
+original scan at once. What
 PEDON holds is kept down on purpose, measured with a real site: the point
 picker's copy of the original scan (about 300 MB with its 8192² texture) is held only while
 picking; the original-scan overlay (about 240 MB loaded, far more while loading) is freed
