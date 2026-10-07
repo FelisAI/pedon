@@ -4,7 +4,8 @@
 The demo site (tools/demo_site.py) is made by code: house walls, a patio, a fence with a gate,
 boulders and a starter planting. This exports it the way the Mac exports any design for the
 phone (tools/ar_export.py), through a private viewer and a throwaway headless Chrome that never
-touch the user's sites, and writes the three files the app reads into ios/PedonAR/Sample/:
+touch the user's sites or library, and writes the three files the app reads into
+ios/PedonAR/Sample/:
 
     current.json        what the Mac's current.json would say (name, size, metadata)
     yard.usdz           the design
@@ -26,6 +27,8 @@ import time
 import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+import project  # noqa: E402 — where Blender is
 OUT = os.path.join(ROOT, "ios", "PedonAR", "Sample")
 CHROME = os.environ.get("PEDON_CHROME", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 
@@ -49,7 +52,16 @@ def wait_for(url, seconds):
 
 def main():
     work = tempfile.mkdtemp(prefix="pedon-sample-")
-    env = {**os.environ, "PEDON_PROJECTS": os.path.join(work, "projects"), "PEDON_PROJECT": "demo-garden"}
+    # Never the user's library: the sample is then the same for anyone who builds the app, and
+    # nothing from a personal library (downloaded models, photographed leaves) can reach a
+    # published binary. It starts from the source's own catalogue, and the demo's one tree, the
+    # olive, is made by the app's own tree generator rather than drawn as the generic tree.
+    library = os.path.join(work, "library")
+    shutil.copytree(os.path.join(ROOT, "tests", "fixtures", "library"), library)
+    env = {**os.environ, "PEDON_PROJECTS": os.path.join(work, "projects"), "PEDON_PROJECT": "demo-garden",
+           "PEDON_LIBRARY": library}
+    subprocess.run([project.BLENDER, "-b", "--python-exit-code", "1", "-P", os.path.join(ROOT, "tools", "gen_trees.py"),
+                    "--", "--species", "olive"], env=env, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     os.makedirs(env["PEDON_PROJECTS"])
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "demo_site.py")], env=env, check=True,
                    stdout=subprocess.DEVNULL)
