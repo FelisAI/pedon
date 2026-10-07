@@ -139,6 +139,6 @@ and the saved anchor agree. **Align again** recovers when the site cannot be rec
 **↻** fetches design changes. A different scan or coordinate frame cannot reuse the old
 alignment. See `ios/README.md` for the saved-map workflow and tests.
 
-**App Store preparation:** `ios/appstore/README.md` records the first iPhone release's store
-copy, privacy disclosures, compiled-archive checks and remaining account/review requirements.
-An App Store listing is not live until Apple approves it and the publisher releases it.
+**App Store:** version 1.0 was submitted to App Review on 2026-10-07 as "PEDON: Planting Guide".
+`ios/appstore/README.md` records its store copy, privacy disclosures, screenshots, archive checks
+and release gates. A listing is not live until Apple approves it and the publisher releases it.

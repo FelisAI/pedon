@@ -1,8 +1,9 @@
-# App Store release preparation
+# App Store release
 
-Status: preparing the first free iPhone release for **Felis AI LLC**. No App Store
-submission or public availability is implied by this folder. The native source remains
-under the repository's AGPL-3.0-only license; no distribution exception has been granted here.
+Status: **PEDON: Planting Guide** 1.0 (1), free, from **Felis AI LLC**, was submitted to App Review
+on 2026-10-07 with manual release, so it goes public only when released by hand after approval.
+The source stays AGPL-3.0-only; Felis AI, which holds all PEDON code, distributes the App Store
+build under Apple's terms (gate 1 below).
 
 ## What is ready in source
 
@@ -36,7 +37,10 @@ Connect. Keep team IDs, account details, distribution certificates and profiles 
 Use the current project version for the initial upload and increment the build for each later
 upload of that marketing version. Do not embed the Mac address or any user's site in the app.
 
-## Remaining release gates
+## Release gates
+
+All eight were met for 1.0. A later version repeats 3, 4 and 8 (with a new build number), and
+changes 6 or 7 only if the app's content or data use changes.
 
 1. App Store distribution rights — DECIDED 2026-10-07: Felis AI LLC holds the rights to all
    PEDON code and distributes the official App Store build under Apple's terms; the source stays
@@ -66,15 +70,17 @@ upload of that marketing version. Do not embed the Mac address or any user's sit
 
 ## Screenshots
 
-The listing's screenshots are the sample garden on a 6.9-inch iPhone Simulator (1320 x 2868),
-made by an opt-in UI test that names each one in listing order. From `pedon/`:
+The listing's screenshots are the sample garden, made by an opt-in UI test that names each one in
+listing order. App Store Connect REQUIRES the 6.1/6.3-inch set ("iPhone with Dynamic Island,
+medium display": iPhone 17 Pro, 1206 x 2622) and scales it to every other iPhone; a 6.9-inch set
+is optional. From `pedon/`:
 
 ```bash
 python3 ios/make_sample.py
 xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100 \
   --wifiBars 3 --cellularBars 4 --operatorName ""
 xcodebuild -project ios/PedonAR/PedonAR.xcodeproj -scheme PedonAR \
-  -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' -resultBundlePath /tmp/shots.xcresult \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -resultBundlePath /tmp/shots.xcresult \
   -only-testing:PedonARUITests/StoreScreenshots PEDON_STORE_SCREENSHOTS=1 CODE_SIGNING_ALLOWED=NO test
 xcrun xcresulttool export attachments --path /tmp/shots.xcresult --output-path /tmp/shots
 ```

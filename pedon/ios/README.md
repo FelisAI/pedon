@@ -7,8 +7,8 @@ controls can be collapsed while you work.
 
 This is the native companion to the [PEDON desktop design editor](../../README.md), under
 the same [AGPL-3.0-only license](../../LICENSE). On-site visualization uses this app.
-There is no Safari AR viewer. An App Store release is [being prepared](appstore/README.md);
-until it is approved and released, build and install from source below.
+There is no Safari AR viewer. Version 1.0 is [in App Review](appstore/README.md); until it is
+approved and released, build and install from source below.
 
 ## Requirements
 
