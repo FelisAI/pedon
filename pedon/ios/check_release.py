@@ -3,8 +3,8 @@
 
     python3 ios/check_release.py /tmp/PEDON.xcarchive
 
-Content checks can pass for an unsigned archive. Apple signing, App Store Connect
-validation, reviewer access and distribution rights remain separate release gates.
+Content checks can pass for an unsigned archive, and include the sample garden a reviewer
+opens. Apple signing, App Store Connect validation and distribution rights remain separate gates.
 """
 import argparse
 import json
@@ -53,6 +53,13 @@ def inspect(path):
         defaults = next((api for api in privacy.get("NSPrivacyAccessedAPITypes", [])
                          if api.get("NSPrivacyAccessedAPIType") == "NSPrivacyAccessedAPICategoryUserDefaults"), {})
         require("CA92.1" in defaults.get("NSPrivacyAccessedAPITypeReasons", []), "App-local preferences need their approved API reason")
+    # App Review has no Mac running PEDON: the sample garden is the only way in (ios/make_sample.py).
+    sample = path / "Sample" / "current.json"
+    require(sample.is_file(), "No sample garden in the app: run ios/make_sample.py before archiving")
+    if sample.is_file():
+        current = json.loads(sample.read_text())
+        files = [current.get("name"), ((current.get("info") or {}).get("scan") or {}).get("file")]
+        require(all(f and (path / "Sample" / f).is_file() for f in files), "The sample garden's design or scan is missing")
     return {"bundle": info.get("CFBundleIdentifier"), "version": info.get("CFBundleShortVersionString"),
             "build": info.get("CFBundleVersion"), "sdk": info.get("DTSDKName"), "errors": errors,
             "note": "Checks compiled contents only. This is not Apple upload validation or submission approval."}
