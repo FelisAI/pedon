@@ -377,6 +377,13 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     func previewFocus(_ point: SIMD3<Float>) {
         previewCamera?.look(at: point, from: point + SIMD3(0, 3.5, 4), relativeTo: nil)
     }
+    /// `-previewWide`: a high view over the whole planting, for store screenshots.
+    func previewFrame(_ points: [SIMD3<Float>]) {
+        guard !points.isEmpty, let camera = previewCamera else { return }
+        let centre = points.reduce(SIMD3<Float>(0, 0, 0), +) / Float(points.count)
+        let reach = max(points.map { simd_distance($0, centre) }.max() ?? 1, 2)
+        camera.look(at: centre, from: centre + SIMD3(0, reach * 2.4, reach * 2.6), relativeTo: nil)
+    }
     func hidePreviewDesign() { design?.isEnabled = false }
     func plantIsEnabled(_ plant: PlantItem) -> Bool? { design?.findEntity(named: plant.node)?.isEnabled }
     #endif

@@ -64,6 +64,24 @@ upload of that marketing version. Do not embed the Mac address or any user's sit
 8. Review the complete listing/build, choose manual release, then submit to App Review.
    Do not confuse TestFlight upload, review approval and public release.
 
+## Screenshots
+
+The listing's screenshots are the sample garden on a 6.9-inch iPhone Simulator (1320 x 2868),
+made by an opt-in UI test that names each one in listing order. From `pedon/`:
+
+```bash
+python3 ios/make_sample.py
+xcrun simctl status_bar booted override --time 9:41 --batteryState discharging --batteryLevel 100 \
+  --wifiBars 3 --cellularBars 4 --operatorName ""
+xcodebuild -project ios/PedonAR/PedonAR.xcodeproj -scheme PedonAR \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' -resultBundlePath /tmp/shots.xcresult \
+  -only-testing:PedonARUITests/StoreScreenshots PEDON_STORE_SCREENSHOTS=1 CODE_SIGNING_ALLOWED=NO test
+xcrun xcresulttool export attachments --path /tmp/shots.xcresult --output-path /tmp/shots
+```
+
+The Simulator has no camera, so the design stands on its own scan (`-previewPlaced
+-previewWide`); look at every image before uploading it.
+
 ## Review notes draft
 
 PEDON is a free companion to the open-source PEDON desktop landscape editor. There is no

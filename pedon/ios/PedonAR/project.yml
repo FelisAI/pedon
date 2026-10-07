@@ -75,4 +75,5 @@ schemes:
     test:
       environmentVariables:
         PEDON_TEST_SERVER: "$(PEDON_TEST_SERVER)"
+        PEDON_STORE_SCREENSHOTS: "$(PEDON_STORE_SCREENSHOTS)"
       targets: [PedonARTests, PedonARUITests]

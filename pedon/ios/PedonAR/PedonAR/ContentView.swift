@@ -407,6 +407,7 @@ final class Flow: ObservableObject {
             do { try await garden.preview(scan: scanURL, focus: focus) }
             catch { problem = error.localizedDescription; step = .failed; return }
         }
+        if ProcessInfo.processInfo.arguments.contains("-previewWide") { garden.previewFrame(plants.compactMap(\.point)) }
         step = .placed
     }
     func previewResumePrompt() {
