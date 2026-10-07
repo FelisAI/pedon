@@ -95,6 +95,12 @@ enum SourceError: LocalizedError {
 
 final class DesignSource {
     static let serverKey = "server"
+    /// The sample garden built into the app (ios/make_sample.py): the demo site, exported as
+    /// the Mac exports any design, so the app can be tried without a Mac — App Review included.
+    static let sampleAddress = "pedon-sample:"
+    static var sampleFolder: URL? {
+        Bundle.main.url(forResource: "current", withExtension: "json", subdirectory: "Sample")?.deletingLastPathComponent()
+    }
 
     /// Only the address this user saved. No developer machine fallback.
     var candidates: [String] {
@@ -109,9 +115,25 @@ final class DesignSource {
         return URLSession(configuration: c)
     }()
 
+    /// Whether a saved copy can stand for what is current without asking. A Mac can only be
+    /// asked over the network, so its saved copy stands until ↻; the built-in sample is on this
+    /// iPhone, so a newer one, after an app update, replaces the copy saved from an older one.
+    func stillCurrent(_ saved: Current) -> Bool {
+        guard candidates.first == Self.sampleAddress else { return true }
+        guard let folder = Self.sampleFolder,
+              let data = try? Data(contentsOf: folder.appendingPathComponent("current.json")),
+              let bundled = try? JSONDecoder().decode(Current.self, from: data) else { return true }
+        return bundled.mtime_ms == saved.mtime_ms
+    }
+
     /// The first address that answers, and what it says is current.
     func current() async throws -> (base: URL, current: Current) {
         guard !candidates.isEmpty else { throw SourceError.noServer }
+        if candidates.first == Self.sampleAddress {
+            guard let folder = Self.sampleFolder else { throw SourceError.noServer }
+            let data = try Data(contentsOf: folder.appendingPathComponent("current.json"))
+            return (folder, try JSONDecoder().decode(Current.self, from: data))
+        }
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("-offline") { throw SourceError.unreachable(candidates) }
         #endif
@@ -131,6 +153,8 @@ final class DesignSource {
     func file(for current: Current, from base: URL, scan: Bool = false,
               onDownload: (@MainActor () -> Void)? = nil) async throws -> URL {
         guard let name = scan ? current.info?.scan?.file : current.name, let url = URL(string: name, relativeTo: base) else { throw SourceError.nothingMade }
+        // the built-in sample is already on this iPhone: nothing to download
+        if base.isFileURL { return base.appendingPathComponent(name) }
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
         let local = caches.appendingPathComponent("\(Int(current.mtime_ms ?? 0))-\(name)")
         if FileManager.default.fileExists(atPath: local.path) { return local }

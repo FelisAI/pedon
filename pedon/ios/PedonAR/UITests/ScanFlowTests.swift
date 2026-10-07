@@ -25,6 +25,24 @@ import Foundation
         XCTAssertTrue(app.buttons["Done"].exists)
     }
 
+    /// App Review has no Mac running PEDON: a fresh install must be usable from the sample alone.
+    func testTheSampleGardenNeedsNoMac() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-resetConnection"]
+        app.launch()
+        let sample = app.buttons["Try the sample garden"]
+        guard sample.waitForExistence(timeout: 15) else {
+            throw XCTSkip("This build carries no sample garden (ios/make_sample.py)")
+        }
+        attach(app, "Settings offers the sample garden")
+        sample.tap()
+        XCTAssertTrue(app.staticTexts["Original 3D scan"].waitForExistence(timeout: 60))
+        XCTAssertTrue(app.staticTexts["Sample garden"].exists, "The header names the sample")
+        XCTAssertTrue(app.otherElements["original-scan"].waitForExistence(timeout: 20))
+        attach(app, "Sample garden scan, no Mac")
+    }
+
     func testRealScanPickingAndConnectionSettings() throws {
         let connection = try server()
         continueAfterFailure = false

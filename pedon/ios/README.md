@@ -55,6 +55,15 @@ automatic fallback. Use Xcode directly if you changed the app's bundle identifie
 
 ## Connect and align
 
+**Without a Mac:** Settings → **Try the sample garden** opens a small garden built into the app —
+the code-made demo site (`tools/demo_site.py`) exported as any design is. `python3
+ios/make_sample.py` generates it into `PedonAR/Sample/` (not part of the source: the app ships no
+assets), through a private viewer and headless Chrome that never touch your own sites; a build
+without that folder has no sample. A newer sample, after an app update, replaces the copy the
+iPhone saved from an older one. A scan coloured per vertex, as the demo's is, has its colours
+baked into a texture by `tools/ar_export.py`, the form both iPhone renderers draw.
+
+
 1. On the Mac, open your design in PEDON and choose **··· → See it on site…**. Wait for
    the export, then open the phone connection there.
 2. On the iPhone, use the same Wi-Fi. Open **PEDON → Settings** and enter the Mac address

@@ -53,6 +53,7 @@ import bpy, json, os, re, sys, tempfile, shutil
 from pxr import Usd, UsdGeom, UsdShade, UsdUtils, Sdf
 argv = sys.argv[sys.argv.index("--") + 1:]
 src, dst, ratio, cut = argv[0], argv[1], float(argv[2]), float(argv[3])
+bake = len(argv) > 4 and argv[4] == "bake"
 keep = tuple(KEEP_WHOLE_PY)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=src)
@@ -71,6 +72,64 @@ if ratio < 0.999:
             bm.to_mesh(o.data)
             bm.free()
             o.modifiers.new("dec", "DECIMATE").ratio = ratio
+
+# A SCAN COLOURED PER VERTEX, BAKED TO A TEXTURE. Blender writes vertex colours as a primvar no
+# material reads, so the phone drew such a scan plain white and nobody could pick a feature on
+# it (the demo garden's scan, 2026-10-07). A texture is the form the app's SceneKit picker and
+# RealityKit overlay already draw from real scans. A mesh that has a picture keeps it.
+def bake_vertex_colours():
+    import tempfile as _tf
+    out = _tf.mkdtemp(prefix="ar_bake_")
+    scene = bpy.context.scene
+    scene.render.engine = "CYCLES"
+    scene.cycles.device = "CPU"
+    scene.cycles.samples = 1
+    for o in [o for o in bpy.data.objects if o.type == "MESH"]:
+        me = o.data
+        if not me.color_attributes:
+            continue
+        if any(n.type == "TEX_IMAGE" for m in me.materials if m and m.use_nodes for n in m.node_tree.nodes):
+            continue
+        # the NAME, read now: an attribute reference dangles once the mode changes below, and
+        # the name read through it is then whatever the memory holds — measured: the bake came
+        # out navy or right depending on it
+        colour = (me.color_attributes.active_color or me.color_attributes[0]).name
+        for other in bpy.context.selected_objects:
+            other.select_set(False)
+        bpy.context.view_layer.objects.active = o
+        o.select_set(True)
+        if not me.uv_layers:
+            me.uv_layers.new(name="UVMap")
+        bpy.ops.object.mode_set(mode="EDIT")
+        bpy.ops.mesh.select_all(action="SELECT")
+        bpy.ops.uv.smart_project(island_margin=0.002)
+        bpy.ops.object.mode_set(mode="OBJECT")
+        size = 2048 if len(me.polygons) < 200000 else 4096
+        image = bpy.data.images.new(o.name + "_colour", width=size, height=size)
+        mat = bpy.data.materials.new(o.name + "_baked")
+        mat.use_nodes = True
+        nt = mat.node_tree
+        bsdf = nt.nodes.get("Principled BSDF")
+        source = nt.nodes.new("ShaderNodeVertexColor")
+        source.layer_name = colour
+        nt.links.new(source.outputs["Color"], bsdf.inputs["Base Color"])
+        texture = nt.nodes.new("ShaderNodeTexImage")
+        texture.image = image
+        nt.nodes.active = texture
+        me.materials.clear()
+        me.materials.append(mat)
+        bpy.ops.object.bake(type="DIFFUSE", pass_filter={"COLOR"}, margin=2)
+        for link in list(bsdf.inputs["Base Color"].links):
+            nt.links.remove(link)
+        nt.links.new(texture.outputs["Color"], bsdf.inputs["Base Color"])
+        nt.nodes.remove(source)
+        image.filepath_raw = os.path.join(out, image.name + ".png")
+        image.file_format = "PNG"
+        image.save()
+        print("BAKED " + o.name + " " + str(size))
+
+if bake:
+    bake_vertex_colours()
 
 # COUNT THE EVALUATED MESH, not the base one: a decimate modifier does not touch o.data,
 # and a count taken there contradicts the file size printed beside it.
@@ -211,7 +270,7 @@ def export_usdz(out_name=OUT_NAME, timeout_s=240, ratio=0.35, name=None):
             scan_name = f"{os.path.splitext(out_name)[0]}-{time.time_ns()}.scan.usdz"
             scan_tmp = os.path.join(making, scan_name)
             scan_result = subprocess.run([BLENDER, "-b", "--python-exit-code", "1", "--python-expr", CONVERT,
-                                          "--", scan_glb, scan_tmp, "1.0", str(ALPHA_CUT)],
+                                          "--", scan_glb, scan_tmp, "1.0", str(ALPHA_CUT), "bake"],
                                          capture_output=True, text=True)
             if scan_result.returncode or not os.path.isfile(scan_tmp):
                 return None, {"error": "scan_convert_failed", "detail": (scan_result.stderr or scan_result.stdout)[-600:]}

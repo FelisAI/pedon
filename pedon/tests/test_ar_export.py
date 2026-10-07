@@ -159,6 +159,14 @@ def test_what_blender_is_told_to_do():
     assert "CreateNewARKitUsdzPackage" in src
     # the triangle count is of the EVALUATED mesh, after the modifier
     assert "evaluated_depsgraph_get" in src and "to_mesh_clear" in src
+    # a scan coloured per vertex is baked to a texture before export: Blender writes vertex
+    # colours as a primvar no material reads, and the phone drew the demo scan plain white
+    assert 'bake = len(argv) > 4 and argv[4] == "bake"' in src
+    assert src.index("bake_vertex_colours()\n") < src.index("bpy.ops.wm.usd_export")
+    assert 'n.type == "TEX_IMAGE"' in src, "a scan that has its photograph keeps it"
+    # the colour's NAME is taken before the mode switch; a reference read after it dangles
+    assert src.index("color_attributes[0]).name") < src.index('mode_set(mode="EDIT")')
+    assert "source.layer_name = colour\n" in src
 
 
 def test_blender_is_not_assumed_to_be_on_PATH():
@@ -185,6 +193,7 @@ def test_scan_is_a_separate_full_resolution_file_in_the_same_frame(monkeypatch, 
     assert path and info["scan"]["file"].endswith(".scan.usdz")
     assert info["shift"] == [3, 1, -7]
     assert len(called) == 2 and called[1][2] == "1.0"
+    assert called[1][-1] == "bake" and "bake" not in called[0], "only the scan's colours are baked"
     assert os.path.isfile(os.path.join(ar_export.OUT_DIR, info["scan"]["file"]))
     assert not scan.exists()
 

@@ -143,7 +143,7 @@ final class Flow: ObservableObject {
             let storage = SessionStore(server: connection)
             let record: CachedDesign
             let usingSaved: Bool
-            if preferSaved, let existing = storage.cachedDesign() {
+            if preferSaved, let existing = storage.cachedDesign(), source.stillCurrent(existing.current) {
                 record = existing; usingSaved = true
             } else {
                 loadingStage = .checkingMac
@@ -918,7 +918,8 @@ struct Quiet: ButtonStyle {
 
 struct SettingsView: View {
     let done: () -> Void
-    @State private var server = UserDefaults.standard.string(forKey: DesignSource.serverKey) ?? ""
+    @State private var server = UserDefaults.standard.string(forKey: DesignSource.serverKey)
+        .flatMap { $0 == DesignSource.sampleAddress ? "" : $0 } ?? ""
     @State private var error: String?
     var body: some View {
         NavigationStack {
@@ -929,6 +930,16 @@ struct SettingsView: View {
                     if let error { Text(error).foregroundStyle(.red) }
                     Text("Enter the address shown in the Mac’s ··· → See it on site sheet.")
                         .font(.footnote).foregroundStyle(.secondary)
+                }
+                if DesignSource.sampleFolder != nil {
+                    Section {
+                        Button("Try the sample garden") {
+                            UserDefaults.standard.set(DesignSource.sampleAddress, forKey: DesignSource.serverKey)
+                            done()
+                        }
+                    } footer: {
+                        Text("A small garden built into PEDON, for trying it without a Mac. Pick two points on its scan, then mark any two spots on the ground around you.")
+                    }
                 }
                 Section("About PEDON") {
                     NavigationLink("Privacy", destination: PrivacyPolicyView())
@@ -944,6 +955,9 @@ struct SettingsView: View {
             .toolbar {
                 Button("Done") {
                     let entered = server.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if entered.isEmpty, UserDefaults.standard.string(forKey: DesignSource.serverKey) == DesignSource.sampleAddress {
+                        done(); return                      // keep the sample garden
+                    }
                     let value = entered.contains("://") ? entered : "http://" + entered
                     guard let url = URL(string: value), ["http", "https"].contains(url.scheme?.lowercased() ?? ""),
                           url.host != nil, url.user == nil, url.password == nil, url.query == nil, url.fragment == nil else {
