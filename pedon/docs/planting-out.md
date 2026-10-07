@@ -101,12 +101,12 @@ stay available when controls are collapsed. Guide mode preserves the 3D layer se
 returning to **3D view** restores them. It also turns off real-world occlusion for the thin
 markers so a soil-depth estimate cannot swallow them. Targets still depend on the user's
 alignment and AR tracking; check a fixed reference before using them to set out plants.
-The guide draws as a fixed handful of objects whatever the bed's size — every cross in one
-mesh, every ID label in one mesh cut from one picture of all the IDs, and the selected target
-— because a target per object (616 objects for 154 plants) ran the phone out of memory when
-many were on screen. The AR view also skips motion blur, depth of field, film grain, grounding
-shadows and ARKit's lighting probes; the last leaked graphics memory for as long as the camera
-ran. `ios/README.md` (*When the app quits by itself*) says how such an exit is measured.
+Nothing the app draws casts a shadow onto the real ground: RealityKit made about 1.4 GB of
+shadow maps for the old guide's 616 objects the moment they were drawn over the scanned garden,
+and iOS ended the app. The guide now draws as a fixed handful of objects whatever the bed's size
+— every cross in one mesh, every ID label in one mesh cut from one picture of all the IDs, and
+the selected target. The AR view also skips motion blur, depth of field, film grain and ARKit's
+lighting probes; the last leaked graphics memory for as long as the camera ran. `ios/README.md` (*When the app quits by itself*) says how such an exit is measured.
 
 **Hide controls** leaves a compact bar; **Controls** restores the panel. Move/turn/re-mark
 controls live under **Adjust alignment**. Returning to **Change points / Other points** starts

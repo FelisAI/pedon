@@ -195,11 +195,15 @@ at most a `JetsamEvent-….ips` naming the largest process. The log's last lines
 happening, and each line carries the peak since the one before, sampled every 50 ms. The limit
 on an iPhone 17 Pro measured 3.3 GB. ARKit's automatic lighting probes
 (`environmentTexturing = .automatic`) grew graphics memory about 2.5 MB a second for as long as
-the camera ran; they are off. On site, drawing the planting guide with many targets on screen
-burst graphics memory by 1-2 GB in under a second: the guide was four objects per plant, so it
-now draws as three objects for any bed (`PlantingGuide.swift`), and the AR view skips motion
-blur, depth of field, film grain and grounding shadows. A memory warning frees a hidden
-original scan at once. What
+the camera ran; they are off. On site, drawing the planting guide over the real garden burst
+graphics memory by 1-2 GB in under a second: every drawn object casts a grounding shadow onto
+the surfaces ARKit scans, and for the old 616-object guide RealityKit's `MeshShadowProvider`
+allocated about 1.4 GB of shadow maps (five 253 MB textures, seen in Instruments' Game Memory).
+ARView's `.disableGroundingShadows` does not stop it; `GroundingShadowComponent(castsShadow:
+false)` on each object does, so nothing PEDON draws casts one (`DesignScene.castNoShadows`). It
+needs real surfaces, so a phone lying flat cannot show it: stand it up facing a room. The guide
+also draws as three objects for any bed (`PlantingGuide.swift`), the AR view skips motion blur,
+depth of field and film grain, and a memory warning frees a hidden original scan at once. What
 PEDON holds is kept down on purpose, measured with a real site: the point
 picker's copy of the original scan (about 300 MB with its 8192² texture) is held only while
 picking; the original-scan overlay (about 240 MB loaded, far more while loading) is freed

@@ -51,6 +51,7 @@ final class PlantingGuide {
         }
         root.addChild(crosses); root.addChild(labels); root.addChild(highlight)
         rebuildCrosses()
+        DesignScene.castNoShadows(root)
         root.isEnabled = false
     }
 

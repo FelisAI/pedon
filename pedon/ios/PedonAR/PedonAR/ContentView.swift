@@ -471,7 +471,17 @@ final class Flow: ObservableObject {
         var flat = SIMD3<Float>(look.x, 0, look.z)
         if simd_length(flat) < 0.2 { flat = SIMD3<Float>(m.columns.1.x, 0, m.columns.1.z) }
         if simd_length(flat) < 0.2 { flat = SIMD3<Float>(0, 0, -1) }
-        tapA = eye + look * 4; tapB = tapA! + simd_normalize(flat) * 6
+        let distance = UserDefaults.standard.double(forKey: "probeDistance") > 0 ? Float(UserDefaults.standard.double(forKey: "probeDistance")) : 4
+        if abs(look.y) < 0.5 {
+            // a phone standing up looks across a room: lay the planting on the floor ahead of it,
+            // seen at a shallow angle as across a bed on site, where ARKit's planes are
+            let floor = garden.lowestHorizontalPlane() ?? (eye.y - 1.0)
+            let ahead = eye + simd_normalize(flat) * distance
+            tapA = SIMD3(ahead.x, floor, ahead.z)
+        } else {
+            tapA = eye + look * distance
+        }
+        tapB = tapA! + simd_normalize(flat) * 6
         clearFixes()
         placeFrom(tapA!, tapB!)
         MemoryLog.shared.note(String(format: "probe placed; looking %.2f %.2f %.2f", look.x, look.y, look.z))

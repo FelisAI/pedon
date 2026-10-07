@@ -294,3 +294,11 @@ second while the camera ran. A Mac process's footprint does count GPU memory, so
 can be measured there; ARKit can only be measured on the phone. The app's memory log
 (`ios/README.md`) records the footprint split into graphics, camera media and its own memory;
 switching one feature off at a time against that split found the cause in seven two-minute runs.
+
+A probe whose camera sees nothing measures nothing. Phone runs lying flat on a desk drew the
+design where no camera looked, then drew it in view but over no real surfaces, and both stayed
+flat — while the site crashed. The burst needed real surfaces: RealityKit casts each drawn
+object's grounding shadow onto what ARKit scans, and ARView's `.disableGroundingShadows` does not
+cover these per-object mesh shadows. Stood up facing a room, the same build burst by 1.1 GB in
+four seconds; Instruments' Game Memory named `MeshShadowProvider` and its five 253 MB textures.
+Save a screenshot with each device measurement and read the log's mesh and plane counts.

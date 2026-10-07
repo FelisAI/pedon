@@ -32,6 +32,8 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
     private let imageContext = CIContext()
 
     private var design: Entity?
+    /// The loaded design, guide included (read by tests).
+    var designRoot: Entity? { design }
     @Published private(set) var scanLoading = false
     @Published private(set) var scanError: String?
     private var scanSource: URL?
@@ -178,6 +180,7 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
         head.position.y = 0.52
         let foot = ModelEntity(mesh: .generateCylinder(height: 0.004, radius: 0.08), materials: [paint])
         a.addChild(post); a.addChild(head); a.addChild(foot)
+        DesignScene.castNoShadows(a)
         view.scene.addAnchor(a)
         pins.append(a)
     }
@@ -313,6 +316,14 @@ final class ARGarden: NSObject, ObservableObject, ARSessionDelegate {
         plantingGuide?.update(on: on, hidden: hidden, selected: selected)
         pins.forEach { $0.isEnabled = !on }
     }
+
+    #if DEBUG
+    /// The height of the lowest horizontal plane ARKit has found (a room's floor), for probes.
+    func lowestHorizontalPlane() -> Float? {
+        view.session.currentFrame?.anchors.compactMap { $0 as? ARPlaneAnchor }
+            .filter { $0.alignment == .horizontal }.map { $0.transform.columns.3.y }.min()
+    }
+    #endif
 
     /// What ARKit holds, for the memory log: reconstructed mesh, lighting probes, planes.
     func arSummary() -> String {
