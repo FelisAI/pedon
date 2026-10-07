@@ -50,3 +50,12 @@ def test_a_sample_missing_its_scan_is_refused(tmp_path):
     app = make_app(tmp_path)
     (app / "Sample" / "yard-1.scan.usdz").unlink()
     assert any("sample garden" in e for e in check_release.inspect(app)["errors"])
+
+
+def test_a_source_only_build_may_leave_the_sample_out_but_not_half_of_it(tmp_path):
+    app = make_app(tmp_path)
+    (app / "Sample" / "yard-1.scan.usdz").unlink()
+    assert any("sample garden" in e for e in check_release.inspect(app, sample=False)["errors"])
+    for f in (app / "Sample").iterdir():
+        f.unlink()
+    assert check_release.inspect(app, sample=False)["errors"] == []

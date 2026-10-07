@@ -13,7 +13,7 @@ import re
 from pathlib import Path
 
 
-def inspect(path):
+def inspect(path, sample=True):
     path = Path(path)
     if path.suffix == ".xcarchive":
         apps = list((path / "Products" / "Applications").glob("*.app"))
@@ -54,10 +54,11 @@ def inspect(path):
                          if api.get("NSPrivacyAccessedAPIType") == "NSPrivacyAccessedAPICategoryUserDefaults"), {})
         require("CA92.1" in defaults.get("NSPrivacyAccessedAPITypeReasons", []), "App-local preferences need their approved API reason")
     # App Review has no Mac running PEDON: the sample garden is the only way in (ios/make_sample.py).
-    sample = path / "Sample" / "current.json"
-    require(sample.is_file(), "No sample garden in the app: run ios/make_sample.py before archiving")
-    if sample.is_file():
-        current = json.loads(sample.read_text())
+    current_json = path / "Sample" / "current.json"
+    if sample:
+        require(current_json.is_file(), "No sample garden in the app: run ios/make_sample.py before archiving")
+    if current_json.is_file():
+        current = json.loads(current_json.read_text())
         files = [current.get("name"), ((current.get("info") or {}).get("scan") or {}).get("file")]
         require(all(f and (path / "Sample" / f).is_file() for f in files), "The sample garden's design or scan is missing")
     return {"bundle": info.get("CFBundleIdentifier"), "version": info.get("CFBundleShortVersionString"),
@@ -68,7 +69,9 @@ def inspect(path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("archive", help="An .xcarchive or compiled .app")
+    parser.add_argument("--without-sample", action="store_true",
+                        help="a source-only build (CI): the generated sample garden is not required")
     args = parser.parse_args()
-    result = inspect(args.archive)
+    result = inspect(args.archive, sample=not args.without_sample)
     print(json.dumps(result, indent=2))
     raise SystemExit(bool(result["errors"]))

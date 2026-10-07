@@ -24,4 +24,4 @@ jobs:
       - name: Inspect the unsigned release archive
         run: |
           xcodebuild -project pedon/ios/PedonAR/PedonAR.xcodeproj -scheme PedonAR -configuration Release -destination 'generic/platform=iOS' -archivePath /tmp/PEDON-release.xcarchive CODE_SIGNING_ALLOWED=NO archive
-          python3 pedon/ios/check_release.py /tmp/PEDON-release.xcarchive
+          python3 pedon/ios/check_release.py --without-sample /tmp/PEDON-release.xcarchive
