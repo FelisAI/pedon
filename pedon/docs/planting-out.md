@@ -141,4 +141,4 @@ alignment. See `ios/README.md` for the saved-map workflow and tests.
 
 **App Store:** version 1.0 was submitted to App Review on 2026-10-07 as "PEDON: Planting Guide".
 `ios/appstore/README.md` records its store copy, privacy disclosures, screenshots, archive checks
-and release gates. A listing is not live until Apple approves it and the publisher releases it.
+and release gates. It is set to release automatically, so it goes live when Apple approves it.

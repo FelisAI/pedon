@@ -1,7 +1,7 @@
 # App Store release
 
 Status: **PEDON: Planting Guide** 1.0 (1), free, from **Felis AI LLC**, was submitted to App Review
-on 2026-10-07 with manual release, so it goes public only when released by hand after approval.
+on 2026-10-07, set to release automatically: it goes public as soon as Apple approves it.
 The source stays AGPL-3.0-only; Felis AI, which holds all PEDON code, distributes the App Store
 build under Apple's terms (gate 1 below).
 
@@ -65,7 +65,8 @@ changes 6 or 7 only if the app's content or data use changes.
    verify the support/privacy URLs are public and reachable. For the audited native build,
    the proposed answer is **No, we do not collect data from this app**. App-local AR processing
    is not off-device collection; the desktop server is selected and operated by the user.
-8. Review the complete listing/build, choose manual release, then submit to App Review.
+8. Review the complete listing/build, choose the release option, then submit to App Review.
+   The owner chose automatic release for 1.0 (2026-10-08); it can be changed until approval.
    Do not confuse TestFlight upload, review approval and public release.
 
 ## Screenshots
